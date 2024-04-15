@@ -10,7 +10,7 @@ Welcome to the BakingUp Backend Repository!
 - <b>Backend API:</b> Go Fiber
 - <b>Database:</b> PostgreSQL
 - <b>Database ORM:</b> Prisma
-- <b>3rd Party APIs:</b> Firebase Authentication, Firebase Cloud Messaging, Gemini AI
+- <b>3rd Party APIs:</b> Gemini AI
 - <b>Container Management:</b> Docker
 - <b>Hosting:</b> Azure Virtual Machine
 - <b>DNS:</b> Cloudflare
