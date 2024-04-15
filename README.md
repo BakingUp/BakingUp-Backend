@@ -14,7 +14,9 @@ Welcome to the BakingUp Backend Repository!
 - <b>Container Management:</b> Docker
 - <b>Hosting:</b> Azure Virtual Machine
 - <b>DNS:</b> Cloudflare
-- <b>CI/CD:</b> GitHub Actions
+- <b>CI/CD:</b> GitHub Actions / GitLab CI/CD
 
 ## More Information
-For more information, please refer to the "Wiki" section at https://github.com/BakingUp/BakingUp-Backend/wiki.
+For more information, please refer to the "Wiki" section at 
+- For viewers in GitHub: https://github.com/BakingUp/BakingUp-Backend/wiki.
+- For viewers in CS GitLab: https://csgit.sit.kmutt.ac.th/csc498-499-bakingup/bakingup-backend/-/wikis/.
