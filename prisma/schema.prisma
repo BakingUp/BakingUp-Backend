@@ -1,0 +1,274 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator db {
+  provider = "go run github.com/steebchen/prisma-client-go"
+}
+
+model Users{
+  user_id                String    @id @unique
+  first_name             String
+  last_name              String
+  telephone              String
+  store_name             String
+  black_expiration_date  DateTime
+  red_expiration_date    DateTime
+  yellow_expiration_date DateTime
+  language               Language
+  rent                   Float?
+  salaries               Float?
+  insurance              Float?
+  subscriptions          Float?
+  advertising            Float?
+  electricity            Float?
+  water                  Float?
+  gas                    Float?
+  other                  Float?
+  note                   String?
+  notifications          Notifications[]
+  orders                 Orders[]
+  ingredients            Ingredients[]
+  devices                Devices[]
+  recipes                Recipes[]
+}
+
+model Notifications {
+  noti_id      String   @id @unique
+  user         Users    @relation(fields: [user_id], references: [user_id])
+  user_id      String
+  eng_title    String
+  thai_title   String
+  eng_message  String
+  thai_message String
+  created_at   DateTime
+  is_read      Boolean
+  noti_type    NotificationType
+}
+
+enum Language {
+  EN
+  TH
+}
+
+enum NotificationType {
+  INFO
+  WARNING
+  ALERT
+}
+
+model Orders {
+  order_id String @id @unique
+  user   Users    @relation(fields: [user_id], references: [user_id])
+  user_id String 
+  order_taken_by String
+  customer_name String
+  customer_phone_num String
+  order_platform OrderPlatform
+  order_date DateTime
+  order_type OrderType
+  is_pre_order Boolean
+  order_status OrderStatus
+  pick_up_date_time DateTime
+  pick_up_method PickUpMethod
+  order_index Int @unique
+  order_products Order_products[]
+  order_notes Order_notes[]
+
+}
+
+enum OrderPlatform {
+  STORE
+  DELIVERY
+  FACEBOOK
+  WEBSITE
+  OTHER
+}
+
+enum OrderType {
+  BULK_ORDER
+  PERSONAL
+  SPECIAL_DAY
+  FESTIVAL
+  OTHER
+}
+
+enum OrderStatus {
+  DONE
+  IN_PROCESS
+  CANCEL
+}
+
+enum PickUpMethod {
+  IN_STORE
+  DELIVERY
+  OTHER
+}
+
+model Order_products {
+  order_id          String
+  recipe_id         String
+  product_quantity  Int
+  order             Orders    @relation(fields: [order_id], references: [order_id])
+  recipe            Recipes   @relation(fields: [recipe_id], references: [recipe_id])
+
+  @@id([order_id, recipe_id])
+}
+
+model Order_notes {
+  order_id   String
+  created_at DateTime
+  order_note String
+  order      Orders    @relation(fields: [order_id], references: [order_id])
+  
+  @@id([order_id, created_at])
+}
+
+model Ingredients {
+  ingredient_id        String       @id @unique
+  user                 Users        @relation(fields: [user_id], references: [user_id])
+  user_id              String
+  ingredient_eng_name String
+  ingredient_thai_name String
+  unit                 Unit
+  ingredient_less_than Float
+  day_before_expire    DateTime
+  ingredient_images    Ingredient_images[]
+  ingredient_detail    Ingredient_detail[]
+  recipe_ingredients   Recipe_ingredients[]
+}
+
+model Ingredient_detail {
+  ingredient_stock_id  String        @id @unique
+  ingredient           Ingredients   @relation(fields: [ingredient_id], references: [ingredient_id])
+  ingredient_id        String
+  ingredient_stock_url String
+  price                Float
+  ingredient_quantity  Float
+  expiration_date      DateTime
+  ingredient_supplier  String
+  ingredient_brand     String
+  ingredient_notes     Ingredient_notes[]
+}
+
+model Ingredient_images {
+  ingredient_image_index String            @unique
+  ingredient_id          String
+  ingredient             Ingredients       @relation(fields: [ingredient_id], references: [ingredient_id])
+  ingredient_url         String
+ 
+  @@id([ingredient_id, ingredient_image_index])
+}
+
+model Ingredient_notes {
+  ingredient_detail   Ingredient_detail  @relation(fields: [ingredient_stock_id], references: [ingredient_stock_id])
+  ingredient_stock_id String
+  note_created_at     DateTime
+  ingredient_note     String
+
+  @@id([ingredient_stock_id, note_created_at])
+}
+
+enum Unit {
+  G
+  KG
+  L
+  ML
+}
+
+model Devices {
+  deviceToken String  @id @unique
+  user        Users   @relation(fields: [user_id], references: [user_id])
+  user_id     String
+}
+
+model Recipes {
+  recipe_id                     String                     @id @unique
+  user                          Users                      @relation(fields: [user_id], references: [user_id])
+  user_id                       String
+  recipe_eng_name               String
+  recipe_thai_name              String
+  total_time                    DateTime
+  serving                       Int
+  scale_servings                Int
+  hidden_cost                   Float
+  labor_cost                    Float
+  profit_margin                 Float
+  recipe_images                 Recipe_images[]
+  recipe_ingredients            Recipe_ingredients[]
+  recipe_eng_instruction_steps  Recipe_eng_instruction_steps[]
+  recipe_thai_instruction_steps Recipe_thai_instruction_steps[]
+  recipe_instruction_images     Recipe_instruction_images[]
+  stocks                        Stocks[]
+  order_products                Order_products[]
+}
+
+model Recipe_images {
+  recipe                   Recipes   @relation(fields: [recipe_id], references: [recipe_id])
+  recipe_id                String
+  image_index              Int       @unique
+  recipe_url               String
+
+  @@id([recipe_id, image_index])
+}
+
+model Recipe_ingredients {
+  recipe                   Recipes     @relation(fields: [recipe_id], references: [recipe_id])
+  recipe_id                String
+  ingredient_id            String
+  ingredient               Ingredients @relation(fields: [ingredient_id], references: [ingredient_id])
+  recipe_ingredient_quantity Float
+
+  @@id([recipe_id, ingredient_id])
+}
+
+model Recipe_eng_instruction_steps {
+  recipe                   Recipes     @relation(fields: [recipe_id], references: [recipe_id])
+  recipe_id                String
+  instruction_order        Int
+  instruction_step         String
+
+  @@id([recipe_id, instruction_order])
+}
+
+model Recipe_thai_instruction_steps {
+  recipe                   Recipes     @relation(fields: [recipe_id], references: [recipe_id])
+  recipe_id                String
+  instruction_order        Int
+  instruction_step         String
+
+  @@id([recipe_id, instruction_order])
+}
+
+model Recipe_instruction_images {
+  recipe                   Recipes     @relation(fields: [recipe_id], references: [recipe_id])
+  recipe_id                String
+  instruction_image_index  Int         @unique
+  instruction_url          String
+
+  @@id([recipe_id, instruction_image_index])
+}
+
+model Stocks {
+  recipe                   Recipes    @relation(fields: [recipe_id], references: [recipe_id])
+  recipe_id                String     @id
+  lst                      Int
+  selling_price            Float
+  stock_less_than          Int
+  day_before_expired       DateTime
+  stock_detail             Stock_detail[]
+}
+
+model Stock_detail {
+  stock                    Stocks     @relation(fields: [recipe_id], references: [recipe_id])
+  recipe_id                String
+  created_at               DateTime
+  stock_url                String
+  sell_by_date             DateTime
+  quantity                 Int
+  note                     String
+  cooking_time             DateTime
+
+  @@id([recipe_id, created_at])
+}
