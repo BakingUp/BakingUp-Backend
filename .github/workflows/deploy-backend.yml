@@ -1,50 +1,33 @@
-name: Backend CI
+name: Deploy Backend Production
 
 on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-    - '*'
 
 jobs:
   build:
-    name: Build and Test
+    name: Build 
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Set up Go
-        uses: actions/setup-go@v3
-        with:
-          go-version: '1.21.6'
-
-      - name: Install Go dependencies
-        run: go mod download
-
-      - name: Run Go tests
-        run: go test -v ./...
-        env: 
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          HTTP_PORT: 8000
-      
       - name: Login to docker
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with: 
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
 
       - name: Create Env file
         run: echo '${{secrets.BACKEND_PRODUCTION_ENV}}' > .env
 
       - name: Build and push
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           context: .
           file: Dockerfile
