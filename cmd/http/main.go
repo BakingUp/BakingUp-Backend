@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/BakingUp/BakingUp-Backend/internal/adapter/config"
+	"github.com/BakingUp/BakingUp-Backend/internal/infrastructure"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -12,6 +13,9 @@ func main() {
 	
 	app := fiber.New()
 	config, err := config.New()
+	
+	client := infrastructure.InitializePrismaClient()
+    defer client.Disconnect()
 
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Welcome to BakingUp Backend API")
