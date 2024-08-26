@@ -9,6 +9,9 @@ jobs:
   build:
     name: Test and Run
     runs-on: ubuntu-latest
+    env: 
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      HTTP_PORT: 8000
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -21,11 +24,11 @@ jobs:
       - name: Install Go dependencies
         run: go mod download
 
+      - name: Install Prisma
+        run: go run github.com/steebchen/prisma-client-go generate
+
       - name: Run Go tests
         run: go test -v ./...
-        env: 
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          HTTP_PORT: 8000
       
       - name: Compile Backend
         run: |
