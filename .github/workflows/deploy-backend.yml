@@ -7,16 +7,18 @@ on:
 
 jobs:
   build:
-    name: Build 
+    name: Build
     runs-on: ubuntu-latest
-    env: ${{ secrets.BACKEND_PRODUCTION_ENV }}
+    env: 
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      HTTP_PORT: 8000
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Login to docker
         uses: docker/login-action@v3
-        with: 
+        with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
