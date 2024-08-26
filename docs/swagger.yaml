@@ -1,0 +1,24 @@
+basePath: /
+host: localhost:8000
+info:
+  contact: {}
+  description: This is the BakingUp Backend API.
+  title: BakingUp Backend API
+  version: "1.0"
+paths:
+  /:
+    get:
+      consumes:
+      - application/json
+      description: Returns a welcome message
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Welcome to BakingUp Backend API
+          schema:
+            type: string
+      summary: Welcome message
+      tags:
+      - root
+swagger: "2.0"
