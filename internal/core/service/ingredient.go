@@ -8,18 +8,31 @@ import (
 )
 
 type IngredientService struct {
-	ingredientRepo port.IngredientRepository
+	ingredientRepo 	port.IngredientRepository
+	userService 	 	port.UserService
 }
 
-func NewIngredientService(ingredientRepo port.IngredientRepository) *IngredientService {
+func NewIngredientService(ingredientRepo port.IngredientRepository, userService port.UserService) *IngredientService {
 	return &IngredientService{
 		ingredientRepo: ingredientRepo,
+		userService: userService,
 	}
 }
 
 func (s *IngredientService) GetIngredientDetail(c *fiber.Ctx, ingredientID string) (*domain.IngredientDetail, error) {
 	ingredient, err := s.ingredientRepo.GetIngredientDetail(c, ingredientID)
 	
+	if err != nil {
+		return nil, err
+	}
+
+	language, err := s.userService.GetUserLanguage(c, ingredient.UserID)
+	if err != nil {
+		return nil, err
+	}
+
+	expirationDate, err := s.userService.GetUserExpirationDate(c, ingredient.UserID)
+
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +47,7 @@ func (s *IngredientService) GetIngredientDetail(c *fiber.Ctx, ingredientID strin
 			Price:            util.CombinePrice(detail.Price, ingredient.Unit),
 			Quantity:         util.CombineIngredientQuantity(detail.IngredientQuantity, ingredient.Unit),
 			ExpirationDate:   detail.ExpirationDate.Format("02/01/2006"),
-			ExpirationStatus: util.CalculateExpirationStatus(detail.ExpirationDate),
+			ExpirationStatus: util.CalculateExpirationStatus(detail.ExpirationDate, expirationDate.BlackExpirationDate, expirationDate.RedExpirationDate, expirationDate.YellowExpirationDate),
 		})
 
 	}
@@ -45,7 +58,7 @@ func (s *IngredientService) GetIngredientDetail(c *fiber.Ctx, ingredientID strin
 	}
 
 	detail := &domain.IngredientDetail{
-		IngredientName:     ingredient.IngredientEngName,
+		IngredientName:     util.GetIngredientName(ingredient, language),
 		IngredientQuantity: util.CombineIngredientQuantity(totalQuantity, ingredient.Unit),
 		StockAmount:        len(stocks),
 		IngredientURL:      ingredientURLs,

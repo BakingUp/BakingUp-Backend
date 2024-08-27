@@ -50,8 +50,11 @@ func main() {
 
 	app.Get("/swagger/*", swagger.HandlerDefault)
 	
+	userRepo := repository.NewUserRepository(client)
+	userService := service.NewUserService(userRepo)
+
 	ingredientRepo := repository.NewIngredientRepository(client)
-	ingredientService := service.NewIngredientService(ingredientRepo)
+	ingredientService := service.NewIngredientService(ingredientRepo, userService)
 	ingredientHandler := http.NewIngredientHandler(ingredientService)
 
 	_, err = http.NewRouter(app, *ingredientHandler)
