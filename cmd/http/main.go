@@ -4,10 +4,12 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/BakingUp/BakingUp-Backend/internal/adapter/config"
-	"github.com/BakingUp/BakingUp-Backend/internal/infrastructure"
-	"github.com/BakingUp/BakingUp-Backend/internal/adapter/handler/http"
 	_ "github.com/BakingUp/BakingUp-Backend/docs"
+	"github.com/BakingUp/BakingUp-Backend/internal/adapter/config"
+	"github.com/BakingUp/BakingUp-Backend/internal/adapter/handler/http"
+	"github.com/BakingUp/BakingUp-Backend/internal/adapter/storage/postgres/repository"
+	"github.com/BakingUp/BakingUp-Backend/internal/core/service"
+	"github.com/BakingUp/BakingUp-Backend/internal/infrastructure"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/swagger"
 )
@@ -33,6 +35,11 @@ func main() {
 	
 	app := fiber.New()
 	config, err := config.New()
+
+	if err != nil {
+		slog.Error("Error loading the configuration", "error", err)
+		os.Exit(1)
+	}
 	
 	client := infrastructure.InitializePrismaClient()
     defer client.Disconnect()
@@ -43,10 +50,20 @@ func main() {
 
 	app.Get("/swagger/*", swagger.HandlerDefault)
 	
+	userRepo := repository.NewUserRepository(client)
+	userService := service.NewUserService(userRepo)
+
+	ingredientRepo := repository.NewIngredientRepository(client)
+	ingredientService := service.NewIngredientService(ingredientRepo, userService)
+	ingredientHandler := http.NewIngredientHandler(ingredientService)
+
+	_, err = http.NewRouter(app, *ingredientHandler)
+
 	port := config.HTTP.Port
 	if port == "" {
 		port = "8000"
 	}
+
 	app.Listen(":" + port)
 	if err != nil {
 		slog.Error("Error starting the HTTP server", "error", err)
