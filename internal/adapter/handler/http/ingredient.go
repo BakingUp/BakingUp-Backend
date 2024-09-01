@@ -15,18 +15,30 @@ func NewIngredientHandler(svc port.IngredientService) *IngredientHandler {
 	}
 }
 
-func (ih *IngredientHandler) GetIngredientDetail(c *fiber.Ctx) error {
-    ingredientID := c.Params("ingredientID")
+func (ih *IngredientHandler) GetAllIngredients(c *fiber.Ctx) error {
+	userID := c.Query("user_id")
 
-    ingredient, err := ih.svc.GetIngredientDetail(c, ingredientID)
-    if err != nil {
-        return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-            "error": err.Error(),
-        })
-    }
+	ingredients, err := ih.svc.GetAllIngredients(c, userID)
+	if err != nil {
+		handleError(c, 400, "Cannot get all ingredients", err.Error())
+	}
+
+	handleSuccess(c, ingredients)
+	return nil
+}
+
+func (ih *IngredientHandler) GetIngredientDetail(c *fiber.Ctx) error {
+	ingredientID := c.Params("ingredientID")
+
+	ingredient, err := ih.svc.GetIngredientDetail(c, ingredientID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
 
 	rsp := newIngredientDetailResponse(ingredient)
 
-    handleSuccess(c, rsp)
+	handleSuccess(c, rsp)
 	return nil
 }
