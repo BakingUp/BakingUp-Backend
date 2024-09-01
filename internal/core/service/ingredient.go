@@ -1,6 +1,9 @@
 package service
 
 import (
+	"fmt"
+	"time"
+
 	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
 	"github.com/BakingUp/BakingUp-Backend/internal/core/port"
 	"github.com/BakingUp/BakingUp-Backend/internal/core/util"
@@ -8,20 +11,82 @@ import (
 )
 
 type IngredientService struct {
-	ingredientRepo 	port.IngredientRepository
-	userService 	 	port.UserService
+	ingredientRepo port.IngredientRepository
+	userService    port.UserService
 }
 
 func NewIngredientService(ingredientRepo port.IngredientRepository, userService port.UserService) *IngredientService {
 	return &IngredientService{
 		ingredientRepo: ingredientRepo,
-		userService: userService,
+		userService:    userService,
 	}
+}
+
+func (s *IngredientService) GetAllIngredients(c *fiber.Ctx, userID string) (*domain.IngredientList, error) {
+	ingredients, err := s.ingredientRepo.GetAllIngredients(c, userID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	language, err := s.userService.GetUserLanguage(c, userID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	expirationDate, err := s.userService.GetUserExpirationDate(c, userID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var ingredientItems []domain.Ingredient
+	for _, item := range ingredients {
+		var stockAmount int
+		var stockQuantity int
+		var stockExpirationDate time.Time
+		var IImage string
+		for _, ingredientDetailItem := range item.IngredientDetail() {
+			stockQuantity += int(ingredientDetailItem.IngredientQuantity)
+			if stockAmount == 0 {
+				stockExpirationDate = ingredientDetailItem.ExpirationDate
+			} else if ingredientDetailItem.ExpirationDate.Before(stockExpirationDate) {
+				stockExpirationDate = ingredientDetailItem.ExpirationDate
+			}
+			stockAmount++
+		}
+
+		for _, ingredientImageItem := range item.IngredientImages() {
+			if ingredientImageItem.IngredientID == item.IngredientID {
+				IImage = ingredientImageItem.IngredientURL
+				break
+			}
+		}
+
+		ingredientItem := &domain.Ingredient{
+			IngredientId:     item.IngredientID,
+			IngredientName:   util.GetIngredientName(&item, language),
+			Quantity:         fmt.Sprintf("%d %s", stockQuantity, item.Unit),
+			Stock:            stockAmount,
+			IngredientURL:    IImage,
+			ExpirationStatus: util.CalculateExpirationStatus(stockExpirationDate, expirationDate.BlackExpirationDate, expirationDate.RedExpirationDate, expirationDate.YellowExpirationDate),
+		}
+
+		ingredientItems = append(ingredientItems, *ingredientItem)
+	}
+
+	ingredientList := &domain.IngredientList{
+		Ingredients: ingredientItems,
+	}
+
+	return ingredientList, nil
+
 }
 
 func (s *IngredientService) GetIngredientDetail(c *fiber.Ctx, ingredientID string) (*domain.IngredientDetail, error) {
 	ingredient, err := s.ingredientRepo.GetIngredientDetail(c, ingredientID)
-	
+
 	if err != nil {
 		return nil, err
 	}

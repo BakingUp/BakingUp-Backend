@@ -8,8 +8,10 @@ import (
 
 type IngredientRepository interface {
 	GetIngredientDetail(c *fiber.Ctx, ingredientID string) (*db.IngredientsModel, error)
+	GetAllIngredients(c *fiber.Ctx, userID string) ([]db.IngredientsModel, error)
 }
 
 type IngredientService interface {
 	GetIngredientDetail(c *fiber.Ctx, ingredientID string) (*domain.IngredientDetail, error)
+	GetAllIngredients(c *fiber.Ctx, userID string) (*domain.IngredientList, error)
 }
