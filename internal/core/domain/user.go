@@ -7,3 +7,21 @@ type ExpirationDate struct {
 	RedExpirationDate    time.Time `json:"red_expiration_date"`
 	BlackExpirationDate  time.Time `json:"black_expiration_date"`
 }
+
+type RegisterUserRequest struct {
+	UserID    string `json:"user_id"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Tel       string `json:"tel"`
+	StoreName string `json:"store_name"`
+}
+
+type DeviceTokenRequest struct {
+	UserID      string `json:"user_id"`
+	DeviceToken string `json:"device_token"`
+}
+
+type UserResponse struct {
+	Status  int    `json:"status"`
+	Message string `json:"message"`
+}
