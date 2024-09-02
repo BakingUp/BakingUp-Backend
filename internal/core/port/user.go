@@ -8,6 +8,8 @@ import (
 
 type UserRepository interface {
 	GetUser(c *fiber.Ctx, userID string) (*db.UsersModel, error)
+	CreateUser(user *domain.RegisterUserRequest) error
+	AddDeviceToken(req *domain.DeviceTokenRequest) error
 }
 
 type UserService interface {
