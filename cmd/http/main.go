@@ -58,7 +58,11 @@ func main() {
 	ingredientService := service.NewIngredientService(ingredientRepo, userService)
 	ingredientHandler := http.NewIngredientHandler(ingredientService)
 
-	_, err = http.NewRouter(app, *ingredientHandler, *authHandler)
+	recipeRepo := repository.NewRecipeRepository(client)
+	recipeService := service.NewRecipeService(recipeRepo, userService)
+	recipeHandler := http.NewRecipeHandler(recipeService)
+
+	_, err = http.NewRouter(app, *ingredientHandler, *recipeHandler, *authHandler)
 
 	port := config.HTTP.Port
 	if port == "" {
