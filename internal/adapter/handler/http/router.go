@@ -6,10 +6,15 @@ type Router struct {
 	router fiber.Router
 }
 
-func NewRouter(a *fiber.App, ingredientHandler IngredientHandler) (*Router, error) {
+func NewRouter(a *fiber.App, ingredientHandler IngredientHandler, authHandler AuthHandler) (*Router, error) {
 
 	api := a.Group("/api")
 	{
+		auth := api.Group("/auth")
+		{
+			auth.Post("/register", authHandler.Register)
+			auth.Post("/addDeviceToken", authHandler.AddDeviceToken)
+		}
 		ingredient := api.Group("/ingredient")
 		{
 			ingredient.Get("/getAllIngredients", ingredientHandler.GetAllIngredients)

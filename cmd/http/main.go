@@ -28,11 +28,11 @@ import (
 // @Success 200 {string} string "Welcome to BakingUp Backend API"
 // @Router / [get]
 func welcome(c *fiber.Ctx) error {
-    return c.SendString("Welcome to BakingUp Backend API")
+	return c.SendString("Welcome to BakingUp Backend API")
 }
 
 func main() {
-	
+
 	app := fiber.New()
 	config, err := config.New()
 
@@ -40,24 +40,25 @@ func main() {
 		slog.Error("Error loading the configuration", "error", err)
 		os.Exit(1)
 	}
-	
+
 	client := infrastructure.InitializePrismaClient()
-    defer client.Disconnect()
+	defer client.Disconnect()
 
 	http.SetupSwagger(app)
-	
+
 	app.Get("/", welcome)
 
 	app.Get("/swagger/*", swagger.HandlerDefault)
-	
+
 	userRepo := repository.NewUserRepository(client)
 	userService := service.NewUserService(userRepo)
+	authHandler := http.NewAuthHandler(userService)
 
 	ingredientRepo := repository.NewIngredientRepository(client)
 	ingredientService := service.NewIngredientService(ingredientRepo, userService)
 	ingredientHandler := http.NewIngredientHandler(ingredientService)
 
-	_, err = http.NewRouter(app, *ingredientHandler)
+	_, err = http.NewRouter(app, *ingredientHandler, *authHandler)
 
 	port := config.HTTP.Port
 	if port == "" {

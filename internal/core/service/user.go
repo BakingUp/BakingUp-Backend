@@ -17,6 +17,37 @@ func NewUserService(userRepo port.UserRepository) *UserService {
 	}
 }
 
+func (s *UserService) RegisterUser(user *domain.RegisterUserRequest) (*domain.UserResponse, error) {
+	err := s.userRepo.CreateUser(user)
+	if err != nil {
+		return &domain.UserResponse{
+			Status:  400,
+			Message: "Cannot create a new user.",
+		}, err
+	}
+
+	return &domain.UserResponse{
+		Status:  201,
+		Message: "Sucessfuly create a new user.",
+	}, nil
+}
+
+func (s *UserService) AddDeviceToken(req *domain.DeviceTokenRequest) (*domain.UserResponse, error) {
+	err := s.userRepo.AddDeviceToken(req)
+	if err != nil {
+		return &domain.UserResponse{
+			Status:  400,
+			Message: "Cannot add a device token.",
+		}, err
+	}
+
+	return &domain.UserResponse{
+		Status:  201,
+		Message: "Successfully added a device token.",
+	}, nil
+
+}
+
 func (s *UserService) GetUserLanguage(c *fiber.Ctx, userID string) (*db.Language, error) {
 	user, err := s.userRepo.GetUser(c, userID)
 
@@ -36,8 +67,8 @@ func (s *UserService) GetUserExpirationDate(c *fiber.Ctx, userID string) (*domai
 
 	expirationDate := &domain.ExpirationDate{
 		YellowExpirationDate: user.YellowExpirationDate,
-		RedExpirationDate: user.RedExpirationDate,
-		BlackExpirationDate: user.BlackExpirationDate,
+		RedExpirationDate:    user.RedExpirationDate,
+		BlackExpirationDate:  user.BlackExpirationDate,
 	}
 
 	return expirationDate, nil
