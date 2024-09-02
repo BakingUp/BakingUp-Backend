@@ -25,7 +25,7 @@ func (ur *UserRepository) CreateUser(user *domain.RegisterUserRequest) error {
 	redExpirationDate := time.Date(2000, time.January, 6, 0, 0, 0, 0, time.UTC)
 	yellowExpirationDate := time.Date(2000, time.January, 11, 0, 0, 0, 0, time.UTC)
 
-	createdUser, err := ur.db.Users.CreateOne(
+	_, err := ur.db.Users.CreateOne(
 		db.Users.UserID.Set(user.UserID),
 		db.Users.FirstName.Set(user.FirstName),
 		db.Users.LastName.Set(user.LastName),
@@ -35,17 +35,6 @@ func (ur *UserRepository) CreateUser(user *domain.RegisterUserRequest) error {
 		db.Users.RedExpirationDate.Set(redExpirationDate),
 		db.Users.YellowExpirationDate.Set(yellowExpirationDate),
 		db.Users.Language.Set(db.LanguageEn),
-	).Exec(ctx)
-
-	if err != nil {
-		return err
-	}
-
-	_, err = ur.db.Devices.CreateOne(
-		db.Devices.DeviceToken.Set(user.DeviceToken),
-		db.Devices.User.Link(
-			db.Users.UserID.Equals(createdUser.UserID),
-		),
 	).Exec(ctx)
 
 	if err != nil {

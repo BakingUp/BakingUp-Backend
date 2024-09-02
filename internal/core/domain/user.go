@@ -9,12 +9,11 @@ type ExpirationDate struct {
 }
 
 type RegisterUserRequest struct {
-	UserID      string `json:"user_id"`
-	FirstName   string `json:"first_name"`
-	LastName    string `json:"last_name"`
-	Tel         string `json:"tel"`
-	StoreName   string `json:"store_name"`
-	DeviceToken string `json:"device_token"`
+	UserID    string `json:"user_id"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Tel       string `json:"tel"`
+	StoreName string `json:"store_name"`
 }
 
 type DeviceTokenRequest struct {
