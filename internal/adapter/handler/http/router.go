@@ -6,7 +6,7 @@ type Router struct {
 	router fiber.Router
 }
 
-func NewRouter(a *fiber.App, ingredientHandler IngredientHandler, recipeHandler RecipeHandler, authHandler AuthHandler) (*Router, error) {
+func NewRouter(a *fiber.App, ingredientHandler IngredientHandler, recipeHandler RecipeHandler, authHandler AuthHandler, stockHandler StockHandler) (*Router, error) {
 
 	api := a.Group("/api")
 	{
@@ -24,6 +24,11 @@ func NewRouter(a *fiber.App, ingredientHandler IngredientHandler, recipeHandler 
 		recipe := api.Group("/recipe")
 		{
 			recipe.Get("/getAllRecipes", recipeHandler.GetAllRecipes)
+		}
+
+		stock := api.Group("/stock")
+		{
+			stock.Get("/getAllStocks", stockHandler.GetAllStocks)
 		}
 	}
 
