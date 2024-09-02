@@ -267,7 +267,7 @@ model Stock_detail {
   stock_url                String
   sell_by_date             DateTime
   quantity                 Int
-  note                     String
+  note                     String?
   cooking_time             DateTime
 
   @@id([recipe_id, created_at])
