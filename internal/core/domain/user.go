@@ -21,8 +21,6 @@ type DeviceTokenRequest struct {
 	DeviceToken string `json:"device_token"`
 }
 
-//เช็กก่อนว่าต้องมี response ตรงนี้ไหม
-
 type UserResponse struct {
 	Status  int    `json:"status"`
 	Message string `json:"message"`
