@@ -51,3 +51,21 @@ func (h *AuthHandler) AddDeviceToken(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusCreated).JSON(response)
 }
+
+func (h *AuthHandler) DeleteDeviceToken(c *fiber.Ctx) error {
+	var req domain.DeviceTokenRequest
+
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(domain.UserResponse{
+			Status:  400,
+			Message: "Invalid request body.",
+		})
+	}
+
+	response, err := h.userService.DeleteDeviceToken(&req)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(response)
+	}
+
+	return c.Status(fiber.StatusOK).JSON(response)
+}

@@ -48,6 +48,22 @@ func (s *UserService) AddDeviceToken(req *domain.DeviceTokenRequest) (*domain.Us
 
 }
 
+func (s *UserService) DeleteDeviceToken(req *domain.DeviceTokenRequest) (*domain.UserResponse, error) {
+	err := s.userRepo.DeleteDeviceToken(req)
+	if err != nil {
+		return &domain.UserResponse{
+			Status:  400,
+			Message: "Cannot delete a device token.",
+		}, err
+	}
+
+	return &domain.UserResponse{
+		Status:  201,
+		Message: "Successfully deleted a device token.",
+	}, nil
+
+}
+
 func (s *UserService) GetUserLanguage(c *fiber.Ctx, userID string) (*db.Language, error) {
 	user, err := s.userRepo.GetUser(c, userID)
 
