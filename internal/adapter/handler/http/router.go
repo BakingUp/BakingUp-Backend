@@ -15,6 +15,7 @@ func NewRouter(a *fiber.App, ingredientHandler IngredientHandler, authHandler Au
 			auth.Post("/register", authHandler.Register)
 			auth.Post("/addDeviceToken", authHandler.AddDeviceToken)
 			auth.Delete("/deleteDeviceToken", authHandler.DeleteDeviceToken)
+			auth.Delete("/deleteAllExceptDeviceToken", authHandler.DeleteAllExceptDeviceToken)
 		}
 		ingredient := api.Group("/ingredient")
 		{

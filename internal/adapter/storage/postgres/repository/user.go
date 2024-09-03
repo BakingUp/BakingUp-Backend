@@ -84,3 +84,26 @@ func (ur *UserRepository) DeleteDeviceToken(req *domain.DeviceTokenRequest) erro
 
 	return nil
 }
+
+func (ur *UserRepository) DeleteAllExceptDeviceToken(req *domain.DeviceTokenRequest) error {
+	ctx := context.Background()
+
+	list, err := ur.db.Devices.FindMany(
+		db.Devices.UserID.Equals(req.UserID)).Exec(ctx)
+
+	if err != nil {
+		return err
+	}
+
+	for _, token := range list {
+		if token.DeviceToken != req.DeviceToken {
+			_, err := ur.db.Devices.FindUnique(
+				db.Devices.DeviceToken.Equals(token.DeviceToken), ).Delete().Exec(ctx)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}

@@ -11,6 +11,7 @@ type UserRepository interface {
 	CreateUser(user *domain.RegisterUserRequest) error
 	AddDeviceToken(req *domain.DeviceTokenRequest) error
 	DeleteDeviceToken(req *domain.DeviceTokenRequest) error
+	DeleteAllExceptDeviceToken(req *domain.DeviceTokenRequest) error
 }
 
 type UserService interface {
