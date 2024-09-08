@@ -14,6 +14,7 @@ type (
 
 	HTTP struct {
 		Port string
+		AllowedOrigins string
 	}
 )
 
@@ -26,6 +27,7 @@ func New() (*Container, error) {
 
 	http := &HTTP{
 		Port: os.Getenv("HTTP_PORT"),
+		AllowedOrigins: os.Getenv("HTTP_ALLOWED_ORIGINS"),
 	}
 
 	return &Container{
