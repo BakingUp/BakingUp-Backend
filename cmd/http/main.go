@@ -45,6 +45,7 @@ func main() {
 	defer client.Disconnect()
 
 	http.SetupSwagger(app)
+	http.SetupCORS(app, config.HTTP.AllowedOrigins)
 
 	app.Get("/", welcome)
 
