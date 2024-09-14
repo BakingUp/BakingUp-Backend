@@ -1,13 +1,17 @@
 package http
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/swagger"
+)
 
 type Router struct {
 	router fiber.Router
 }
 
 func NewRouter(a *fiber.App, ingredientHandler IngredientHandler, recipeHandler RecipeHandler, authHandler AuthHandler, stockHandler StockHandler) (*Router, error) {
-
+	a.Get("/swagger/*", swagger.HandlerDefault)
+	
 	api := a.Group("/api")
 	{
 		auth := api.Group("/auth")

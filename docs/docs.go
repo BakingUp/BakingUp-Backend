@@ -15,9 +15,9 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/": {
+        "/ingredient/{ingredientID}": {
             "get": {
-                "description": "Returns a welcome message",
+                "description": "Get ingredient details by ingredient ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -25,15 +25,78 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "root"
+                    "ingredient"
                 ],
-                "summary": "Welcome message",
+                "summary": "Get ingredient details",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Ingredient ID",
+                        "name": "ingredientID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "Welcome to BakingUp Backend API",
+                        "description": "Successful operation",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http.IngredientDetail"
                         }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "domain.Stock": {
+            "type": "object",
+            "properties": {
+                "expiration_date": {
+                    "type": "string"
+                },
+                "expiration_status": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "string"
+                },
+                "stock_id": {
+                    "type": "string"
+                },
+                "stock_url": {
+                    "type": "string"
+                }
+            }
+        },
+        "http.IngredientDetail": {
+            "type": "object",
+            "properties": {
+                "ingredient_less_than": {
+                    "type": "integer"
+                },
+                "ingredient_name": {
+                    "type": "string"
+                },
+                "ingredient_quantity": {
+                    "type": "string"
+                },
+                "ingredient_url": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "stock_amount": {
+                    "type": "integer"
+                },
+                "stocks": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.Stock"
                     }
                 }
             }
@@ -45,7 +108,7 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "localhost:8000",
-	BasePath:         "/",
+	BasePath:         "/api",
 	Schemes:          []string{},
 	Title:            "BakingUp Backend API",
 	Description:      "This is the BakingUp Backend API.",
