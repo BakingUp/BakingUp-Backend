@@ -13,11 +13,11 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// @title 		BakingUp Backend API
-// @version 	1.0
-// @description This is the BakingUp Backend API.
-// @host 		localhost:8000
-// @BasePath 	/api
+// @title         BakingUp Backend API
+// @version       1.0
+// @description   This is the BakingUp Backend API.
+// @host          localhost:8000
+// @BasePath      /api
 
 func main() {
 
