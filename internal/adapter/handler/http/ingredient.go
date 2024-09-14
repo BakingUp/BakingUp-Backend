@@ -36,7 +36,7 @@ func (ih *IngredientHandler) GetAllIngredients(c *fiber.Ctx) error {
 // @Param        ingredient_id  query  string  true  "Ingredient ID"
 // @Success      200  {object}  IngredientDetail  "Success"
 // @Failure      400  {object}  response     "Cannot get ingredient detail"
-// @Router       /ingredient [get]
+// @Router       /ingredient/getIngredientDetail [get]
 func (ih *IngredientHandler) GetIngredientDetail(c *fiber.Ctx) error {
 	ingredientID := c.Query("ingredient_id")
 

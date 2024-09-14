@@ -9,7 +9,7 @@
     "host": "localhost:8000",
     "basePath": "/api",
     "paths": {
-        "/ingredient": {
+        "/ingredient/getIngredientDetail": {
             "get": {
                 "description": "Get ingredient details by ingredient ID",
                 "consumes": [

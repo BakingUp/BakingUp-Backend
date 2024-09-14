@@ -15,7 +15,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/ingredient": {
+        "/ingredient/getIngredientDetail": {
             "get": {
                 "description": "Get ingredient details by ingredient ID",
                 "consumes": [

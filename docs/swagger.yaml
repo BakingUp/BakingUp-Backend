@@ -53,7 +53,7 @@ info:
   title: BakingUp Backend API
   version: "1.0"
 paths:
-  /ingredient:
+  /ingredient/getIngredientDetail:
     get:
       consumes:
       - application/json
