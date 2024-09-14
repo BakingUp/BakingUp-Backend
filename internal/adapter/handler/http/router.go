@@ -25,6 +25,7 @@ func NewRouter(a *fiber.App, ingredientHandler IngredientHandler, recipeHandler 
 		{
 			ingredient.Get("/getAllIngredients", ingredientHandler.GetAllIngredients)
 			ingredient.Get("/getIngredientDetail", ingredientHandler.GetIngredientDetail)
+			ingredient.Get("/getIngredientStockDetail", ingredientHandler.GetIngredientStockDetail)
 		}
 
 		recipe := api.Group("/recipe")

@@ -34,7 +34,7 @@ func (ih *IngredientHandler) GetAllIngredients(c *fiber.Ctx) error {
 // @Accept       json
 // @Produce      json
 // @Param        ingredient_id  query  string  true  "Ingredient ID"
-// @Success      200  {object}  IngredientDetail  "Success"
+// @Success      200  {object}  domain.IngredientDetail  "Success"
 // @Failure      400  {object}  response     "Cannot get ingredient detail"
 // @Router       /ingredient/getIngredientDetail [get]
 func (ih *IngredientHandler) GetIngredientDetail(c *fiber.Ctx) error {
@@ -46,8 +46,29 @@ func (ih *IngredientHandler) GetIngredientDetail(c *fiber.Ctx) error {
 		return nil
 	}
 
-	rsp := newIngredientDetailResponse(ingredient)
+	handleSuccess(c, ingredient)
+	return nil
+}
 
-	handleSuccess(c, rsp)
+// GetIngredientStockDetail godoc
+// @Summary      Get ingredient stock details
+// @Description  Get ingredient stock details by ingredient stock ID
+// @Tags         ingredient
+// @Accept       json
+// @Produce      json
+// @Param        ingredient_stock_id  query  string  true  "Ingredient stock ID"
+// @Success      200  {object}  domain.IngredientStockDetail  "Success"
+// @Failure      400  {object}  response     "Cannot get ingredient stock detail"
+// @Router       /ingredient/getIngredientStockDetail [get]
+func (ih *IngredientHandler) GetIngredientStockDetail(c *fiber.Ctx) error {
+	ingredientStockID := c.Query("ingredient_stock_id")
+
+	ingredient, err := ih.svc.GetIngredientStockDetail(c, ingredientStockID)
+	if err != nil {
+		handleError(c, 400, "Cannot get ingredient stock detail", err.Error())
+		return nil
+	}
+
+	handleSuccess(c, ingredient)
 	return nil
 }
