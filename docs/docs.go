@@ -15,7 +15,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/ingredient/{ingredientID}": {
+        "/ingredient": {
             "get": {
                 "description": "Get ingredient details by ingredient ID",
                 "consumes": [
@@ -32,16 +32,22 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Ingredient ID",
-                        "name": "ingredientID",
-                        "in": "path",
+                        "name": "ingredient_id",
+                        "in": "query",
                         "required": true
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successful operation",
+                        "description": "Success",
                         "schema": {
                             "$ref": "#/definitions/http.IngredientDetail"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get ingredient detail",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
                         }
                     }
                 }
@@ -98,6 +104,23 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/domain.Stock"
                     }
+                }
+            }
+        },
+        "http.response": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "error": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Success"
+                },
+                "status": {
+                    "type": "integer",
+                    "example": 200
                 }
             }
         }

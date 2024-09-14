@@ -33,17 +33,17 @@ func (ih *IngredientHandler) GetAllIngredients(c *fiber.Ctx) error {
 // @Tags         ingredient
 // @Accept       json
 // @Produce      json
-// @Param        ingredientID  path  string  true  "Ingredient ID"
-// @Success      200  {object}  IngredientDetail  "Successful operation"
-// @Router       /ingredient/{ingredientID} [get]
+// @Param        ingredient_id  query  string  true  "Ingredient ID"
+// @Success      200  {object}  IngredientDetail  "Success"
+// @Failure      400  {object}  response     "Cannot get ingredient detail"
+// @Router       /ingredient [get]
 func (ih *IngredientHandler) GetIngredientDetail(c *fiber.Ctx) error {
-	ingredientID := c.Params("ingredientID")
+	ingredientID := c.Query("ingredient_id")
 
 	ingredient, err := ih.svc.GetIngredientDetail(c, ingredientID)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		handleError(c, 400, "Cannot get ingredient detail", err.Error())
+		return nil
 	}
 
 	rsp := newIngredientDetailResponse(ingredient)

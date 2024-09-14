@@ -34,6 +34,18 @@ definitions:
           $ref: '#/definitions/domain.Stock'
         type: array
     type: object
+  http.response:
+    properties:
+      data: {}
+      error:
+        type: string
+      message:
+        example: Success
+        type: string
+      status:
+        example: 200
+        type: integer
+    type: object
 host: localhost:8000
 info:
   contact: {}
@@ -41,24 +53,28 @@ info:
   title: BakingUp Backend API
   version: "1.0"
 paths:
-  /ingredient/{ingredientID}:
+  /ingredient:
     get:
       consumes:
       - application/json
       description: Get ingredient details by ingredient ID
       parameters:
       - description: Ingredient ID
-        in: path
-        name: ingredientID
+        in: query
+        name: ingredient_id
         required: true
         type: string
       produces:
       - application/json
       responses:
         "200":
-          description: Successful operation
+          description: Success
           schema:
             $ref: '#/definitions/http.IngredientDetail'
+        "400":
+          description: Cannot get ingredient detail
+          schema:
+            $ref: '#/definitions/http.response'
       summary: Get ingredient details
       tags:
       - ingredient
