@@ -27,6 +27,15 @@ func (ih *IngredientHandler) GetAllIngredients(c *fiber.Ctx) error {
 	return nil
 }
 
+// GetIngredientDetail godoc
+// @Summary      Get ingredient details
+// @Description  Get ingredient details by ingredient ID
+// @Tags         ingredient
+// @Accept       json
+// @Produce      json
+// @Param        ingredientID  path  string  true  "Ingredient ID"
+// @Success      200  {object}  IngredientDetail  "Successful operation"
+// @Router       /ingredient/{ingredientID} [get]
 func (ih *IngredientHandler) GetIngredientDetail(c *fiber.Ctx) error {
 	ingredientID := c.Params("ingredientID")
 

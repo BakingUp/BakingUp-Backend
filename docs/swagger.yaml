@@ -1,4 +1,39 @@
-basePath: /
+basePath: /api
+definitions:
+  domain.Stock:
+    properties:
+      expiration_date:
+        type: string
+      expiration_status:
+        type: string
+      price:
+        type: string
+      quantity:
+        type: string
+      stock_id:
+        type: string
+      stock_url:
+        type: string
+    type: object
+  http.IngredientDetail:
+    properties:
+      ingredient_less_than:
+        type: integer
+      ingredient_name:
+        type: string
+      ingredient_quantity:
+        type: string
+      ingredient_url:
+        items:
+          type: string
+        type: array
+      stock_amount:
+        type: integer
+      stocks:
+        items:
+          $ref: '#/definitions/domain.Stock'
+        type: array
+    type: object
 host: localhost:8000
 info:
   contact: {}
@@ -6,19 +41,25 @@ info:
   title: BakingUp Backend API
   version: "1.0"
 paths:
-  /:
+  /ingredient/{ingredientID}:
     get:
       consumes:
       - application/json
-      description: Returns a welcome message
+      description: Get ingredient details by ingredient ID
+      parameters:
+      - description: Ingredient ID
+        in: path
+        name: ingredientID
+        required: true
+        type: string
       produces:
       - application/json
       responses:
         "200":
-          description: Welcome to BakingUp Backend API
+          description: Successful operation
           schema:
-            type: string
-      summary: Welcome message
+            $ref: '#/definitions/http.IngredientDetail'
+      summary: Get ingredient details
       tags:
-      - root
+      - ingredient
 swagger: "2.0"

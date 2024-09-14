@@ -11,25 +11,13 @@ import (
 	"github.com/BakingUp/BakingUp-Backend/internal/core/service"
 	"github.com/BakingUp/BakingUp-Backend/internal/infrastructure"
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/swagger"
 )
 
-// @title BakingUp Backend API
-// @version 1.0
-// @description This is the BakingUp Backend API.
-// @host localhost:8000
-// @BasePath /
-
-// @Summary Welcome message
-// @Description Returns a welcome message
-// @Tags root
-// @Accept  json
-// @Produce  json
-// @Success 200 {string} string "Welcome to BakingUp Backend API"
-// @Router / [get]
-func welcome(c *fiber.Ctx) error {
-	return c.SendString("Welcome to BakingUp Backend API")
-}
+// @title         BakingUp Backend API
+// @version       1.0
+// @description   This is the BakingUp Backend API.
+// @host          localhost:8000
+// @BasePath      /api
 
 func main() {
 
@@ -44,12 +32,7 @@ func main() {
 	client := infrastructure.InitializePrismaClient()
 	defer client.Disconnect()
 
-	http.SetupSwagger(app)
 	http.SetupCORS(app, config.HTTP.AllowedOrigins)
-
-	app.Get("/", welcome)
-
-	app.Get("/swagger/*", swagger.HandlerDefault)
 
 	userRepo := repository.NewUserRepository(client)
 	userService := service.NewUserService(userRepo)
