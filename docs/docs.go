@@ -145,6 +145,9 @@ const docTemplate = `{
                 "ingredient_eng_name": {
                     "type": "string"
                 },
+                "ingredient_price": {
+                    "type": "string"
+                },
                 "ingredient_quantity": {
                     "type": "string"
                 },
