@@ -44,3 +44,18 @@ func (ir *IngredientRepository) GetIngredientDetail(c *fiber.Ctx, ingredientID s
 
 	return ingredient, nil
 }
+
+func (ir *IngredientRepository) GetIngredientStockDetail(c *fiber.Ctx, ingredientStockID string) (*db.IngredientDetailModel, error) {
+	ingredient, err := ir.db.IngredientDetail.FindFirst(
+		db.IngredientDetail.IngredientStockID.Equals(ingredientStockID),
+	).With(
+		db.IngredientDetail.Ingredient.Fetch(),
+		db.IngredientDetail.IngredientNotes.Fetch(),
+	).Exec(c.Context())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return ingredient, nil
+}

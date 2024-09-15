@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
@@ -132,4 +133,34 @@ func (s *IngredientService) GetIngredientDetail(c *fiber.Ctx, ingredientID strin
 	}
 
 	return detail, nil
+}
+
+func (s *IngredientService) GetIngredientStockDetail(c *fiber.Ctx, ingredientStockID string) (*domain.IngredientStockDetail, error) {
+	ingredient, err := s.ingredientRepo.GetIngredientStockDetail(c, ingredientStockID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var notes []domain.IngredientNote
+	for _, note := range ingredient.IngredientNotes() {
+		notes = append(notes, domain.IngredientNote{
+			IngredientNote: note.IngredientNote,
+			NoteCreatedAt:  note.NoteCreatedAt.Format("02/01/2006"),
+		})
+	}
+
+	stockDetail := &domain.IngredientStockDetail{
+		IngredientEngName:    ingredient.Ingredient().IngredientEngName,
+		IngredientThaiName:   ingredient.Ingredient().IngredientThaiName,
+		IngredientQuantity:   util.CombineIngredientQuantity(ingredient.IngredientQuantity, ingredient.Ingredient().Unit),
+		IngredientPrice:      strconv.FormatFloat(ingredient.Price, 'f', -1, 64),
+		IngredientBrand:      ingredient.IngredientBrand,
+		IngredientSupplier:   ingredient.IngredientSupplier,
+		IngredientStockURL:   ingredient.IngredientStockURL,
+		DayBeforeExpire:      ingredient.ExpirationDate.Format("02/01/2006"),
+		Notes:                notes,
+	}
+
+	return stockDetail, nil
 }

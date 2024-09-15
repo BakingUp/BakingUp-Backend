@@ -30,3 +30,20 @@ type IngredientDetail struct {
 	IngredientLessThan int      `json:"ingredient_less_than"`
 	Stocks             []Stock  `json:"stocks"`
 }
+
+type IngredientNote struct {
+    IngredientNote string `json:"ingredient_note"`
+    NoteCreatedAt  string `json:"note_created_at"`
+}
+
+type IngredientStockDetail struct {
+    IngredientEngName    string           `json:"ingredient_eng_name"`
+    IngredientThaiName   string           `json:"ingredient_thai_name"`
+    IngredientQuantity   string           `json:"ingredient_quantity"`
+	IngredientPrice      string           `json:"ingredient_price"`
+    IngredientBrand      string           `json:"ingredient_brand"`
+    IngredientSupplier   string           `json:"ingredient_supplier"`
+    IngredientStockURL   string           `json:"ingredient_stock_url"`
+    DayBeforeExpire      string           `json:"day_before_expire"`
+    Notes                []IngredientNote `json:"notes"`
+}

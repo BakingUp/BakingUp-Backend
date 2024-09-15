@@ -1,21 +1,6 @@
 basePath: /api
 definitions:
-  domain.Stock:
-    properties:
-      expiration_date:
-        type: string
-      expiration_status:
-        type: string
-      price:
-        type: string
-      quantity:
-        type: string
-      stock_id:
-        type: string
-      stock_url:
-        type: string
-    type: object
-  http.IngredientDetail:
+  domain.IngredientDetail:
     properties:
       ingredient_less_than:
         type: integer
@@ -34,6 +19,63 @@ definitions:
           $ref: '#/definitions/domain.Stock'
         type: array
     type: object
+  domain.IngredientNote:
+    properties:
+      ingredient_note:
+        type: string
+      note_created_at:
+        type: string
+    type: object
+  domain.IngredientStockDetail:
+    properties:
+      day_before_expire:
+        type: string
+      ingredient_brand:
+        type: string
+      ingredient_eng_name:
+        type: string
+      ingredient_price:
+        type: string
+      ingredient_quantity:
+        type: string
+      ingredient_stock_url:
+        type: string
+      ingredient_supplier:
+        type: string
+      ingredient_thai_name:
+        type: string
+      notes:
+        items:
+          $ref: '#/definitions/domain.IngredientNote'
+        type: array
+    type: object
+  domain.Stock:
+    properties:
+      expiration_date:
+        type: string
+      expiration_status:
+        type: string
+      price:
+        type: string
+      quantity:
+        type: string
+      stock_id:
+        type: string
+      stock_url:
+        type: string
+    type: object
+  http.response:
+    properties:
+      data: {}
+      error:
+        type: string
+      message:
+        example: Success
+        type: string
+      status:
+        example: 200
+        type: integer
+    type: object
 host: localhost:8000
 info:
   contact: {}
@@ -41,25 +83,54 @@ info:
   title: BakingUp Backend API
   version: "1.0"
 paths:
-  /ingredient/{ingredientID}:
+  /ingredient/getIngredientDetail:
     get:
       consumes:
       - application/json
       description: Get ingredient details by ingredient ID
       parameters:
       - description: Ingredient ID
-        in: path
-        name: ingredientID
+        in: query
+        name: ingredient_id
         required: true
         type: string
       produces:
       - application/json
       responses:
         "200":
-          description: Successful operation
+          description: Success
           schema:
-            $ref: '#/definitions/http.IngredientDetail'
+            $ref: '#/definitions/domain.IngredientDetail'
+        "400":
+          description: Cannot get ingredient detail
+          schema:
+            $ref: '#/definitions/http.response'
       summary: Get ingredient details
+      tags:
+      - ingredient
+  /ingredient/getIngredientStockDetail:
+    get:
+      consumes:
+      - application/json
+      description: Get ingredient stock details by ingredient stock ID
+      parameters:
+      - description: Ingredient stock ID
+        in: query
+        name: ingredient_stock_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/domain.IngredientStockDetail'
+        "400":
+          description: Cannot get ingredient stock detail
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get ingredient stock details
       tags:
       - ingredient
 swagger: "2.0"

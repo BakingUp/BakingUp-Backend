@@ -15,7 +15,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/ingredient/{ingredientID}": {
+        "/ingredient/getIngredientDetail": {
             "get": {
                 "description": "Get ingredient details by ingredient ID",
                 "consumes": [
@@ -32,16 +32,60 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Ingredient ID",
-                        "name": "ingredientID",
-                        "in": "path",
+                        "name": "ingredient_id",
+                        "in": "query",
                         "required": true
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successful operation",
+                        "description": "Success",
                         "schema": {
-                            "$ref": "#/definitions/http.IngredientDetail"
+                            "$ref": "#/definitions/domain.IngredientDetail"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get ingredient detail",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/ingredient/getIngredientStockDetail": {
+            "get": {
+                "description": "Get ingredient stock details by ingredient stock ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ingredient"
+                ],
+                "summary": "Get ingredient stock details",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Ingredient stock ID",
+                        "name": "ingredient_stock_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.IngredientStockDetail"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get ingredient stock detail",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
                         }
                     }
                 }
@@ -49,30 +93,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "domain.Stock": {
-            "type": "object",
-            "properties": {
-                "expiration_date": {
-                    "type": "string"
-                },
-                "expiration_status": {
-                    "type": "string"
-                },
-                "price": {
-                    "type": "string"
-                },
-                "quantity": {
-                    "type": "string"
-                },
-                "stock_id": {
-                    "type": "string"
-                },
-                "stock_url": {
-                    "type": "string"
-                }
-            }
-        },
-        "http.IngredientDetail": {
+        "domain.IngredientDetail": {
             "type": "object",
             "properties": {
                 "ingredient_less_than": {
@@ -98,6 +119,92 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/domain.Stock"
                     }
+                }
+            }
+        },
+        "domain.IngredientNote": {
+            "type": "object",
+            "properties": {
+                "ingredient_note": {
+                    "type": "string"
+                },
+                "note_created_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.IngredientStockDetail": {
+            "type": "object",
+            "properties": {
+                "day_before_expire": {
+                    "type": "string"
+                },
+                "ingredient_brand": {
+                    "type": "string"
+                },
+                "ingredient_eng_name": {
+                    "type": "string"
+                },
+                "ingredient_price": {
+                    "type": "string"
+                },
+                "ingredient_quantity": {
+                    "type": "string"
+                },
+                "ingredient_stock_url": {
+                    "type": "string"
+                },
+                "ingredient_supplier": {
+                    "type": "string"
+                },
+                "ingredient_thai_name": {
+                    "type": "string"
+                },
+                "notes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.IngredientNote"
+                    }
+                }
+            }
+        },
+        "domain.Stock": {
+            "type": "object",
+            "properties": {
+                "expiration_date": {
+                    "type": "string"
+                },
+                "expiration_status": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "string"
+                },
+                "stock_id": {
+                    "type": "string"
+                },
+                "stock_url": {
+                    "type": "string"
+                }
+            }
+        },
+        "http.response": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "error": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Success"
+                },
+                "status": {
+                    "type": "integer",
+                    "example": 200
                 }
             }
         }
