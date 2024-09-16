@@ -95,6 +95,7 @@ func (s *StockService) GetStockDetail(c *fiber.Ctx, recipeID string) (*domain.St
 
 		var detail domain.StockDetail
 
+		detail.CreatedAt = stockDetail.CreatedAt.Format("02/01/2006")
 		detail.LSTStatus = util.CalculateLstStatus(stock.Lst, stockDetail.Quantity)
 		detail.Quantity = stockDetail.Quantity
 		detail.SellByDate = stockDetail.SellByDate.Format("02/01/2006")

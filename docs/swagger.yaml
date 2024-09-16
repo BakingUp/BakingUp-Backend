@@ -66,6 +66,8 @@ definitions:
     type: object
   domain.StockDetail:
     properties:
+      created_at:
+        type: string
       lst_status:
         type: string
       quantity:

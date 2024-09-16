@@ -232,6 +232,9 @@ const docTemplate = `{
         "domain.StockDetail": {
             "type": "object",
             "properties": {
+                "created_at": {
+                    "type": "string"
+                },
                 "lst_status": {
                     "type": "string"
                 },

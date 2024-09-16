@@ -14,6 +14,7 @@ type StockList struct {
 }
 
 type StockDetail struct {
+	CreatedAt    string  `json:"created_at"`
 	LSTStatus    string  `json:"lst_status"`
 	Quantity	 int     `json:"quantity"`
 	SellByDate   string  `json:"sell_by_date"`
