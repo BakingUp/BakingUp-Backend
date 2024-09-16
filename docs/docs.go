@@ -90,6 +90,44 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/stock/getStockDetail": {
+            "get": {
+                "description": "Get stock details by recipe ID and user ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stock"
+                ],
+                "summary": "Get stock details",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Recipe ID",
+                        "name": "recipe_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.StockDetail"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get stock detail",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -187,6 +225,20 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "stock_url": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.StockDetail": {
+            "type": "object",
+            "properties": {
+                "lst_status": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "integer"
+                },
+                "sell_by_date": {
                     "type": "string"
                 }
             }
