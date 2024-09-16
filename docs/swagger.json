@@ -84,6 +84,44 @@
                     }
                 }
             }
+        },
+        "/recipe/getRecipeDetail": {
+            "get": {
+                "description": "Get recipe details by recipe ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "recipe"
+                ],
+                "summary": "Get recipe details",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Recipe ID",
+                        "name": "recipe_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.RecipeDetail"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get recipe detail",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -159,6 +197,70 @@
                     "items": {
                         "$ref": "#/definitions/domain.IngredientNote"
                     }
+                }
+            }
+        },
+        "domain.RecipeDetail": {
+            "type": "object",
+            "properties": {
+                "instruction_steps": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "instruction_url": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "num_of_order": {
+                    "type": "integer"
+                },
+                "recipe_ingredients": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.RecipeIngredient"
+                    }
+                },
+                "recipe_name": {
+                    "type": "string"
+                },
+                "recipe_url": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "servings": {
+                    "type": "integer"
+                },
+                "stars": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "total_time": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.RecipeIngredient": {
+            "type": "object",
+            "properties": {
+                "ingredient_name": {
+                    "type": "string"
+                },
+                "ingredient_price": {
+                    "type": "number"
+                },
+                "ingredient_quantity": {
+                    "type": "string"
+                },
+                "ingredient_url": {
+                    "type": "string"
                 }
             }
         },

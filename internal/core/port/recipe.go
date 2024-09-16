@@ -8,8 +8,10 @@ import (
 
 type RecipeRepository interface {
 	GetAllRecipes(c *fiber.Ctx, userID string) ([]db.RecipesModel, error)
+	GetRecipeDetail(c *fiber.Ctx, recipeID string) (*db.RecipesModel, error)
 }
 
 type RecipeService interface {
 	GetAllRecipes(c *fiber.Ctx, userID string) (*domain.RecipeList, error)
+	GetRecipeDetail(c *fiber.Ctx, recipeID string) (*domain.RecipeDetail, error)
 }
