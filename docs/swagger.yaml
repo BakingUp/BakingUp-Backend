@@ -191,11 +191,6 @@ paths:
       consumes:
       - application/json
       description: Get recipe details by recipe ID
-  /stock/getStockDetail:
-    get:
-      consumes:
-      - application/json
-      description: Get stock details by recipe ID and user ID
       parameters:
       - description: Recipe ID
         in: query
@@ -216,6 +211,23 @@ paths:
       summary: Get recipe details
       tags:
       - recipe
+  /stock/getStockDetail:
+    get:
+      consumes:
+      - application/json
+      description: Get stock details by recipe ID and user ID
+      parameters:
+      - description: Recipe ID
+        in: query
+        name: recipe_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
             $ref: '#/definitions/domain.StockDetail'
         "400":
           description: Cannot get stock detail

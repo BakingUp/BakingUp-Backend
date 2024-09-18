@@ -94,9 +94,6 @@ const docTemplate = `{
         "/recipe/getRecipeDetail": {
             "get": {
                 "description": "Get recipe details by recipe ID",
-        "/stock/getStockDetail": {
-            "get": {
-                "description": "Get stock details by recipe ID and user ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -107,9 +104,6 @@ const docTemplate = `{
                     "recipe"
                 ],
                 "summary": "Get recipe details",
-                    "stock"
-                ],
-                "summary": "Get stock details",
                 "parameters": [
                     {
                         "type": "string",
@@ -128,6 +122,39 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Cannot get recipe detail",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/stock/getStockDetail": {
+            "get": {
+                "description": "Get stock details by recipe ID and user ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stock"
+                ],
+                "summary": "Get stock details",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Recipe ID",
+                        "name": "recipe_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
                             "$ref": "#/definitions/domain.StockDetail"
                         }
                     },
