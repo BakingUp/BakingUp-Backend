@@ -31,3 +31,20 @@ func (sr *StockRepository) GetAllStocks(c *fiber.Ctx, userID string) ([]db.Recip
 
 	return recipes, nil
 }
+
+func (sr *StockRepository) GetStockDetail(c *fiber.Ctx, recipeID string) (*db.StocksModel, error) {
+	stock, err := sr.db.Stocks.FindFirst(
+		db.Stocks.RecipeID.Equals(recipeID),
+	).With(
+		db.Stocks.Recipe.Fetch().With(
+			db.Recipes.RecipeImages.Fetch(),
+		),
+		db.Stocks.StockDetail.Fetch(),
+	).Exec((c.Context()))
+
+	if err != nil {
+		return nil, err
+	}
+
+	return stock, nil
+}

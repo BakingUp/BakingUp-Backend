@@ -106,6 +106,17 @@ definitions:
       stock_url:
         type: string
     type: object
+  domain.StockDetail:
+    properties:
+      created_at:
+        type: string
+      lst_status:
+        type: string
+      quantity:
+        type: integer
+      sell_by_date:
+        type: string
+    type: object
   http.response:
     properties:
       data: {}
@@ -180,6 +191,11 @@ paths:
       consumes:
       - application/json
       description: Get recipe details by recipe ID
+  /stock/getStockDetail:
+    get:
+      consumes:
+      - application/json
+      description: Get stock details by recipe ID and user ID
       parameters:
       - description: Recipe ID
         in: query
@@ -200,4 +216,12 @@ paths:
       summary: Get recipe details
       tags:
       - recipe
+            $ref: '#/definitions/domain.StockDetail'
+        "400":
+          description: Cannot get stock detail
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get stock details
+      tags:
+      - stock
 swagger: "2.0"

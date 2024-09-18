@@ -94,6 +94,9 @@ const docTemplate = `{
         "/recipe/getRecipeDetail": {
             "get": {
                 "description": "Get recipe details by recipe ID",
+        "/stock/getStockDetail": {
+            "get": {
+                "description": "Get stock details by recipe ID and user ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -104,6 +107,9 @@ const docTemplate = `{
                     "recipe"
                 ],
                 "summary": "Get recipe details",
+                    "stock"
+                ],
+                "summary": "Get stock details",
                 "parameters": [
                     {
                         "type": "string",
@@ -122,6 +128,11 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Cannot get recipe detail",
+                            "$ref": "#/definitions/domain.StockDetail"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get stock detail",
                         "schema": {
                             "$ref": "#/definitions/http.response"
                         }
@@ -289,6 +300,23 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "stock_url": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.StockDetail": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "lst_status": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "integer"
+                },
+                "sell_by_date": {
                     "type": "string"
                 }
             }
