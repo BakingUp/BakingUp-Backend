@@ -64,6 +64,17 @@ definitions:
       stock_url:
         type: string
     type: object
+  domain.StockDetail:
+    properties:
+      created_at:
+        type: string
+      lst_status:
+        type: string
+      quantity:
+        type: integer
+      sell_by_date:
+        type: string
+    type: object
   http.response:
     properties:
       data: {}
@@ -133,4 +144,29 @@ paths:
       summary: Get ingredient stock details
       tags:
       - ingredient
+  /stock/getStockDetail:
+    get:
+      consumes:
+      - application/json
+      description: Get stock details by recipe ID and user ID
+      parameters:
+      - description: Recipe ID
+        in: query
+        name: recipe_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/domain.StockDetail'
+        "400":
+          description: Cannot get stock detail
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get stock details
+      tags:
+      - stock
 swagger: "2.0"
