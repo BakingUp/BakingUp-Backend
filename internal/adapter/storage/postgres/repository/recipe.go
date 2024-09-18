@@ -29,3 +29,27 @@ func (rr *RecipeRepository) GetAllRecipes(c *fiber.Ctx, userID string) ([]db.Rec
 
 	return recipes, nil
 }
+
+func (rr *RecipeRepository) GetRecipeDetail(c *fiber.Ctx, recipeID string) (*db.RecipesModel, error) {
+	recipe, err := rr.db.Recipes.FindUnique(
+		db.Recipes.RecipeID.Equals(recipeID),
+	).With(
+		db.Recipes.OrderProducts.Fetch(),
+		db.Recipes.RecipeImages.Fetch(),
+		db.Recipes.RecipeIngredients.Fetch().With(
+			db.RecipeIngredients.Ingredient.Fetch().With(
+				db.Ingredients.IngredientImages.Fetch(),
+				db.Ingredients.IngredientDetail.Fetch(),
+			),
+		),
+		db.Recipes.RecipeEngInstructionSteps.Fetch(),
+		db.Recipes.RecipeThaiInstructionSteps.Fetch(),
+		db.Recipes.RecipeInstructionImages.Fetch(),
+	).Exec(c.Context())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return recipe, nil
+}
