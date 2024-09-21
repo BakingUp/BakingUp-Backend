@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"sort"
 	"strconv"
 	"time"
 
@@ -119,6 +120,11 @@ func (s *IngredientService) GetIngredientDetail(c *fiber.Ctx, ingredientID strin
 	}
 
 	var ingredientURLs []string
+	ingredientImages := ingredient.IngredientImages()
+
+	sort.Slice(ingredientImages, func(i, j int) bool {
+		return ingredientImages[i].IngredientImageIndex < ingredientImages[j].IngredientImageIndex
+	})
 	for _, image := range ingredient.IngredientImages() {
 		ingredientURLs = append(ingredientURLs, image.IngredientURL)
 	}
