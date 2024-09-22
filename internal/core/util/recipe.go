@@ -3,6 +3,7 @@ package util
 import (
 	"math"
 	"sort"
+	"time"
 
 	"github.com/BakingUp/BakingUp-Backend/prisma/db"
 )
@@ -47,13 +48,15 @@ func CalculateIngredientPrice(value []db.IngredientDetailModel) float64 {
 	var price float64
 	var totalQuantity float64
 
-	for _, detail := range value {
-		price += detail.IngredientQuantity * detail.Price
-		totalQuantity += detail.IngredientQuantity
-	}
+for _, detail := range value {
+    if time.Now().After(detail.ExpirationDate) {
+        price += detail.IngredientQuantity * detail.Price
+        totalQuantity += detail.IngredientQuantity
+    }
+}
 
 	if totalQuantity == 0 || price == 0 {
-		return 0
+		return -1
 	}
 
 	finalPrice := price / totalQuantity
