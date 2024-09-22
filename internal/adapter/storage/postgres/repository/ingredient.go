@@ -59,3 +59,15 @@ func (ir *IngredientRepository) GetIngredientStockDetail(c *fiber.Ctx, ingredien
 
 	return ingredient, nil
 }
+
+func (ir *IngredientRepository) DeleteIngredientBatchNote(c *fiber.Ctx, ingredientNoteID string) error {
+	_, err := ir.db.IngredientNotes.FindMany(
+		db.IngredientNotes.IngredientNoteID.Equals(ingredientNoteID),
+	).Delete().Exec(c.Context())
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

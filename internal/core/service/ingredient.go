@@ -151,6 +151,7 @@ func (s *IngredientService) GetIngredientStockDetail(c *fiber.Ctx, ingredientSto
 	var notes []domain.IngredientNote
 	for _, note := range ingredient.IngredientNotes() {
 		notes = append(notes, domain.IngredientNote{
+			IngredientNoteID: note.IngredientNoteID,
 			IngredientNote: note.IngredientNote,
 			NoteCreatedAt:  note.NoteCreatedAt.Format("02/01/2006"),
 		})
@@ -169,4 +170,13 @@ func (s *IngredientService) GetIngredientStockDetail(c *fiber.Ctx, ingredientSto
 	}
 
 	return stockDetail, nil
+}
+
+func (s *IngredientService) DeleteIngredientBatchNote(c *fiber.Ctx, ingredientNoteID string) error {
+    err := s.ingredientRepo.DeleteIngredientBatchNote(c, ingredientNoteID)
+    if err != nil {
+        return err
+    }
+
+    return nil
 }

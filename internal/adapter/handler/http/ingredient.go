@@ -72,3 +72,26 @@ func (ih *IngredientHandler) GetIngredientStockDetail(c *fiber.Ctx) error {
 	handleSuccess(c, ingredient)
 	return nil
 }
+
+// DeleteIngredientBatchNote godoc
+// @Summary      Delete ingredient batch note
+// @Description  Delete ingredient batch note by ingredient note ID
+// @Tags         ingredient
+// @Accept       json
+// @Produce      json
+// @Param        ingredient_note_id  query  string  true  "Ingredient Note ID"
+// @Success      200  {object}  response  "Success"
+// @Failure      400  {object}  response  "Cannot delete ingredient batch note"
+// @Router       /ingredient/deleteIngredientBatchNote [delete]
+func (ih *IngredientHandler) DeleteIngredientBatchNote(c *fiber.Ctx) error {
+    ingredientNoteID := c.Query("ingredient_note_id")
+
+    err := ih.svc.DeleteIngredientBatchNote(c, ingredientNoteID)
+    if err != nil {
+        handleError(c, 400, "Cannot delete ingredient batch note", err.Error())
+        return nil
+    }
+
+    handleSuccess(c, nil)
+    return nil
+}

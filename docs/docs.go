@@ -15,6 +15,44 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/ingredient/deleteIngredientBatchNote": {
+            "delete": {
+                "description": "Delete ingredient batch note by ingredient note ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ingredient"
+                ],
+                "summary": "Delete ingredient batch note",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Ingredient Note ID",
+                        "name": "ingredient_note_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot delete ingredient batch note",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/ingredient/getIngredientDetail": {
             "get": {
                 "description": "Get ingredient details by ingredient ID",
@@ -202,6 +240,9 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "ingredient_note": {
+                    "type": "string"
+                },
+                "ingredient_note_id": {
                     "type": "string"
                 },
                 "note_created_at": {
