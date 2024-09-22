@@ -37,6 +37,7 @@ func main() {
 	userRepo := repository.NewUserRepository(client)
 	userService := service.NewUserService(userRepo)
 	authHandler := http.NewAuthHandler(userService)
+	userHandler := http.NewUserHandler(userService)
 
 	ingredientRepo := repository.NewIngredientRepository(client)
 	ingredientService := service.NewIngredientService(ingredientRepo, userService)
@@ -50,7 +51,7 @@ func main() {
 	stockService := service.NewStockService(stockRepo, userService)
 	stockHandler := http.NewStockHandler(stockService)
 
-	_, err = http.NewRouter(app, *ingredientHandler, *recipeHandler, *authHandler, *stockHandler)
+	_, err = http.NewRouter(app, *ingredientHandler, *recipeHandler, *authHandler, *stockHandler, *userHandler)
 
 	port := config.HTTP.Port
 	if port == "" {

@@ -3,6 +3,7 @@ package service
 import (
 	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
 	"github.com/BakingUp/BakingUp-Backend/internal/core/port"
+	"github.com/BakingUp/BakingUp-Backend/internal/core/util"
 	"github.com/BakingUp/BakingUp-Backend/prisma/db"
 	"github.com/gofiber/fiber/v2"
 )
@@ -15,6 +16,48 @@ func NewUserService(userRepo port.UserRepository) *UserService {
 	return &UserService{
 		userRepo: userRepo,
 	}
+}
+
+func (s *UserService) GetUserInfo(c *fiber.Ctx, userID string) (*domain.UserInfo, error) {
+	user, err := s.userRepo.GetUser(c, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	orders, err := s.userRepo.GetUserProductionQueue(c, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	language, err := s.GetUserLanguage(c, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	var queue []domain.ProductionQueueItem
+	for _, order := range orders {
+		for _, orderProduct := range order.OrderProducts() {
+			recipe := orderProduct.Recipe()
+			if recipe != nil {
+				queue = append(queue, domain.ProductionQueueItem{
+					OrderIndex: order.OrderIndex,
+					Name:       util.GetRecipeName(recipe, language),
+					Quantity:   orderProduct.ProductQuantity,
+					PickUpDate: order.PickUpDateTime.Format("02/01/2006"),
+				})
+			}
+		}
+	}
+
+	userInfo := &domain.UserInfo{
+		FirstName:       user.FirstName,
+		LastName:        user.LastName,
+		Tel:             user.Telephone,
+		StoreName:       user.StoreName,
+		ProductionQueue: queue,
+	}
+
+	return userInfo, nil
 }
 
 func (s *UserService) RegisterUser(user *domain.RegisterUserRequest) (*domain.UserResponse, error) {

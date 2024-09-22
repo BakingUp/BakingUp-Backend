@@ -9,11 +9,15 @@ type Router struct {
 	router fiber.Router
 }
 
-func NewRouter(a *fiber.App, ingredientHandler IngredientHandler, recipeHandler RecipeHandler, authHandler AuthHandler, stockHandler StockHandler) (*Router, error) {
+func NewRouter(a *fiber.App, ingredientHandler IngredientHandler, recipeHandler RecipeHandler, authHandler AuthHandler, stockHandler StockHandler, userHandler UserHandler) (*Router, error) {
 	a.Get("/swagger/*", swagger.HandlerDefault)
-	
+
 	api := a.Group("/api")
 	{
+		user := api.Group("/user")
+		{
+			user.Get("/getUserInfo", userHandler.GetUserInfo)
+		}
 		auth := api.Group("/auth")
 		{
 			auth.Post("/register", authHandler.Register)

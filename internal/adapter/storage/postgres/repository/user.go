@@ -98,7 +98,7 @@ func (ur *UserRepository) DeleteAllExceptDeviceToken(req *domain.DeviceTokenRequ
 	for _, token := range list {
 		if token.DeviceToken != req.DeviceToken {
 			_, err := ur.db.Devices.FindUnique(
-				db.Devices.DeviceToken.Equals(token.DeviceToken), ).Delete().Exec(ctx)
+				db.Devices.DeviceToken.Equals(token.DeviceToken)).Delete().Exec(ctx)
 			if err != nil {
 				return err
 			}
@@ -106,4 +106,19 @@ func (ur *UserRepository) DeleteAllExceptDeviceToken(req *domain.DeviceTokenRequ
 	}
 
 	return nil
+}
+
+func (ur *UserRepository) GetUserProductionQueue(c *fiber.Ctx, userID string) ([]db.OrdersModel, error) {
+	now := time.Now()
+	orders, err := ur.db.Orders.FindMany(
+		db.Orders.UserID.Equals(userID), db.Orders.PickUpDateTime.Gt(now), db.Orders.IsPreOrder.Equals(true),
+	).With(
+		db.Orders.OrderProducts.Fetch().With(db.OrderProducts.Recipe.Fetch()),
+	).Exec(c.Context())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return orders, nil
 }
