@@ -25,3 +25,18 @@ type UserResponse struct {
 	Status  int    `json:"status"`
 	Message string `json:"message"`
 }
+
+type ProductionQueueItem struct {
+	OrderIndex int    `json:"order_index"`
+	Name       string `json:"name"`
+	Quantity   int    `json:"quantity"`
+	PickUpDate string `json:"pick_up_date"`
+}
+
+type UserInfo struct {
+	FirstName       string                `json:"first_name"`
+	LastName        string                `json:"last_name"`
+	Tel             string                `json:"tel"`
+	StoreName       string                `json:"store_name"`
+	ProductionQueue []ProductionQueueItem `json:"production_queue"`
+}

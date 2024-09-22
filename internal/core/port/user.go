@@ -12,9 +12,11 @@ type UserRepository interface {
 	AddDeviceToken(req *domain.DeviceTokenRequest) error
 	DeleteDeviceToken(req *domain.DeviceTokenRequest) error
 	DeleteAllExceptDeviceToken(req *domain.DeviceTokenRequest) error
+	GetUserProductionQueue(c *fiber.Ctx, userID string) ([]db.OrdersModel, error)
 }
 
 type UserService interface {
 	GetUserLanguage(c *fiber.Ctx, userID string) (*db.Language, error)
 	GetUserExpirationDate(c *fiber.Ctx, userID string) (*domain.ExpirationDate, error)
+	GetUserInfo(c *fiber.Ctx, userID string) (*domain.UserInfo, error)
 }
