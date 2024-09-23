@@ -199,7 +199,7 @@ model Recipes {
   recipe_eng_instruction_steps  Recipe_eng_instruction_steps[]
   recipe_thai_instruction_steps Recipe_thai_instruction_steps[]
   recipe_instruction_images     Recipe_instruction_images[]
-  stocks                        Stocks[]
+  stocks                        Stocks?
   order_products                Order_products[]
 }
 

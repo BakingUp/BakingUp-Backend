@@ -42,19 +42,15 @@ func (s *StockService) GetAllStocks(c *fiber.Ctx, userID string) (*domain.StockL
 		var stock domain.StockItem
 
 		stock.StockName = util.GetRecipeName(&recipe, language)
+		if stockItem, ok := recipe.Stocks(); ok {
 
-		for _, stockItem := range recipe.Stocks() {
-			if stockItem.RecipeID == recipe.RecipeID {
-
-				for _, stockDetail := range stockItem.StockDetail() {
-					if stockDetail.RecipeID == stockItem.RecipeID {
-						stock.Quantity += stockDetail.Quantity
-					}
+			for _, stockDetail := range stockItem.StockDetail() {
+				if stockDetail.RecipeID == stockItem.RecipeID {
+					stock.Quantity += stockDetail.Quantity
 				}
-				stock.LST = stockItem.Lst
-				stock.SellingPrice = stockItem.SellingPrice
-				break
 			}
+			stock.LST = stockItem.Lst
+			stock.SellingPrice = stockItem.SellingPrice
 		}
 
 		for _, recipeImage := range recipe.RecipeImages() {
@@ -67,7 +63,6 @@ func (s *StockService) GetAllStocks(c *fiber.Ctx, userID string) (*domain.StockL
 		stock.LSTStatus = util.CalculateLstStatus(stock.LST, stock.Quantity)
 		stockItems = append(stockItems, stock)
 	}
-
 	stockList := &domain.StockList{
 		Stocks: stockItems,
 	}
