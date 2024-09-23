@@ -28,7 +28,7 @@ func (s *OrderService) GetAllOrders(c *fiber.Ctx, userID string) (*domain.Orders
 		return nil, fmt.Errorf("No orders found for user ID %s", userID)
 	}
 
-	var list []domain.OrderDetail
+	var list []domain.OrderInfo
 	for _, order := range orders {
 		totalPrice := 0.0
 		for _, product := range order.OrderProducts() {
@@ -38,12 +38,12 @@ func (s *OrderService) GetAllOrders(c *fiber.Ctx, userID string) (*domain.Orders
 			}
 		}
 
-		list = append(list, domain.OrderDetail{
+		list = append(list, domain.OrderInfo{
 			OrderID:     order.OrderID,
 			OrderIndex:  order.OrderIndex,
 			Total:       totalPrice,
-			OrderDate:   order.OrderDate,
-			PickUpDate:  order.PickUpDateTime,
+			OrderDate:   order.OrderDate.Format("02/01/2006 03:04 PM"),
+			PickUpDate:  order.PickUpDateTime.Format("02/01/2006 03:04 PM"),
 			OrderStatus: order.OrderStatus,
 		})
 	}
