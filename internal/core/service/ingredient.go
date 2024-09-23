@@ -149,13 +149,19 @@ func (s *IngredientService) GetIngredientStockDetail(c *fiber.Ctx, ingredientSto
 	}
 
 	var notes []domain.IngredientNote
-	for _, note := range ingredient.IngredientNotes() {
-		notes = append(notes, domain.IngredientNote{
-			IngredientNoteID: note.IngredientNoteID,
-			IngredientNote: note.IngredientNote,
-			NoteCreatedAt:  note.NoteCreatedAt.Format("02/01/2006"),
-		})
-	}
+	ingredientNotes := ingredient.IngredientNotes()
+
+    sort.SliceStable(ingredientNotes, func(i, j int) bool {
+        return ingredientNotes[i].NoteCreatedAt.After(ingredientNotes[j].NoteCreatedAt)
+    })
+
+    for _, note := range ingredientNotes {
+        notes = append(notes, domain.IngredientNote{
+            IngredientNoteID: note.IngredientNoteID,
+            IngredientNote:   note.IngredientNote,
+            NoteCreatedAt:    note.NoteCreatedAt.Format("02/01/2006"),
+        })
+    }
 
 	stockDetail := &domain.IngredientStockDetail{
 		IngredientEngName:    ingredient.Ingredient().IngredientEngName,
