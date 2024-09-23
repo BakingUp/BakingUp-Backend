@@ -162,12 +162,11 @@ model Ingredient_images {
 }
 
 model Ingredient_notes {
+  ingredient_note_id  String             @id @unique
   ingredient_detail   Ingredient_detail  @relation(fields: [ingredient_stock_id], references: [ingredient_stock_id])
   ingredient_stock_id String
   note_created_at     DateTime
   ingredient_note     String
-
-  @@id([ingredient_stock_id, note_created_at])
 }
 
 enum Unit {

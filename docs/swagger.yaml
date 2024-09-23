@@ -23,6 +23,8 @@ definitions:
     properties:
       ingredient_note:
         type: string
+      ingredient_note_id:
+        type: string
       note_created_at:
         type: string
     type: object
@@ -136,6 +138,31 @@ info:
   title: BakingUp Backend API
   version: "1.0"
 paths:
+  /ingredient/deleteIngredientBatchNote:
+    delete:
+      consumes:
+      - application/json
+      description: Delete ingredient batch note by ingredient note ID
+      parameters:
+      - description: Ingredient Note ID
+        in: query
+        name: ingredient_note_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot delete ingredient batch note
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Delete ingredient batch note
+      tags:
+      - ingredient
   /ingredient/getIngredientDetail:
     get:
       consumes:

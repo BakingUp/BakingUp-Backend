@@ -32,8 +32,9 @@ type IngredientDetail struct {
 }
 
 type IngredientNote struct {
-    IngredientNote string `json:"ingredient_note"`
-    NoteCreatedAt  string `json:"note_created_at"`
+	IngredientNoteID 	string 	`json:"ingredient_note_id"`
+    IngredientNote		string 	`json:"ingredient_note"`
+    NoteCreatedAt  		string 	`json:"note_created_at"`
 }
 
 type IngredientStockDetail struct {
