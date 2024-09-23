@@ -1,6 +1,7 @@
 package util
 
 import (
+	"fmt"
 	"math"
 	"sort"
 	"time"
@@ -61,4 +62,23 @@ func CalculateIngredientPrice(value []db.IngredientDetailModel) float64 {
 
 	finalPrice := price / totalQuantity
 	return math.Round(finalPrice * 100) / 100
+}
+
+func FormatTotalTime(totalTimeHours, totalTimeMinutes int) string {
+    return fmt.Sprintf("%d %s %d %s",
+        totalTimeHours, 
+        func() string {
+            if totalTimeHours == 1 {
+                return "hr"
+            }
+            return "hrs"
+        }(),
+        totalTimeMinutes, 
+        func() string {
+            if totalTimeMinutes == 1 {
+                return "min"
+            }
+            return "mins"
+        }(),
+    )
 }
