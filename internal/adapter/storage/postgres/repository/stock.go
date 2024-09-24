@@ -48,3 +48,15 @@ func (sr *StockRepository) GetStockDetail(c *fiber.Ctx, recipeID string) (*db.St
 
 	return stock, nil
 }
+
+func (sr *StockRepository) DeleteStock(c *fiber.Ctx, recipeID string) error {
+	_, err := sr.db.Stocks.FindMany(
+		db.Stocks.RecipeID.Equals(recipeID),
+	).Delete().Exec(c.Context())
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
