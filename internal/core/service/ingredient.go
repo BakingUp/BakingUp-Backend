@@ -152,31 +152,40 @@ func (s *IngredientService) GetIngredientStockDetail(c *fiber.Ctx, ingredientSto
 	for _, note := range ingredient.IngredientNotes() {
 		notes = append(notes, domain.IngredientNote{
 			IngredientNoteID: note.IngredientNoteID,
-			IngredientNote: note.IngredientNote,
-			NoteCreatedAt:  note.NoteCreatedAt.Format("02/01/2006"),
+			IngredientNote:   note.IngredientNote,
+			NoteCreatedAt:    note.NoteCreatedAt.Format("02/01/2006"),
 		})
 	}
 
 	stockDetail := &domain.IngredientStockDetail{
-		IngredientEngName:    ingredient.Ingredient().IngredientEngName,
-		IngredientThaiName:   ingredient.Ingredient().IngredientThaiName,
-		IngredientQuantity:   util.CombineIngredientQuantity(ingredient.IngredientQuantity, ingredient.Ingredient().Unit),
-		IngredientPrice:      strconv.FormatFloat(ingredient.Price, 'f', -1, 64),
-		IngredientBrand:      ingredient.IngredientBrand,
-		IngredientSupplier:   ingredient.IngredientSupplier,
-		IngredientStockURL:   ingredient.IngredientStockURL,
-		DayBeforeExpire:      ingredient.ExpirationDate.Format("02/01/2006"),
-		Notes:                notes,
+		IngredientEngName:  ingredient.Ingredient().IngredientEngName,
+		IngredientThaiName: ingredient.Ingredient().IngredientThaiName,
+		IngredientQuantity: util.CombineIngredientQuantity(ingredient.IngredientQuantity, ingredient.Ingredient().Unit),
+		IngredientPrice:    strconv.FormatFloat(ingredient.Price, 'f', -1, 64),
+		IngredientBrand:    ingredient.IngredientBrand,
+		IngredientSupplier: ingredient.IngredientSupplier,
+		IngredientStockURL: ingredient.IngredientStockURL,
+		DayBeforeExpire:    ingredient.ExpirationDate.Format("02/01/2006"),
+		Notes:              notes,
 	}
 
 	return stockDetail, nil
 }
 
 func (s *IngredientService) DeleteIngredientBatchNote(c *fiber.Ctx, ingredientNoteID string) error {
-    err := s.ingredientRepo.DeleteIngredientBatchNote(c, ingredientNoteID)
-    if err != nil {
-        return err
-    }
+	err := s.ingredientRepo.DeleteIngredientBatchNote(c, ingredientNoteID)
+	if err != nil {
+		return err
+	}
 
-    return nil
+	return nil
+}
+
+func (s *IngredientService) DeleteIngredient(c *fiber.Ctx, ingredientID string) error {
+	err := s.ingredientRepo.DeleteIngredient(c, ingredientID)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -71,3 +71,35 @@ func (ir *IngredientRepository) DeleteIngredientBatchNote(c *fiber.Ctx, ingredie
 
 	return nil
 }
+
+func (ir *IngredientRepository) DeleteIngredient(c *fiber.Ctx, ingredientID string) error {
+	_, err := ir.db.IngredientImages.FindMany(
+		db.IngredientImages.IngredientID.Equals(ingredientID),
+	).Delete().Exec(c.Context())
+	if err != nil {
+		return err
+	}
+
+	_, err = ir.db.IngredientNotes.FindMany(
+		db.IngredientNotes.IngredientStockID.Equals(ingredientID),
+	).Delete().Exec(c.Context())
+	if err != nil {
+		return err
+	}
+
+	_, err = ir.db.IngredientDetail.FindMany(
+		db.IngredientDetail.IngredientID.Equals(ingredientID),
+	).Delete().Exec(c.Context())
+	if err != nil {
+		return err
+	}
+
+	_, err = ir.db.Ingredients.FindMany(
+		db.Ingredients.IngredientID.Equals(ingredientID),
+	).Delete().Exec(c.Context())
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
