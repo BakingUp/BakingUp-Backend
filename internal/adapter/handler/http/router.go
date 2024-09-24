@@ -37,6 +37,7 @@ func NewRouter(a *fiber.App, ingredientHandler IngredientHandler, recipeHandler 
 		{
 			recipe.Get("/getAllRecipes", recipeHandler.GetAllRecipes)
 			recipe.Get("/getRecipeDetail", recipeHandler.GetRecipeDetail)
+			recipe.Delete("/deleteRecipe", recipeHandler.DeleteRecipe)
 		}
 
 		stock := api.Group("/stock")

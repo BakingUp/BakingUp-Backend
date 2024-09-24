@@ -49,3 +49,26 @@ func (rh *RecipeHandler) GetRecipeDetail(c *fiber.Ctx) error {
 	handleSuccess(c, recipe)
 	return nil
 }
+
+// DeleteRecipe godoc
+// @Summary      Delete a recipe
+// @Description  Delete a recipe by using recipe id
+// @Tags         recipe
+// @Accept       json
+// @Produce      json
+// @Param        recipe_id  query  string  true  "Recipe ID"
+// @Success      200  {object}  response  "Success"
+// @Failure      400  {object}  response  "Cannot delete a recipe"
+// @Router       /recipe/deleteRecipe [delete]
+func (rh *RecipeHandler) DeleteRecipe(c *fiber.Ctx) error {
+	recipeID := c.Query("recipe_id")
+
+	err := rh.svc.DeleteRecipe(c, recipeID)
+	if err != nil {
+		handleError(c, 400, "Cannot delete a recipe", err.Error())
+		return nil
+	}
+
+	handleSuccess(c, nil)
+	return nil
+}

@@ -139,3 +139,12 @@ func (s *RecipeService) GetRecipeDetail(c *fiber.Ctx, recipeID string) (*domain.
 
 	return recipeDetail, nil
 }
+
+func (s *RecipeService) DeleteRecipe(c *fiber.Ctx, recipeID string) error {
+	err := s.recipeRepo.DeleteRecipe(c, recipeID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

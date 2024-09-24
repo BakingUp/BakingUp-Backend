@@ -213,6 +213,31 @@ paths:
       summary: Get ingredient stock details
       tags:
       - ingredient
+  /recipe/deleteRecipe:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a recipe by using recipe id
+      parameters:
+      - description: Recipe ID
+        in: query
+        name: recipe_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot delete a recipe
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Delete a recipe
+      tags:
+      - recipe
   /recipe/getRecipeDetail:
     get:
       consumes:
