@@ -110,7 +110,7 @@ model Order_products {
   order_id          String
   recipe_id         String
   product_quantity  Int
-  order             Orders    @relation(fields: [order_id], references: [order_id])
+  order             Orders    @relation(fields: [order_id], references: [order_id], onDelete: Cascade)
   recipe            Recipes   @relation(fields: [recipe_id], references: [recipe_id])
 
   @@id([order_id, recipe_id])
@@ -120,7 +120,7 @@ model Order_notes {
   order_id   String
   created_at DateTime
   order_note String
-  order      Orders    @relation(fields: [order_id], references: [order_id])
+  order      Orders    @relation(fields: [order_id], references: [order_id], onDelete: Cascade)
   
   @@id([order_id, created_at])
 }
@@ -141,7 +141,7 @@ model Ingredients {
 
 model Ingredient_detail {
   ingredient_stock_id  String        @id @unique
-  ingredient           Ingredients   @relation(fields: [ingredient_id], references: [ingredient_id])
+  ingredient           Ingredients   @relation(fields: [ingredient_id], references: [ingredient_id], onDelete: Cascade)
   ingredient_id        String
   ingredient_stock_url String
   price                Float
@@ -155,7 +155,7 @@ model Ingredient_detail {
 model Ingredient_images {
   ingredient_image_index String
   ingredient_id          String
-  ingredient             Ingredients       @relation(fields: [ingredient_id], references: [ingredient_id])
+  ingredient             Ingredients       @relation(fields: [ingredient_id], references: [ingredient_id], onDelete: Cascade)
   ingredient_url         String
  
   @@id([ingredient_id, ingredient_image_index])
@@ -163,7 +163,7 @@ model Ingredient_images {
 
 model Ingredient_notes {
   ingredient_note_id  String             @id @unique
-  ingredient_detail   Ingredient_detail  @relation(fields: [ingredient_stock_id], references: [ingredient_stock_id])
+  ingredient_detail   Ingredient_detail  @relation(fields: [ingredient_stock_id], references: [ingredient_stock_id], onDelete: Cascade)
   ingredient_stock_id String
   note_created_at     DateTime
   ingredient_note     String
@@ -204,7 +204,7 @@ model Recipes {
 }
 
 model Recipe_images {
-  recipe                   Recipes   @relation(fields: [recipe_id], references: [recipe_id])
+  recipe                   Recipes   @relation(fields: [recipe_id], references: [recipe_id], onDelete: Cascade)
   recipe_id                String
   image_index              Int
   recipe_url               String
@@ -213,7 +213,7 @@ model Recipe_images {
 }
 
 model Recipe_ingredients {
-  recipe                   Recipes     @relation(fields: [recipe_id], references: [recipe_id])
+  recipe                   Recipes     @relation(fields: [recipe_id], references: [recipe_id], onDelete: Cascade)
   recipe_id                String
   ingredient_id            String
   ingredient               Ingredients @relation(fields: [ingredient_id], references: [ingredient_id])
@@ -223,7 +223,7 @@ model Recipe_ingredients {
 }
 
 model Recipe_eng_instruction_steps {
-  recipe                   Recipes     @relation(fields: [recipe_id], references: [recipe_id])
+  recipe                   Recipes     @relation(fields: [recipe_id], references: [recipe_id], onDelete: Cascade)
   recipe_id                String
   instruction_order        Int
   instruction_step         String
@@ -232,7 +232,7 @@ model Recipe_eng_instruction_steps {
 }
 
 model Recipe_thai_instruction_steps {
-  recipe                   Recipes     @relation(fields: [recipe_id], references: [recipe_id])
+  recipe                   Recipes     @relation(fields: [recipe_id], references: [recipe_id], onDelete: Cascade)
   recipe_id                String
   instruction_order        Int
   instruction_step         String
@@ -241,7 +241,7 @@ model Recipe_thai_instruction_steps {
 }
 
 model Recipe_instruction_images {
-  recipe                   Recipes     @relation(fields: [recipe_id], references: [recipe_id])
+  recipe                   Recipes     @relation(fields: [recipe_id], references: [recipe_id], onDelete: Cascade)
   recipe_id                String
   instruction_image_index  Int
   instruction_url          String
@@ -250,7 +250,7 @@ model Recipe_instruction_images {
 }
 
 model Stocks {
-  recipe                   Recipes    @relation(fields: [recipe_id], references: [recipe_id])
+  recipe                   Recipes    @relation(fields: [recipe_id], references: [recipe_id], onDelete: Cascade)
   recipe_id                String     @id
   lst                      Int
   selling_price            Float
@@ -260,7 +260,7 @@ model Stocks {
 }
 
 model Stock_detail {
-  stock                    Stocks     @relation(fields: [recipe_id], references: [recipe_id])
+  stock                    Stocks     @relation(fields: [recipe_id], references: [recipe_id], onDelete: Cascade)
   recipe_id                String
   created_at               DateTime
   stock_url                String
