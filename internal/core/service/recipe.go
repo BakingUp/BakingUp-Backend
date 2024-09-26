@@ -52,6 +52,7 @@ func (s *RecipeService) GetAllRecipes(c *fiber.Ctx, userID string) (*domain.Reci
 		totalTimeMinutes := item.TotalTime.Minute()
 
 		recipeItem := &domain.Recipe{
+			RecipeID:   item.RecipeID,
 			RecipeName: util.GetRecipeName(&item, language),
 			RecipeImg:  recipeImg,
 			TotalTime:  util.FormatTotalTime(totalTimeHours, totalTimeMinutes),

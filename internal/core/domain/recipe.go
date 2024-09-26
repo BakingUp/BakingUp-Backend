@@ -1,6 +1,7 @@
 package domain
 
 type Recipe struct {
+	RecipeID   string `json:"recipe_id"`
 	RecipeName string `json:"recipe_name"`
 	RecipeImg  string `json:"recipe_img"`
 	TotalTime  string `json:"total_time"`
