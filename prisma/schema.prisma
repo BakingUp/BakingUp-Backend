@@ -63,24 +63,26 @@ model Orders {
   user   Users    @relation(fields: [user_id], references: [user_id])
   user_id String 
   order_taken_by String
-  customer_name String
-  customer_phone_num String
+  customer_name String?
+  customer_phone_num String?
   order_platform OrderPlatform
   order_date DateTime
   order_type OrderType
   is_pre_order Boolean
   order_status OrderStatus
-  pick_up_date_time DateTime
-  pick_up_method PickUpMethod
+  pick_up_date_time DateTime @default(now())
+  pick_up_method PickUpMethod?
   order_index Int @unique
   order_products Order_products[]
-  order_notes Order_notes[]
+  order_note_text String?
+  order_note_create_at DateTime?
 
 }
 
 enum OrderPlatform {
   STORE
-  DELIVERY
+  LINEMAN
+  GRAB
   FACEBOOK
   WEBSITE
   OTHER
@@ -114,15 +116,6 @@ model Order_products {
   recipe            Recipes   @relation(fields: [recipe_id], references: [recipe_id])
 
   @@id([order_id, recipe_id])
-}
-
-model Order_notes {
-  order_id   String
-  created_at DateTime
-  order_note String
-  order      Orders    @relation(fields: [order_id], references: [order_id])
-  
-  @@id([order_id, created_at])
 }
 
 model Ingredients {
