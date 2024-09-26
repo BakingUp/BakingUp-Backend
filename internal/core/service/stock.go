@@ -115,3 +115,12 @@ func (s *StockService) GetStockDetail(c *fiber.Ctx, recipeID string) (*domain.St
 
 	return stockItemDetail, nil
 }
+
+func (s *StockService) DeleteStock(c *fiber.Ctx, recipeID string) error {
+	err := s.stockRepo.DeleteStock(c, recipeID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
