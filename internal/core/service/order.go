@@ -37,15 +37,31 @@ func (s *OrderService) GetAllOrders(c *fiber.Ctx, userID string) (*domain.Orders
 				totalPrice = totalPrice + (stock.SellingPrice * float64(product.ProductQuantity))
 			}
 		}
+		if order.IsPreOrder {
+			//Pre-Order case
+			list = append(list, domain.OrderInfo{
+				OrderID:       order.OrderID,
+				OrderIndex:    order.OrderIndex,
+				OrderPlatform: order.OrderPlatform,
+				IsPreOrder:    order.IsPreOrder,
+				Total:         totalPrice,
+				OrderDate:     order.OrderDate.Format("02/01/2006 03:04 PM"),
+				PickUpDate:    order.PickUpDateTime.Format("02/01/2006 03:04 PM"),
+				OrderStatus:   order.OrderStatus,
+			})
+		} else {
+			// In-store case
+			list = append(list, domain.OrderInfo{
+				OrderID:       order.OrderID,
+				OrderIndex:    order.OrderIndex,
+				OrderPlatform: order.OrderPlatform,
+				IsPreOrder:    order.IsPreOrder,
+				Total:         totalPrice,
+				OrderDate:     order.OrderDate.Format("02/01/2006 03:04 PM"),
+				OrderStatus:   order.OrderStatus,
+			})
+		}
 
-		list = append(list, domain.OrderInfo{
-			OrderID:     order.OrderID,
-			OrderIndex:  order.OrderIndex,
-			Total:       totalPrice,
-			OrderDate:   order.OrderDate.Format("02/01/2006 03:04 PM"),
-			PickUpDate:  order.PickUpDateTime.Format("02/01/2006 03:04 PM"),
-			OrderStatus: order.OrderStatus,
-		})
 	}
 
 	reponse := &domain.Orders{
