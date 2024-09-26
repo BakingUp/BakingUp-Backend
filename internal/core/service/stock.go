@@ -43,7 +43,7 @@ func (s *StockService) GetAllStocks(c *fiber.Ctx, userID string) (*domain.StockL
 
 		stock.StockName = util.GetRecipeName(&recipe, language)
 		if stockItem, ok := recipe.Stocks(); ok {
-
+			stock.StockId = stockItem.RecipeID
 			for _, stockDetail := range stockItem.StockDetail() {
 				if stockDetail.RecipeID == stockItem.RecipeID {
 					stock.Quantity += stockDetail.Quantity
