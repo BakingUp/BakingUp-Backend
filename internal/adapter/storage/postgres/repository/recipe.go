@@ -53,3 +53,15 @@ func (rr *RecipeRepository) GetRecipeDetail(c *fiber.Ctx, recipeID string) (*db.
 
 	return recipe, nil
 }
+
+func (rr *RecipeRepository) DeleteRecipe(c *fiber.Ctx, recipeID string) error {
+	_, err := rr.db.Recipes.FindMany(
+		db.Recipes.RecipeID.Equals(recipeID),
+	).Delete().Exec(c.Context())
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

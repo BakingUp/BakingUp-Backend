@@ -9,6 +9,44 @@
     "host": "localhost:8000",
     "basePath": "/api",
     "paths": {
+        "/ingredient/deleteIngredient": {
+            "delete": {
+                "description": "Delete an ingredient by using ingredient id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ingredient"
+                ],
+                "summary": "Delete an ingredient",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Ingredient ID",
+                        "name": "ingredient_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot delete an ingredient",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/ingredient/deleteIngredientBatchNote": {
             "delete": {
                 "description": "Delete ingredient batch note by ingredient note ID",
@@ -116,6 +154,44 @@
                     },
                     "400": {
                         "description": "Cannot get ingredient stock detail",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/recipe/deleteRecipe": {
+            "delete": {
+                "description": "Delete a recipe by using recipe id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "recipe"
+                ],
+                "summary": "Delete a recipe",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Recipe ID",
+                        "name": "recipe_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot delete a recipe",
                         "schema": {
                             "$ref": "#/definitions/http.response"
                         }

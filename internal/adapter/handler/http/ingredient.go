@@ -84,14 +84,37 @@ func (ih *IngredientHandler) GetIngredientStockDetail(c *fiber.Ctx) error {
 // @Failure      400  {object}  response  "Cannot delete ingredient batch note"
 // @Router       /ingredient/deleteIngredientBatchNote [delete]
 func (ih *IngredientHandler) DeleteIngredientBatchNote(c *fiber.Ctx) error {
-    ingredientNoteID := c.Query("ingredient_note_id")
+	ingredientNoteID := c.Query("ingredient_note_id")
 
-    err := ih.svc.DeleteIngredientBatchNote(c, ingredientNoteID)
-    if err != nil {
-        handleError(c, 400, "Cannot delete ingredient batch note", err.Error())
-        return nil
-    }
+	err := ih.svc.DeleteIngredientBatchNote(c, ingredientNoteID)
+	if err != nil {
+		handleError(c, 400, "Cannot delete ingredient batch note", err.Error())
+		return nil
+	}
 
-    handleSuccess(c, nil)
-    return nil
+	handleSuccess(c, nil)
+	return nil
+}
+
+// DeleteIngredient godoc
+// @Summary      Delete an ingredient
+// @Description  Delete an ingredient by using ingredient id
+// @Tags         ingredient
+// @Accept       json
+// @Produce      json
+// @Param        ingredient_id  query  string  true  "Ingredient ID"
+// @Success      200  {object}  response  "Success"
+// @Failure      400  {object}  response  "Cannot delete an ingredient"
+// @Router       /ingredient/deleteIngredient [delete]
+func (ih *IngredientHandler) DeleteIngredient(c *fiber.Ctx) error {
+	ingredientID := c.Query("ingredient_id")
+
+	err := ih.svc.DeleteIngredient(c, ingredientID)
+	if err != nil {
+		handleError(c, 400, "Cannot delete an ingredient", err.Error())
+		return nil
+	}
+
+	handleSuccess(c, nil)
+	return nil
 }

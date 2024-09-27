@@ -138,6 +138,31 @@ info:
   title: BakingUp Backend API
   version: "1.0"
 paths:
+  /ingredient/deleteIngredient:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an ingredient by using ingredient id
+      parameters:
+      - description: Ingredient ID
+        in: query
+        name: ingredient_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot delete an ingredient
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Delete an ingredient
+      tags:
+      - ingredient
   /ingredient/deleteIngredientBatchNote:
     delete:
       consumes:
@@ -213,6 +238,31 @@ paths:
       summary: Get ingredient stock details
       tags:
       - ingredient
+  /recipe/deleteRecipe:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a recipe by using recipe id
+      parameters:
+      - description: Recipe ID
+        in: query
+        name: recipe_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot delete a recipe
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Delete a recipe
+      tags:
+      - recipe
   /recipe/getRecipeDetail:
     get:
       consumes:
