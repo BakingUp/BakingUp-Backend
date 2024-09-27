@@ -1,0 +1,73 @@
+package service
+
+import (
+	"fmt"
+	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
+	"github.com/BakingUp/BakingUp-Backend/internal/core/port"
+	"github.com/gofiber/fiber/v2"
+)
+
+type OrderService struct {
+	orderRepo port.OrderRespository
+}
+
+func NewOrderService(orderRepo port.OrderRespository) *OrderService {
+	return &OrderService{
+		orderRepo: orderRepo,
+	}
+}
+
+func (s *OrderService) GetAllOrders(c *fiber.Ctx, userID string) (*domain.Orders, error) {
+	orders, err := s.orderRepo.GetAllOrders(c, userID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if len(orders) == 0 {
+		return nil, fmt.Errorf("No orders found for user ID %s", userID)
+	}
+
+	var list []domain.OrderInfo
+	for _, order := range orders {
+		totalPrice := 0.0
+		for _, product := range order.OrderProducts() {
+			stock, err := product.Recipe().Stocks()
+			if err == true {
+				totalPrice = totalPrice + (stock.SellingPrice * float64(product.ProductQuantity))
+			}
+		}
+		if order.IsPreOrder {
+			//Pre-Order case
+			list = append(list, domain.OrderInfo{
+				OrderID:       order.OrderID,
+				OrderIndex:    order.OrderIndex,
+				OrderPlatform: order.OrderPlatform,
+				IsPreOrder:    order.IsPreOrder,
+				Total:         totalPrice,
+				OrderDate:     order.OrderDate.Format("02/01/2006 03:04 PM"),
+				PickUpDate:    order.PickUpDateTime.Format("02/01/2006 03:04 PM"),
+				OrderStatus:   order.OrderStatus,
+			})
+		} else {
+			// In-store case
+			list = append(list, domain.OrderInfo{
+				OrderID:       order.OrderID,
+				OrderIndex:    order.OrderIndex,
+				OrderPlatform: order.OrderPlatform,
+				IsPreOrder:    order.IsPreOrder,
+				Total:         totalPrice,
+				OrderDate:     order.OrderDate.Format("02/01/2006 03:04 PM"),
+				OrderStatus:   order.OrderStatus,
+			})
+		}
+
+	}
+
+	reponse := &domain.Orders{
+		Orders: list,
+	}
+
+	return reponse, err
+
+}

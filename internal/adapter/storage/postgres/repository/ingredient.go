@@ -71,3 +71,14 @@ func (ir *IngredientRepository) DeleteIngredientBatchNote(c *fiber.Ctx, ingredie
 
 	return nil
 }
+
+func (ir *IngredientRepository) DeleteIngredient(c *fiber.Ctx, ingredientID string) error {
+	_, err := ir.db.Ingredients.FindMany(
+		db.Ingredients.IngredientID.Equals(ingredientID),
+	).Delete().Exec(c.Context())
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
