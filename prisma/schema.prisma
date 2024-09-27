@@ -74,7 +74,7 @@ model Orders {
   pick_up_method PickUpMethod?
   order_index Int @unique
   order_products Order_products[]
-  order_note_text String?
+  order_note_text String? @default("-")
   order_note_create_at DateTime?
 
 }
@@ -247,6 +247,7 @@ model Stocks {
   recipe_id                String     @id
   lst                      Int
   selling_price            Float
+  cost                     Float
   stock_less_than          Int
   day_before_expired       DateTime
   stock_detail             Stock_detail[]
