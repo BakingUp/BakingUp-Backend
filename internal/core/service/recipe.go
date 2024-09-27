@@ -52,6 +52,7 @@ func (s *RecipeService) GetAllRecipes(c *fiber.Ctx, userID string) (*domain.Reci
 		totalTimeMinutes := item.TotalTime.Minute()
 
 		recipeItem := &domain.Recipe{
+			RecipeID:   item.RecipeID,
 			RecipeName: util.GetRecipeName(&item, language),
 			RecipeImg:  recipeImg,
 			TotalTime:  util.FormatTotalTime(totalTimeHours, totalTimeMinutes),
@@ -138,4 +139,13 @@ func (s *RecipeService) GetRecipeDetail(c *fiber.Ctx, recipeID string) (*domain.
 	}
 
 	return recipeDetail, nil
+}
+
+func (s *RecipeService) DeleteRecipe(c *fiber.Ctx, recipeID string) error {
+	err := s.recipeRepo.DeleteRecipe(c, recipeID)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
