@@ -43,7 +43,7 @@ func (s *StockService) GetAllStocks(c *fiber.Ctx, userID string) (*domain.StockL
 
 		stock.StockName = util.GetRecipeName(&recipe, language)
 		if stockItem, ok := recipe.Stocks(); ok {
-
+			stock.StockId = stockItem.RecipeID
 			for _, stockDetail := range stockItem.StockDetail() {
 				if stockDetail.RecipeID == stockItem.RecipeID {
 					stock.Quantity += stockDetail.Quantity
@@ -114,4 +114,13 @@ func (s *StockService) GetStockDetail(c *fiber.Ctx, recipeID string) (*domain.St
 	}
 
 	return stockItemDetail, nil
+}
+
+func (s *StockService) DeleteStock(c *fiber.Ctx, recipeID string) error {
+	err := s.stockRepo.DeleteStock(c, recipeID)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

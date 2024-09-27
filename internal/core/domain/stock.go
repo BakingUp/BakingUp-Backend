@@ -3,6 +3,7 @@ package domain
 import "time"
 
 type StockItem struct {
+	StockId      string  `json:"stock_id"`
 	StockName    string  `json:"stock_name"`
 	StockURL     string  `json:"stock_url"`
 	Quantity     int     `json:"quantity"`
