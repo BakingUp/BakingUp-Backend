@@ -21,6 +21,7 @@ func (sh *StockHandler) GetAllStocks(c *fiber.Ctx) error {
 	stocks, err := sh.svc.GetAllStocks(c, userID)
 	if err != nil {
 		handleError(c, 400, "Cannot get all stocks.", err.Error())
+		return nil
 	}
 
 	handleSuccess(c, stocks)
