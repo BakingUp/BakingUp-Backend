@@ -15,6 +15,16 @@ func NewIngredientHandler(svc port.IngredientService) *IngredientHandler {
 	}
 }
 
+// GetAllIngredients godoc
+// @Summary      Get all ingredients
+// @Description  Get all ingredients by user ID
+// @Tags         ingredient
+// @Accept       json
+// @Produce      json
+// @Param        user_id  query  string  true  "User ID"
+// @Success      200  {object}  domain.IngredientList  "Success"
+// @Failure      400  {object}  response     "Cannot get all ingredients"
+// @Router       /ingredient/getAllIngredients [get]
 func (ih *IngredientHandler) GetAllIngredients(c *fiber.Ctx) error {
 	userID := c.Query("user_id")
 

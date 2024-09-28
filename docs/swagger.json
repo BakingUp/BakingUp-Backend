@@ -85,6 +85,44 @@
                 }
             }
         },
+        "/ingredient/getAllIngredients": {
+            "get": {
+                "description": "Get all ingredients by user ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ingredient"
+                ],
+                "summary": "Get all ingredients",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.IngredientList"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get all ingredients",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/ingredient/getIngredientDetail": {
             "get": {
                 "description": "Get ingredient details by ingredient ID",
@@ -315,6 +353,29 @@
         }
     },
     "definitions": {
+        "domain.Ingredient": {
+            "type": "object",
+            "properties": {
+                "expiration_status": {
+                    "type": "string"
+                },
+                "ingredient_id": {
+                    "type": "string"
+                },
+                "ingredient_name": {
+                    "type": "string"
+                },
+                "ingredient_url": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "string"
+                },
+                "stock": {
+                    "type": "integer"
+                }
+            }
+        },
         "domain.IngredientDetail": {
             "type": "object",
             "properties": {
@@ -340,6 +401,17 @@
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/domain.Stock"
+                    }
+                }
+            }
+        },
+        "domain.IngredientList": {
+            "type": "object",
+            "properties": {
+                "ingredients": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.Ingredient"
                     }
                 }
             }
