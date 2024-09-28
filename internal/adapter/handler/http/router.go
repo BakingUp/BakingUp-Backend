@@ -17,6 +17,7 @@ func NewRouter(a *fiber.App, ingredientHandler IngredientHandler, recipeHandler 
 		user := api.Group("/user")
 		{
 			user.Get("/getUserInfo", userHandler.GetUserInfo)
+			user.Put("/editUserInfo", userHandler.EditUserInfo)
 		}
 		auth := api.Group("/auth")
 		{

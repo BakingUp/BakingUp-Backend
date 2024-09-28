@@ -17,6 +17,13 @@ func newResponse(status int, message string, data any) response {
 	}
 }
 
+func newSuccessMessageResponse(status int, message string) response {
+	return response{
+		Status:  status,
+		Message: message,
+	}
+}
+
 func newErrorResponse(status int, message string, err string) response {
 	return response{
 		Status:  status,
@@ -33,5 +40,11 @@ func handleSuccess(ctx *fiber.Ctx, data any) {
 
 func handleError(ctx *fiber.Ctx, status int, message string, err string) {
 	rsp := newErrorResponse(status, message, err)
+	ctx.JSON(rsp)
+}
+
+// handleSuccessMessage send a success response with the specified status code and custom success message
+func handleSuccessMessage(ctx *fiber.Ctx, message string) {
+	rsp := newSuccessMessageResponse(200, message)
 	ctx.JSON(rsp)
 }
