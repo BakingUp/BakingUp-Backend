@@ -256,7 +256,6 @@ model Stock_detail {
   stock                    Stocks     @relation(fields: [recipe_id], references: [recipe_id], onDelete: Cascade)
   recipe_id                String
   created_at               DateTime
-  stock_url                String
   sell_by_date             DateTime
   quantity                 Int
   note                     String?
