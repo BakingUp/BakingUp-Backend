@@ -25,3 +25,14 @@ func (or *OrderRespository) GetAllOrders(c *fiber.Ctx, userID string) ([]db.Orde
 
 	return orders, nil
 }
+
+func (or *OrderRespository) GetOrderDetail(c *fiber.Ctx, orderID string) (*db.OrdersModel, error) {
+	order, err := or.db.Orders.FindFirst(
+		db.Orders.OrderID.Equals(orderID)).With(db.Orders.OrderProducts.Fetch().With(db.OrderProducts.Recipe.Fetch().With(db.Recipes.Stocks.Fetch()))).Exec(c.Context())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return order, nil
+}

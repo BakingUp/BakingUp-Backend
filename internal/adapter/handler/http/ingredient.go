@@ -31,6 +31,7 @@ func (ih *IngredientHandler) GetAllIngredients(c *fiber.Ctx) error {
 	ingredients, err := ih.svc.GetAllIngredients(c, userID)
 	if err != nil {
 		handleError(c, 400, "Cannot get all ingredients", err.Error())
+		return nil
 	}
 
 	handleSuccess(c, ingredients)

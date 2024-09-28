@@ -27,3 +27,16 @@ func (oh *OrderHandler) GetAllOrders(c *fiber.Ctx) error {
 	handleSuccess(c, orders)
 	return nil
 }
+
+func (oh *OrderHandler) GetOrderDeatil(c *fiber.Ctx) error {
+	orderID := c.Query("order_id")
+
+	orderDetail, err := oh.svc.GetOrderDetail(c, orderID)
+	if err != nil {
+		handleError(c, 400, "Cannot get an order detail", err.Error())
+		return nil
+	}
+
+	handleSuccess(c, orderDetail)
+	return nil
+}
