@@ -8,8 +8,10 @@ import (
 
 type OrderRespository interface {
 	GetAllOrders(c *fiber.Ctx, userID string) ([]db.OrdersModel, error)
+	GetOrderDetail(c *fiber.Ctx, orderID string) (*db.OrdersModel, error)
 }
 
 type OrderService interface {
 	GetAllOrders(c *fiber.Ctx, userID string) (*domain.Orders, error)
+	GetOrderDetail(c *fiber.Ctx, orderID string) (interface{}, error)
 }
