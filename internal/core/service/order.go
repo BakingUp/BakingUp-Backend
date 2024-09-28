@@ -4,16 +4,19 @@ import (
 	"fmt"
 	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
 	"github.com/BakingUp/BakingUp-Backend/internal/core/port"
+	"github.com/BakingUp/BakingUp-Backend/internal/core/util"
 	"github.com/gofiber/fiber/v2"
 )
 
 type OrderService struct {
-	orderRepo port.OrderRespository
+	orderRepo   port.OrderRespository
+	userService port.UserService
 }
 
-func NewOrderService(orderRepo port.OrderRespository) *OrderService {
+func NewOrderService(orderRepo port.OrderRespository, userService port.UserService) *OrderService {
 	return &OrderService{
-		orderRepo: orderRepo,
+		orderRepo:   orderRepo,
+		userService: userService,
 	}
 }
 
@@ -70,4 +73,94 @@ func (s *OrderService) GetAllOrders(c *fiber.Ctx, userID string) (*domain.Orders
 
 	return reponse, err
 
+}
+
+func (s *OrderService) GetOrderDetail(c *fiber.Ctx, orderID string) (interface{}, error) {
+	order, err := s.orderRepo.GetOrderDetail(c, orderID)
+	if err != nil {
+		return nil, err
+	}
+
+	language, err := s.userService.GetUserLanguage(c, order.UserID)
+	if err != nil {
+		return nil, err
+	}
+
+	var list []domain.OrderStock
+	totalPrice := 0.0
+	cost := 0.0
+
+	for _, product := range order.OrderProducts() {
+		stock, err := product.Recipe().Stocks()
+		if err == true {
+			totalPrice = totalPrice + (stock.SellingPrice * float64(product.ProductQuantity))
+			cost = cost + (stock.Cost * float64(product.ProductQuantity))
+			list = append(list, domain.OrderStock{
+				Name:       util.GetRecipeName(product.Recipe(), language),
+				Quantity:   product.ProductQuantity,
+				StockPrice: stock.SellingPrice,
+			})
+		}
+	}
+	profit := totalPrice - cost
+
+	if order.IsPreOrder {
+		// Pre-order case
+		detail := &domain.PreOrderOrderDetails{
+			OrderIndex:    order.OrderIndex,
+			OrderStatus:   order.OrderStatus,
+			OrderPlatform: order.OrderPlatform,
+			OrderDate:     order.OrderDate.Format("02/01/2006"),
+			OrderTime:     order.OrderDate.Format("03:04 PM"),
+			OrderType:     order.OrderType,
+			PickUpDate:    order.PickUpDateTime.Format("02/01/2006"),
+			PickUpTime:    order.PickUpDateTime.Format("03:04 PM"),
+			OrderTakenBy:  order.OrderTakenBy,
+			OrderStock:    list,
+			ToTal:         totalPrice,
+			Profit:        profit,
+		}
+
+		custumerName, ok := order.CustomerName()
+		if ok {
+			detail.CustomerName = custumerName
+		}
+		phoneNumber, ok := order.CustomerPhoneNum()
+		if ok {
+			detail.PhoneNumber = phoneNumber
+		}
+		pickUpMethod, ok := order.PickUpMethod()
+		if ok {
+			detail.PickUpMethod = pickUpMethod
+		}
+		orderNoteText, ok1 := order.OrderNoteText()
+		date, ok2 := order.OrderNoteCreateAt()
+		if ok1 && ok2 {
+			detail.OrderNoteText = orderNoteText
+			detail.OrderNoteCreateAt = date.Format("02/01/2006")
+		}
+
+		return detail, nil
+	} else {
+		detail := &domain.InStoreOrderDetails{
+			OrderIndex:    order.OrderIndex,
+			OrderStatus:   order.OrderStatus,
+			OrderPlatform: order.OrderPlatform,
+			OrderDate:     order.OrderDate.Format("02/01/2006"),
+			OrderTime:     order.OrderDate.Format("03:04 PM"),
+			OrderType:     order.OrderType,
+			OrderTakenBy:  order.OrderTakenBy,
+			OrderStock:    list,
+			ToTal:         totalPrice,
+			Profit:        profit,
+		}
+		orderNoteText, ok1 := order.OrderNoteText()
+		date, ok2 := order.OrderNoteCreateAt()
+		if ok1 && ok2 {
+			detail.OrderNoteText = orderNoteText
+			detail.OrderNoteCreateAt = date.Format("02/01/2006")
+		}
+
+		return detail, nil
+	}
 }

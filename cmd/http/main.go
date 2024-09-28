@@ -52,7 +52,7 @@ func main() {
 	stockHandler := http.NewStockHandler(stockService)
 
 	orderRepo := repository.NewOrderRespository(client)
-	orderService := service.NewOrderService(orderRepo)
+	orderService := service.NewOrderService(orderRepo, userService)
 	orderHandler := http.NewOrderHandler(orderService)
 
 	_, err = http.NewRouter(app, *ingredientHandler, *recipeHandler, *authHandler, *stockHandler, *userHandler, *orderHandler)

@@ -51,6 +51,7 @@ func NewRouter(a *fiber.App, ingredientHandler IngredientHandler, recipeHandler 
 		order := api.Group("/order")
 		{
 			order.Get("/getAllOrders", orderHandler.GetAllOrders)
+			order.Get("/getOrderDetail", orderHandler.GetOrderDeatil)
 		}
 	}
 
