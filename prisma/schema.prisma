@@ -63,8 +63,8 @@ model Orders {
   user   Users    @relation(fields: [user_id], references: [user_id])
   user_id String 
   order_taken_by String
-  customer_name String?
-  customer_phone_num String?
+  customer_name String? @default("-")
+  customer_phone_num String? @default("-")
   order_platform OrderPlatform
   order_date DateTime
   order_type OrderType
