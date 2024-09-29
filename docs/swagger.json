@@ -275,6 +275,278 @@
                 }
             }
         },
+        "/settings/changeColorExpired": {
+            "put": {
+                "description": "Change the color of expired icon by user id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Change the color of expired icon",
+                "parameters": [
+                    {
+                        "description": "Change Color Expired Icon",
+                        "name": "change_color_expired_icon",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.ChangeExpirationDateSetting"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully change the color of expiration icon",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot change the color of expiration icon",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/settings/changeFixCost": {
+            "put": {
+                "description": "Change the fix cost by user id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Change the fix cost",
+                "parameters": [
+                    {
+                        "description": "Change Fix Cost",
+                        "name": "change_fix_cost",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.ChangeFixCostSetting"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully change the fix cost",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot change the fix cost",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/settings/changeLanguage": {
+            "put": {
+                "description": "Change the application language by user id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Change the application language",
+                "parameters": [
+                    {
+                        "description": "Change Language",
+                        "name": "change_language",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.ChangeUserLanguage"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully change the language.",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot change the language",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/settings/deleteAccount": {
+            "delete": {
+                "description": "Delete an account by user id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Delete an account",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully delete an account",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot delete an account",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/settings/getColorExpired": {
+            "get": {
+                "description": "Get the color of expired icon by user id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Get the color of expired icon",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.ExpirationDateSetting"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get the color of expiration icon",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/settings/getFixCost": {
+            "get": {
+                "description": "Get the fix cost by user id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Get the fix cost",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.FixCostSetting"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get the fix cost",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/settings/getLanguage": {
+            "get": {
+                "description": "Get the application language by user id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Get the application language",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.UserLanguage"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get the language",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/stock/deleteStock": {
             "delete": {
                 "description": "Delete a stock by recipe id",
@@ -431,6 +703,121 @@
         }
     },
     "definitions": {
+        "domain.ChangeExpirationDateSetting": {
+            "type": "object",
+            "properties": {
+                "black_expiration_date": {
+                    "type": "integer"
+                },
+                "red_expiration_date": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "string"
+                },
+                "yellow_expiration_date": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domain.ChangeFixCostSetting": {
+            "type": "object",
+            "properties": {
+                "advertising": {
+                    "type": "number"
+                },
+                "electricity": {
+                    "type": "number"
+                },
+                "gas": {
+                    "type": "number"
+                },
+                "insurance": {
+                    "type": "number"
+                },
+                "note": {
+                    "type": "string"
+                },
+                "other": {
+                    "type": "number"
+                },
+                "rent": {
+                    "type": "number"
+                },
+                "salaries": {
+                    "type": "number"
+                },
+                "subscriptions": {
+                    "type": "number"
+                },
+                "user_id": {
+                    "type": "string"
+                },
+                "water": {
+                    "type": "number"
+                }
+            }
+        },
+        "domain.ChangeUserLanguage": {
+            "type": "object",
+            "properties": {
+                "language": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.ExpirationDateSetting": {
+            "type": "object",
+            "properties": {
+                "black_expiration_date": {
+                    "type": "integer"
+                },
+                "red_expiration_date": {
+                    "type": "integer"
+                },
+                "yellow_expiration_date": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domain.FixCostSetting": {
+            "type": "object",
+            "properties": {
+                "advertising": {
+                    "type": "number"
+                },
+                "electricity": {
+                    "type": "number"
+                },
+                "gas": {
+                    "type": "number"
+                },
+                "insurance": {
+                    "type": "number"
+                },
+                "note": {
+                    "type": "string"
+                },
+                "other": {
+                    "type": "number"
+                },
+                "rent": {
+                    "type": "number"
+                },
+                "salaries": {
+                    "type": "number"
+                },
+                "subscriptions": {
+                    "type": "number"
+                },
+                "water": {
+                    "type": "number"
+                }
+            }
+        },
         "domain.Ingredient": {
             "type": "object",
             "properties": {
@@ -701,6 +1088,14 @@
                     "items": {
                         "$ref": "#/definitions/domain.StockItem"
                     }
+                }
+            }
+        },
+        "domain.UserLanguage": {
+            "type": "object",
+            "properties": {
+                "language": {
+                    "type": "string"
                 }
             }
         },

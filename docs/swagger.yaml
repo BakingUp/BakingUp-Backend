@@ -1,5 +1,80 @@
 basePath: /api
 definitions:
+  domain.ChangeExpirationDateSetting:
+    properties:
+      black_expiration_date:
+        type: integer
+      red_expiration_date:
+        type: integer
+      user_id:
+        type: string
+      yellow_expiration_date:
+        type: integer
+    type: object
+  domain.ChangeFixCostSetting:
+    properties:
+      advertising:
+        type: number
+      electricity:
+        type: number
+      gas:
+        type: number
+      insurance:
+        type: number
+      note:
+        type: string
+      other:
+        type: number
+      rent:
+        type: number
+      salaries:
+        type: number
+      subscriptions:
+        type: number
+      user_id:
+        type: string
+      water:
+        type: number
+    type: object
+  domain.ChangeUserLanguage:
+    properties:
+      language:
+        type: string
+      user_id:
+        type: string
+    type: object
+  domain.ExpirationDateSetting:
+    properties:
+      black_expiration_date:
+        type: integer
+      red_expiration_date:
+        type: integer
+      yellow_expiration_date:
+        type: integer
+    type: object
+  domain.FixCostSetting:
+    properties:
+      advertising:
+        type: number
+      electricity:
+        type: number
+      gas:
+        type: number
+      insurance:
+        type: number
+      note:
+        type: string
+      other:
+        type: number
+      rent:
+        type: number
+      salaries:
+        type: number
+      subscriptions:
+        type: number
+      water:
+        type: number
+    type: object
   domain.Ingredient:
     properties:
       expiration_status:
@@ -177,6 +252,11 @@ definitions:
         items:
           $ref: '#/definitions/domain.StockItem'
         type: array
+    type: object
+  domain.UserLanguage:
+    properties:
+      language:
+        type: string
     type: object
   http.response:
     properties:
@@ -372,6 +452,184 @@ paths:
       summary: Get recipe details
       tags:
       - recipe
+  /settings/changeColorExpired:
+    put:
+      consumes:
+      - application/json
+      description: Change the color of expired icon by user id
+      parameters:
+      - description: Change Color Expired Icon
+        in: body
+        name: change_color_expired_icon
+        required: true
+        schema:
+          $ref: '#/definitions/domain.ChangeExpirationDateSetting'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully change the color of expiration icon
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot change the color of expiration icon
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Change the color of expired icon
+      tags:
+      - settings
+  /settings/changeFixCost:
+    put:
+      consumes:
+      - application/json
+      description: Change the fix cost by user id
+      parameters:
+      - description: Change Fix Cost
+        in: body
+        name: change_fix_cost
+        required: true
+        schema:
+          $ref: '#/definitions/domain.ChangeFixCostSetting'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully change the fix cost
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot change the fix cost
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Change the fix cost
+      tags:
+      - settings
+  /settings/changeLanguage:
+    put:
+      consumes:
+      - application/json
+      description: Change the application language by user id
+      parameters:
+      - description: Change Language
+        in: body
+        name: change_language
+        required: true
+        schema:
+          $ref: '#/definitions/domain.ChangeUserLanguage'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully change the language.
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot change the language
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Change the application language
+      tags:
+      - settings
+  /settings/deleteAccount:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an account by user id
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully delete an account
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot delete an account
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Delete an account
+      tags:
+      - settings
+  /settings/getColorExpired:
+    get:
+      consumes:
+      - application/json
+      description: Get the color of expired icon by user id
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/domain.ExpirationDateSetting'
+        "400":
+          description: Cannot get the color of expiration icon
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get the color of expired icon
+      tags:
+      - settings
+  /settings/getFixCost:
+    get:
+      consumes:
+      - application/json
+      description: Get the fix cost by user id
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/domain.FixCostSetting'
+        "400":
+          description: Cannot get the fix cost
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get the fix cost
+      tags:
+      - settings
+  /settings/getLanguage:
+    get:
+      consumes:
+      - application/json
+      description: Get the application language by user id
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/domain.UserLanguage'
+        "400":
+          description: Cannot get the language
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get the application language
+      tags:
+      - settings
   /stock/deleteStock:
     delete:
       consumes:

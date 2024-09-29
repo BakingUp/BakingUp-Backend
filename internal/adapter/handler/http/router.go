@@ -9,7 +9,7 @@ type Router struct {
 	router fiber.Router
 }
 
-func NewRouter(a *fiber.App, ingredientHandler IngredientHandler, recipeHandler RecipeHandler, authHandler AuthHandler, stockHandler StockHandler, userHandler UserHandler, orderHandler OrderHandler) (*Router, error) {
+func NewRouter(a *fiber.App, ingredientHandler IngredientHandler, recipeHandler RecipeHandler, authHandler AuthHandler, stockHandler StockHandler, userHandler UserHandler, orderHandler OrderHandler, settingsHandler SettingsHandler) (*Router, error) {
 	a.Get("/swagger/*", swagger.HandlerDefault)
 
 	api := a.Group("/api")
@@ -54,6 +54,18 @@ func NewRouter(a *fiber.App, ingredientHandler IngredientHandler, recipeHandler 
 			order.Get("/getAllOrders", orderHandler.GetAllOrders)
 			order.Get("/getOrderDetail", orderHandler.GetOrderDeatil)
 		}
+		setting := api.Group("/settings")
+		{
+			setting.Delete("/deleteAccount", settingsHandler.DeleteAccount)
+			setting.Get("/getLanguage", settingsHandler.GetLanguage)
+			setting.Put("/changeLanguage", settingsHandler.ChangeLanguage)
+			setting.Get("/getFixCost", settingsHandler.GetFixCost)
+			setting.Put("/changeFixCost", settingsHandler.ChangeFixCost)
+			setting.Get("/getColorExpired", settingsHandler.GetColorExpired)
+			setting.Put("/changeColorExpired", settingsHandler.ChangeColorExpired)
+
+		}
+
 	}
 
 	return &Router{api}, nil
