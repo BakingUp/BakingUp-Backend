@@ -36,7 +36,7 @@ model Users{
 
 model Notifications {
   noti_id      String   @id @unique
-  user         Users    @relation(fields: [user_id], references: [user_id])
+  user         Users    @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
   user_id      String
   eng_title    String
   thai_title   String
@@ -60,7 +60,7 @@ enum NotificationType {
 
 model Orders {
   order_id String @id @unique
-  user   Users    @relation(fields: [user_id], references: [user_id])
+  user   Users    @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
   user_id String 
   order_taken_by String
   customer_name String? @default("-")
@@ -113,14 +113,14 @@ model Order_products {
   recipe_id         String
   product_quantity  Int
   order             Orders    @relation(fields: [order_id], references: [order_id], onDelete: Cascade)
-  recipe            Recipes   @relation(fields: [recipe_id], references: [recipe_id])
+  recipe            Recipes   @relation(fields: [recipe_id], references: [recipe_id], onDelete: Cascade)
 
   @@id([order_id, recipe_id])
 }
 
 model Ingredients {
   ingredient_id        String       @id @unique
-  user                 Users        @relation(fields: [user_id], references: [user_id])
+  user                 Users        @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
   user_id              String
   ingredient_eng_name String
   ingredient_thai_name String
@@ -171,13 +171,13 @@ enum Unit {
 
 model Devices {
   deviceToken String  @id @unique
-  user        Users   @relation(fields: [user_id], references: [user_id])
+  user        Users   @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
   user_id     String
 }
 
 model Recipes {
   recipe_id                     String                     @id @unique
-  user                          Users                      @relation(fields: [user_id], references: [user_id])
+  user                          Users                      @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
   user_id                       String
   recipe_eng_name               String
   recipe_thai_name              String
@@ -209,7 +209,7 @@ model Recipe_ingredients {
   recipe                   Recipes     @relation(fields: [recipe_id], references: [recipe_id], onDelete: Cascade)
   recipe_id                String
   ingredient_id            String
-  ingredient               Ingredients @relation(fields: [ingredient_id], references: [ingredient_id])
+  ingredient               Ingredients @relation(fields: [ingredient_id], references: [ingredient_id], onDelete: Cascade)
   recipe_ingredient_quantity Float
 
   @@id([recipe_id, ingredient_id])
