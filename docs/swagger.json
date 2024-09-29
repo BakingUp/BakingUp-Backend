@@ -313,6 +313,44 @@
                 }
             }
         },
+        "/stock/getAllStocks": {
+            "get": {
+                "description": "Get all stocks by user ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stock"
+                ],
+                "summary": "Get all stocks",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.StockList"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get all stocks",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/stock/getStockDetail": {
             "get": {
                 "description": "Get stock details by recipe ID and user ID",
@@ -626,6 +664,43 @@
                 },
                 "sell_by_date": {
                     "type": "string"
+                }
+            }
+        },
+        "domain.StockItem": {
+            "type": "object",
+            "properties": {
+                "lst": {
+                    "type": "integer"
+                },
+                "lst_status": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "integer"
+                },
+                "selling_price": {
+                    "type": "number"
+                },
+                "stock_id": {
+                    "type": "string"
+                },
+                "stock_name": {
+                    "type": "string"
+                },
+                "stock_url": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.StockList": {
+            "type": "object",
+            "properties": {
+                "stocks": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.StockItem"
+                    }
                 }
             }
         },
