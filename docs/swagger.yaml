@@ -229,11 +229,6 @@ definitions:
       sell_by_date:
         type: string
     type: object
-  domain.UserLanguage:
-    properties:
-      language:
-        type: string
-    type: object
   domain.StockItem:
     properties:
       lst:
@@ -257,6 +252,11 @@ definitions:
         items:
           $ref: '#/definitions/domain.StockItem'
         type: array
+    type: object
+  domain.UserLanguage:
+    properties:
+      language:
+        type: string
     type: object
   http.response:
     properties:

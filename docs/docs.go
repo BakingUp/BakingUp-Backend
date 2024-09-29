@@ -1060,14 +1060,6 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.UserLanguage": {
-            "type": "object",
-            "properties": {
-                "language": {
-                    "type" : "string"
-                }
-            }
-        }
         "domain.StockItem": {
             "type": "object",
             "properties": {
@@ -1102,6 +1094,14 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/domain.StockItem"
                     }
+                }
+            }
+        },
+        "domain.UserLanguage": {
+            "type": "object",
+            "properties": {
+                "language": {
+                    "type": "string"
                 }
             }
         },

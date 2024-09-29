@@ -1054,14 +1054,6 @@
                 }
             }
         },
-        "domain.UserLanguage": {
-            "type": "object",
-            "properties": {
-                "language": {
-                    "type": "string"
-                }
-            }
-        },
         "domain.StockItem": {
             "type": "object",
             "properties": {
@@ -1096,6 +1088,14 @@
                     "items": {
                         "$ref": "#/definitions/domain.StockItem"
                     }
+                }
+            }
+        },
+        "domain.UserLanguage": {
+            "type": "object",
+            "properties": {
+                "language": {
+                    "type": "string"
                 }
             }
         },
