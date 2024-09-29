@@ -57,6 +57,7 @@ func NewRouter(a *fiber.App, ingredientHandler IngredientHandler, recipeHandler 
 		setting := api.Group("/settings")
 		{
 			setting.Delete("/deleteAccount", settingsHandler.DeleteAccount)
+			setting.Get("/getLanguage", settingsHandler.GetLanguage)
 		}
 
 	}

@@ -37,3 +37,26 @@ func (sh *SettingsHandler) DeleteAccount(c *fiber.Ctx) error {
 	handleSuccessMessage(c, "Successfully delete an account")
 	return nil
 }
+
+// GetLanguage godoc
+// @Summary      Get the application language
+// @Description  Get the application language by user id
+// @Tags         settings
+// @Accept       json
+// @Produce      json
+// @Param        user_id  query  string  true  "User ID"
+// @Success      200  {object}  domain.UserLanguage  "Success"
+// @Failure      400  {object}  response     "Cannot get the language"
+// @Router       /settings/getLanguage [get]
+func (sh *SettingsHandler) GetLanguage(c *fiber.Ctx) error {
+	userID := c.Query("user_id")
+
+	userLanguage, err := sh.svc.GetLanguage(c, userID)
+	if err != nil {
+		handleError(c, 400, "Cannot get the language", err.Error())
+		return nil
+	}
+
+	handleSuccess(c, userLanguage)
+	return nil
+}

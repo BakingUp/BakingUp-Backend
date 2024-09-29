@@ -1,11 +1,17 @@
 package port
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
+	"github.com/BakingUp/BakingUp-Backend/prisma/db"
+	"github.com/gofiber/fiber/v2"
+)
 
 type SettingsRepository interface {
 	DeleteAccount(c *fiber.Ctx, userID string) error
+	GetLanguage(c *fiber.Ctx, userID string) (*db.UsersModel, error)
 }
 
 type SettingsService interface {
 	DeleteAccount(c *fiber.Ctx, userID string) error
+	GetLanguage(c *fiber.Ctx, userID string) (*domain.UserLanguage, error)
 }

@@ -319,6 +319,44 @@ const docTemplate = `{
                 }
             }
         },
+        "/settings/getLanguage": {
+            "get": {
+                "description": "Get the application language by user id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Get the application language",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.UserLanguage"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get the language",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/stock/deleteStock": {
             "delete": {
                 "description": "Delete a stock by recipe id",
@@ -669,6 +707,14 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "sell_by_date": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.UserLanguage": {
+            "type": "object",
+            "properties": {
+                "language": {
                     "type": "string"
                 }
             }

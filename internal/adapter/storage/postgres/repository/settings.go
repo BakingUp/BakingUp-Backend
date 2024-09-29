@@ -26,3 +26,15 @@ func (sr *SettingsRepository) DeleteAccount(c *fiber.Ctx, userID string) error {
 
 	return nil
 }
+
+func (sr *SettingsRepository) GetLanguage(c *fiber.Ctx, userID string) (*db.UsersModel, error) {
+	users, err := sr.db.Users.FindFirst(
+		db.Users.UserID.Equals(userID),
+	).Exec(c.Context())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}

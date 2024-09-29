@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
 	"github.com/BakingUp/BakingUp-Backend/internal/core/port"
 	"github.com/gofiber/fiber/v2"
 )
@@ -24,4 +25,20 @@ func (s *SettingsService) DeleteAccount(c *fiber.Ctx, userID string) error {
 	}
 
 	return nil
+}
+
+func (s *SettingsService) GetLanguage(c *fiber.Ctx, userID string) (*domain.UserLanguage, error) {
+	users, err := s.settingsRepo.GetLanguage(c, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	userLanguageResponse := &domain.UserLanguage{}
+	if users.Language == "EN" {
+		userLanguageResponse.Language = "English"
+	} else {
+		userLanguageResponse.Language = "Thai"
+	}
+
+	return userLanguageResponse, nil
 }

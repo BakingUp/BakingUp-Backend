@@ -154,6 +154,11 @@ definitions:
       sell_by_date:
         type: string
     type: object
+  domain.UserLanguage:
+    properties:
+      language:
+        type: string
+    type: object
   http.response:
     properties:
       data: {}
@@ -371,6 +376,31 @@ paths:
           schema:
             $ref: '#/definitions/http.response'
       summary: Delete an account
+      tags:
+      - settings
+  /settings/getLanguage:
+    get:
+      consumes:
+      - application/json
+      description: Get the application language by user id
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/domain.UserLanguage'
+        "400":
+          description: Cannot get the language
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get the application language
       tags:
       - settings
   /stock/deleteStock:
