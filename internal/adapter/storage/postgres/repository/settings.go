@@ -71,3 +71,26 @@ func (sr *SettingsRepository) GetFixCost(c *fiber.Ctx, userID string) (*db.Users
 
 	return user, nil
 }
+
+func (sr *SettingsRepository) ChangeFixCost(c *fiber.Ctx, userFixCost *domain.ChangeFixCostSetting) error {
+	_, err := sr.db.Users.FindUnique(
+		db.Users.UserID.Equals(userFixCost.UserID),
+	).Update(
+		db.Users.Rent.Set(userFixCost.Rent),
+		db.Users.Salaries.Set(userFixCost.Salaries),
+		db.Users.Insurance.Set(userFixCost.Insurance),
+		db.Users.Subscriptions.Set(userFixCost.Subscriptions),
+		db.Users.Advertising.Set(userFixCost.Advertising),
+		db.Users.Electricity.Set(userFixCost.Electricity),
+		db.Users.Water.Set(userFixCost.Water),
+		db.Users.Gas.Set(userFixCost.Gas),
+		db.Users.Other.Set(userFixCost.Other),
+		db.Users.Note.Set(userFixCost.Note),
+	).Exec(c.Context())
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

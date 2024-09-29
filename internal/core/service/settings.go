@@ -84,3 +84,11 @@ func (s *SettingsService) GetFixCost(c *fiber.Ctx, userID string) (*domain.FixCo
 
 	return userFixCost, nil
 }
+
+func (s *SettingsService) ChangeFixCost(c *fiber.Ctx, userFixCost *domain.ChangeFixCostSetting) error {
+	err := s.settingsRepo.ChangeFixCost(c, userFixCost)
+	if err != nil {
+		return err
+	}
+	return nil
+}

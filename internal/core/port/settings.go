@@ -11,6 +11,7 @@ type SettingsRepository interface {
 	GetLanguage(c *fiber.Ctx, userID string) (*db.UsersModel, error)
 	ChangeLanguage(c *fiber.Ctx, userLanguage *domain.ChangeUserLanguage) error
 	GetFixCost(c *fiber.Ctx, userID string) (*db.UsersModel, error)
+	ChangeFixCost(c *fiber.Ctx, userFixCost *domain.ChangeFixCostSetting) error
 }
 
 type SettingsService interface {
@@ -18,4 +19,5 @@ type SettingsService interface {
 	GetLanguage(c *fiber.Ctx, userID string) (*domain.UserLanguage, error)
 	ChangeLanguage(c *fiber.Ctx, userLanguage *domain.ChangeUserLanguage) error
 	GetFixCost(c *fiber.Ctx, userID string) (*domain.FixCostSetting, error)
+	ChangeFixCost(c *fiber.Ctx, userFixCost *domain.ChangeFixCostSetting) error
 }

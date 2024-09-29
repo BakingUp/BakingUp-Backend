@@ -281,6 +281,46 @@ const docTemplate = `{
                 }
             }
         },
+        "/settings/changeFixCost": {
+            "put": {
+                "description": "Change the fix cost by user id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Change the fix cost",
+                "parameters": [
+                    {
+                        "description": "Change Fix Cost",
+                        "name": "change_fix_cost",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.ChangeFixCostSetting"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully change the fix cost",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot change the fix cost",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/settings/changeLanguage": {
             "put": {
                 "description": "Change the application language by user id",
@@ -307,9 +347,9 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Success",
+                        "description": "Successfully change the language.",
                         "schema": {
-                            "$ref": "#/definitions/domain.UserLanguage"
+                            "$ref": "#/definitions/http.response"
                         }
                     },
                     "400": {
@@ -553,6 +593,44 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "domain.ChangeFixCostSetting": {
+            "type": "object",
+            "properties": {
+                "advertising": {
+                    "type": "number"
+                },
+                "electricity": {
+                    "type": "number"
+                },
+                "gas": {
+                    "type": "number"
+                },
+                "insurance": {
+                    "type": "number"
+                },
+                "note": {
+                    "type": "string"
+                },
+                "other": {
+                    "type": "number"
+                },
+                "rent": {
+                    "type": "number"
+                },
+                "salaries": {
+                    "type": "number"
+                },
+                "subscriptions": {
+                    "type": "number"
+                },
+                "user_id": {
+                    "type": "string"
+                },
+                "water": {
+                    "type": "number"
+                }
+            }
+        },
         "domain.ChangeUserLanguage": {
             "type": "object",
             "properties": {

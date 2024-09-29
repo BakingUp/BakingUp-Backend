@@ -69,7 +69,7 @@ func (sh *SettingsHandler) GetLanguage(c *fiber.Ctx) error {
 // @Accept       json
 // @Produce      json
 // @Param        change_language  body  domain.ChangeUserLanguage  true  "Change Language"
-// @Success      200  {object}  domain.UserLanguage  "Success"
+// @Success      200  {object}  response  "Successfully change the language."
 // @Failure      400  {object}  response     "Cannot change the language"
 // @Router       /settings/changeLanguage [put]
 func (sh *SettingsHandler) ChangeLanguage(c *fiber.Ctx) error {
@@ -87,11 +87,11 @@ func (sh *SettingsHandler) ChangeLanguage(c *fiber.Ctx) error {
 
 	err := sh.svc.ChangeLanguage(c, &userLanguage)
 	if err != nil {
-		handleError(c, 400, "Cannot chnage the language", err.Error())
+		handleError(c, 400, "Cannot change the language", err.Error())
 		return nil
 	}
 
-	handleSuccessMessage(c, "Successfully chnage the language.")
+	handleSuccessMessage(c, "Successfully change the language.")
 	return nil
 }
 
@@ -114,5 +114,38 @@ func (sh *SettingsHandler) GetFixCost(c *fiber.Ctx) error {
 	}
 
 	handleSuccess(c, userFixCost)
+	return nil
+}
+
+// ChangeFixCost godoc
+// @Summary      Change the fix cost
+// @Description  Change the fix cost by user id
+// @Tags         settings
+// @Accept       json
+// @Produce      json
+// @Param        change_fix_cost  body  domain.ChangeFixCostSetting  true  "Change Fix Cost"
+// @Success      200  {object}  response  "Successfully change the fix cost"
+// @Failure      400  {object}  response     "Cannot change the fix cost"
+// @Router       /settings/changeFixCost [put]
+func (sh *SettingsHandler) ChangeFixCost(c *fiber.Ctx) error {
+	var userFixCost domain.ChangeFixCostSetting
+
+	if err := c.BodyParser(&userFixCost); err != nil {
+		handleError(c, 400, "Failed to parse request body", err.Error())
+		return nil
+	}
+
+	if userFixCost.UserID == "" {
+		handleError(c, 400, "UserID is required", "")
+		return nil
+	}
+
+	err := sh.svc.ChangeFixCost(c, &userFixCost)
+	if err != nil {
+		handleError(c, 400, "Cannot change the fix cost", err.Error())
+		return nil
+	}
+
+	handleSuccessMessage(c, "Successfully change the fix cost")
 	return nil
 }
