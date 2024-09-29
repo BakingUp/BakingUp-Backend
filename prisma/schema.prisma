@@ -136,7 +136,7 @@ model Ingredient_detail {
   ingredient_stock_id  String        @id @unique
   ingredient           Ingredients   @relation(fields: [ingredient_id], references: [ingredient_id], onDelete: Cascade)
   ingredient_id        String
-  ingredient_stock_url String
+  ingredient_stock_url String?
   price                Float
   ingredient_quantity  Float
   expiration_date      DateTime
