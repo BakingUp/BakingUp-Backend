@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sort"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
@@ -66,10 +67,12 @@ func (s *IngredientService) GetAllIngredients(c *fiber.Ctx, userID string) (*dom
 			}
 		}
 
+		unit := string(item.Unit)
+		unit = strings.ToLower(unit)
 		ingredientItem := &domain.Ingredient{
 			IngredientId:     item.IngredientID,
 			IngredientName:   util.GetIngredientName(&item, language),
-			Quantity:         fmt.Sprintf("%d %s", stockQuantity, item.Unit),
+			Quantity:         fmt.Sprintf("%d %s", stockQuantity, unit),
 			Stock:            stockAmount,
 			IngredientURL:    IImage,
 			ExpirationStatus: util.CalculateExpirationStatus(stockExpirationDate, expirationDate.BlackExpirationDate, expirationDate.RedExpirationDate, expirationDate.YellowExpirationDate),

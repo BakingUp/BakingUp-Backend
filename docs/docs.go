@@ -91,6 +91,44 @@ const docTemplate = `{
                 }
             }
         },
+        "/ingredient/getAllIngredients": {
+            "get": {
+                "description": "Get all ingredients by user ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ingredient"
+                ],
+                "summary": "Get all ingredients",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.IngredientList"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get all ingredients",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/ingredient/getIngredientDetail": {
             "get": {
                 "description": "Get ingredient details by ingredient ID",
@@ -318,9 +356,72 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/user/editUserInfo": {
+            "put": {
+                "description": "Edit user information by using user information request",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Edit user information",
+                "parameters": [
+                    {
+                        "description": "Edit User Info",
+                        "name": "edit_user_info",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.ManageUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully edit the user information.",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot edit the user information",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "domain.Ingredient": {
+            "type": "object",
+            "properties": {
+                "expiration_status": {
+                    "type": "string"
+                },
+                "ingredient_id": {
+                    "type": "string"
+                },
+                "ingredient_name": {
+                    "type": "string"
+                },
+                "ingredient_url": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "string"
+                },
+                "stock": {
+                    "type": "integer"
+                }
+            }
+        },
         "domain.IngredientDetail": {
             "type": "object",
             "properties": {
@@ -346,6 +447,17 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/domain.Stock"
+                    }
+                }
+            }
+        },
+        "domain.IngredientList": {
+            "type": "object",
+            "properties": {
+                "ingredients": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.Ingredient"
                     }
                 }
             }
@@ -396,6 +508,26 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/domain.IngredientNote"
                     }
+                }
+            }
+        },
+        "domain.ManageUserRequest": {
+            "type": "object",
+            "properties": {
+                "first_name": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "store_name": {
+                    "type": "string"
+                },
+                "tel": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
                 }
             }
         },

@@ -1,5 +1,20 @@
 basePath: /api
 definitions:
+  domain.Ingredient:
+    properties:
+      expiration_status:
+        type: string
+      ingredient_id:
+        type: string
+      ingredient_name:
+        type: string
+      ingredient_url:
+        type: string
+      quantity:
+        type: string
+      stock:
+        type: integer
+    type: object
   domain.IngredientDetail:
     properties:
       ingredient_less_than:
@@ -17,6 +32,13 @@ definitions:
       stocks:
         items:
           $ref: '#/definitions/domain.Stock'
+        type: array
+    type: object
+  domain.IngredientList:
+    properties:
+      ingredients:
+        items:
+          $ref: '#/definitions/domain.Ingredient'
         type: array
     type: object
   domain.IngredientNote:
@@ -50,6 +72,19 @@ definitions:
         items:
           $ref: '#/definitions/domain.IngredientNote'
         type: array
+    type: object
+  domain.ManageUserRequest:
+    properties:
+      first_name:
+        type: string
+      last_name:
+        type: string
+      store_name:
+        type: string
+      tel:
+        type: string
+      user_id:
+        type: string
     type: object
   domain.RecipeDetail:
     properties:
@@ -186,6 +221,31 @@ paths:
           schema:
             $ref: '#/definitions/http.response'
       summary: Delete ingredient batch note
+      tags:
+      - ingredient
+  /ingredient/getAllIngredients:
+    get:
+      consumes:
+      - application/json
+      description: Get all ingredients by user ID
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/domain.IngredientList'
+        "400":
+          description: Cannot get all ingredients
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get all ingredients
       tags:
       - ingredient
   /ingredient/getIngredientDetail:
@@ -338,4 +398,30 @@ paths:
       summary: Get stock details
       tags:
       - stock
+  /user/editUserInfo:
+    put:
+      consumes:
+      - application/json
+      description: Edit user information by using user information request
+      parameters:
+      - description: Edit User Info
+        in: body
+        name: edit_user_info
+        required: true
+        schema:
+          $ref: '#/definitions/domain.ManageUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully edit the user information.
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot edit the user information
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Edit user information
+      tags:
+      - user
 swagger: "2.0"
