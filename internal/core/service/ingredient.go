@@ -110,10 +110,11 @@ func (s *IngredientService) GetIngredientDetail(c *fiber.Ctx, ingredientID strin
 	totalQuantity := 0.0
 	var stocks []domain.Stock
 	for _, detail := range ingredient.IngredientDetail() {
+		ingredientStockURL, _ := detail.IngredientStockURL()
 		totalQuantity += detail.IngredientQuantity
 		stocks = append(stocks, domain.Stock{
 			StockID:          detail.IngredientStockID,
-			StockURL:         detail.IngredientStockURL,
+			StockURL:         ingredientStockURL,
 			Price:            util.CombinePrice(detail.Price, ingredient.Unit),
 			Quantity:         util.CombineIngredientQuantity(detail.IngredientQuantity, ingredient.Unit),
 			ExpirationDate:   detail.ExpirationDate.Format("02/01/2006"),
@@ -165,7 +166,7 @@ func (s *IngredientService) GetIngredientStockDetail(c *fiber.Ctx, ingredientSto
 			NoteCreatedAt:    note.NoteCreatedAt.Format("02/01/2006"),
 		})
 	}
-
+	ingredientStockURL, _ := ingredient.IngredientStockURL()
 	stockDetail := &domain.IngredientStockDetail{
 		IngredientEngName:  ingredient.Ingredient().IngredientEngName,
 		IngredientThaiName: ingredient.Ingredient().IngredientThaiName,
@@ -173,7 +174,7 @@ func (s *IngredientService) GetIngredientStockDetail(c *fiber.Ctx, ingredientSto
 		IngredientPrice:    strconv.FormatFloat(ingredient.Price, 'f', -1, 64),
 		IngredientBrand:    ingredient.IngredientBrand,
 		IngredientSupplier: ingredient.IngredientSupplier,
-		IngredientStockURL: ingredient.IngredientStockURL,
+		IngredientStockURL: ingredientStockURL,
 		DayBeforeExpire:    ingredient.ExpirationDate.Format("02/01/2006"),
 		Notes:              notes,
 	}
