@@ -161,6 +161,26 @@ definitions:
       user_id:
         type: string
     type: object
+  domain.NotificationItem:
+    properties:
+      created_at:
+        type: string
+      is_read:
+        type: boolean
+      message:
+        type: string
+      noti_type:
+        type: string
+      title:
+        type: string
+    type: object
+  domain.NotificationList:
+    properties:
+      notis:
+        items:
+          $ref: '#/definitions/domain.NotificationItem'
+        type: array
+    type: object
   domain.RecipeDetail:
     properties:
       instruction_steps:
@@ -402,6 +422,31 @@ paths:
       summary: Get ingredient stock details
       tags:
       - ingredient
+  /noti/getAllNotifications:
+    get:
+      consumes:
+      - application/json
+      description: Get all notifications by user ID
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/domain.NotificationList'
+        "400":
+          description: Cannot get all notifications of the user.
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get all notifications
+      tags:
+      - notification
   /recipe/deleteRecipe:
     delete:
       consumes:

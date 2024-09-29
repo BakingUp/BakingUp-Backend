@@ -205,6 +205,44 @@ const docTemplate = `{
                 }
             }
         },
+        "/noti/getAllNotifications": {
+            "get": {
+                "description": "Get all notifications by user ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notification"
+                ],
+                "summary": "Get all notifications",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.NotificationList"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get all notifications of the user.",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/recipe/deleteRecipe": {
             "delete": {
                 "description": "Delete a recipe by using recipe id",
@@ -953,6 +991,37 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "type": "string"
+                }
+            }
+        },
+        "domain.NotificationItem": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "is_read": {
+                    "type": "boolean"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "noti_type": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.NotificationList": {
+            "type": "object",
+            "properties": {
+                "notis": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.NotificationItem"
+                    }
                 }
             }
         },
