@@ -94,3 +94,15 @@ func (sr *SettingsRepository) ChangeFixCost(c *fiber.Ctx, userFixCost *domain.Ch
 
 	return nil
 }
+
+func (sr *SettingsRepository) GetColorExpired(c *fiber.Ctx, userID string) (*db.UsersModel, error) {
+	user, err := sr.db.Users.FindFirst(
+		db.Users.UserID.Equals(userID),
+	).Exec(c.Context())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}

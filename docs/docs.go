@@ -399,6 +399,44 @@ const docTemplate = `{
                 }
             }
         },
+        "/settings/getColorExpired": {
+            "get": {
+                "description": "Get the color of expired icon by user id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Get the color of expired icon",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.ExpirationDateSetting"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get the color of expiration icon",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/settings/getFixCost": {
             "get": {
                 "description": "Get the fix cost by user id",
@@ -639,6 +677,20 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "type": "string"
+                }
+            }
+        },
+        "domain.ExpirationDateSetting": {
+            "type": "object",
+            "properties": {
+                "black_expiration_date": {
+                    "type": "integer"
+                },
+                "red_expiration_date": {
+                    "type": "integer"
+                },
+                "yellow_expiration_date": {
+                    "type": "integer"
                 }
             }
         },

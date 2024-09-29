@@ -12,6 +12,7 @@ type SettingsRepository interface {
 	ChangeLanguage(c *fiber.Ctx, userLanguage *domain.ChangeUserLanguage) error
 	GetFixCost(c *fiber.Ctx, userID string) (*db.UsersModel, error)
 	ChangeFixCost(c *fiber.Ctx, userFixCost *domain.ChangeFixCostSetting) error
+	GetColorExpired(c *fiber.Ctx, userID string) (*db.UsersModel, error)
 }
 
 type SettingsService interface {
@@ -20,4 +21,5 @@ type SettingsService interface {
 	ChangeLanguage(c *fiber.Ctx, userLanguage *domain.ChangeUserLanguage) error
 	GetFixCost(c *fiber.Ctx, userID string) (*domain.FixCostSetting, error)
 	ChangeFixCost(c *fiber.Ctx, userFixCost *domain.ChangeFixCostSetting) error
+	GetColorExpired(c *fiber.Ctx, userID string) (*domain.ExpirationDateSetting, error)
 }

@@ -3,6 +3,7 @@ package service
 import (
 	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
 	"github.com/BakingUp/BakingUp-Backend/internal/core/port"
+	"github.com/BakingUp/BakingUp-Backend/internal/core/util"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -91,4 +92,19 @@ func (s *SettingsService) ChangeFixCost(c *fiber.Ctx, userFixCost *domain.Change
 		return err
 	}
 	return nil
+}
+
+func (s *SettingsService) GetColorExpired(c *fiber.Ctx, userID string) (*domain.ExpirationDateSetting, error) {
+	user, err := s.settingsRepo.GetColorExpired(c, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	userExpirationDate := &domain.ExpirationDateSetting{
+		BlackExpirationDate:  util.DaysSince2000(user.BlackExpirationDate),
+		RedExpirationDate:    util.DaysSince2000(user.RedExpirationDate),
+		YellowExpirationDate: util.DaysSince2000(user.YellowExpirationDate),
+	}
+
+	return userExpirationDate, nil
 }

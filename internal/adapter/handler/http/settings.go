@@ -149,3 +149,26 @@ func (sh *SettingsHandler) ChangeFixCost(c *fiber.Ctx) error {
 	handleSuccessMessage(c, "Successfully change the fix cost")
 	return nil
 }
+
+// GetColorExpired godoc
+// @Summary      Get the color of expired icon
+// @Description  Get the color of expired icon by user id
+// @Tags         settings
+// @Accept       json
+// @Produce      json
+// @Param        user_id  query  string  true  "User ID"
+// @Success      200  {object}  domain.ExpirationDateSetting  "Success"
+// @Failure      400  {object}  response     "Cannot get the color of expiration icon"
+// @Router       /settings/getColorExpired [get]
+func (sh *SettingsHandler) GetColorExpired(c *fiber.Ctx) error {
+	userID := c.Query("user_id")
+
+	ColorExpiredIcons, err := sh.svc.GetColorExpired(c, userID)
+	if err != nil {
+		handleError(c, 400, "Cannot get the color of expiration icon", err.Error())
+		return nil
+	}
+
+	handleSuccess(c, ColorExpiredIcons)
+	return nil
+}

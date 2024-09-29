@@ -35,3 +35,9 @@ type ChangeFixCostSetting struct {
 	Other         float64 `json:"other"`
 	Note          string  `json:"note"`
 }
+
+type ExpirationDateSetting struct {
+	YellowExpirationDate int `json:"yellow_expiration_date"`
+	RedExpirationDate    int `json:"red_expiration_date"`
+	BlackExpirationDate  int `json:"black_expiration_date"`
+}

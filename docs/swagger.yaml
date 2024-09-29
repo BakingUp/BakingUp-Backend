@@ -32,6 +32,15 @@ definitions:
       user_id:
         type: string
     type: object
+  domain.ExpirationDateSetting:
+    properties:
+      black_expiration_date:
+        type: integer
+      red_expiration_date:
+        type: integer
+      yellow_expiration_date:
+        type: integer
+    type: object
   domain.FixCostSetting:
     properties:
       advertising:
@@ -483,6 +492,31 @@ paths:
           schema:
             $ref: '#/definitions/http.response'
       summary: Delete an account
+      tags:
+      - settings
+  /settings/getColorExpired:
+    get:
+      consumes:
+      - application/json
+      description: Get the color of expired icon by user id
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/domain.ExpirationDateSetting'
+        "400":
+          description: Cannot get the color of expiration icon
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get the color of expired icon
       tags:
       - settings
   /settings/getFixCost:
