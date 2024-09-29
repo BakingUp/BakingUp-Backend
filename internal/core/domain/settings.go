@@ -41,3 +41,10 @@ type ExpirationDateSetting struct {
 	RedExpirationDate    int `json:"red_expiration_date"`
 	BlackExpirationDate  int `json:"black_expiration_date"`
 }
+
+type ChangeExpirationDateSetting struct {
+	UserID               string `json:"user_id"`
+	YellowExpirationDate int    `json:"yellow_expiration_date"`
+	RedExpirationDate    int    `json:"red_expiration_date"`
+	BlackExpirationDate  int    `json:"black_expiration_date"`
+}

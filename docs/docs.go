@@ -281,6 +281,46 @@ const docTemplate = `{
                 }
             }
         },
+        "/settings/changeColorExpired": {
+            "put": {
+                "description": "Change the color of expired icon by user id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Change the color of expired icon",
+                "parameters": [
+                    {
+                        "description": "Change Color Expired Icon",
+                        "name": "change_color_expired_icon",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.ChangeExpirationDateSetting"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully change the color of expiration icon",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot change the color of expiration icon",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/settings/changeFixCost": {
             "put": {
                 "description": "Change the fix cost by user id",
@@ -631,6 +671,23 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "domain.ChangeExpirationDateSetting": {
+            "type": "object",
+            "properties": {
+                "black_expiration_date": {
+                    "type": "integer"
+                },
+                "red_expiration_date": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "string"
+                },
+                "yellow_expiration_date": {
+                    "type": "integer"
+                }
+            }
+        },
         "domain.ChangeFixCostSetting": {
             "type": "object",
             "properties": {

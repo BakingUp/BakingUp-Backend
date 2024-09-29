@@ -108,3 +108,12 @@ func (s *SettingsService) GetColorExpired(c *fiber.Ctx, userID string) (*domain.
 
 	return userExpirationDate, nil
 }
+
+func (s *SettingsService) ChangeColorExpired(c *fiber.Ctx, userColorExpired *domain.ChangeExpirationDateSetting) error {
+	err := s.settingsRepo.ChangeColorExpired(c, userColorExpired)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

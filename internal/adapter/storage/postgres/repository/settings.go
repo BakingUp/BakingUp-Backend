@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"time"
+
 	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
 	"github.com/BakingUp/BakingUp-Backend/prisma/db"
 	"github.com/gofiber/fiber/v2"
@@ -105,4 +107,24 @@ func (sr *SettingsRepository) GetColorExpired(c *fiber.Ctx, userID string) (*db.
 	}
 
 	return user, nil
+}
+
+func (sr *SettingsRepository) ChangeColorExpired(c *fiber.Ctx, userColorExpired *domain.ChangeExpirationDateSetting) error {
+	blackExpirationDate := time.Date(2000, 1, userColorExpired.BlackExpirationDate+1, 0, 0, 0, 0, time.UTC)
+	redExpirationDate := time.Date(2000, 1, userColorExpired.RedExpirationDate+1, 0, 0, 0, 0, time.UTC)
+	yellowExpirationDate := time.Date(2000, 1, userColorExpired.YellowExpirationDate+1, 0, 0, 0, 0, time.UTC)
+
+	_, err := sr.db.Users.FindUnique(
+		db.Users.UserID.Equals(userColorExpired.UserID),
+	).Update(
+		db.Users.BlackExpirationDate.Set(blackExpirationDate),
+		db.Users.RedExpirationDate.Set(redExpirationDate),
+		db.Users.YellowExpirationDate.Set(yellowExpirationDate),
+	).Exec(c.Context())
+
+	if err != nil {
+		return nil
+	}
+
+	return nil
 }

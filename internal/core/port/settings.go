@@ -13,6 +13,7 @@ type SettingsRepository interface {
 	GetFixCost(c *fiber.Ctx, userID string) (*db.UsersModel, error)
 	ChangeFixCost(c *fiber.Ctx, userFixCost *domain.ChangeFixCostSetting) error
 	GetColorExpired(c *fiber.Ctx, userID string) (*db.UsersModel, error)
+	ChangeColorExpired(c *fiber.Ctx, userColorExpired *domain.ChangeExpirationDateSetting) error
 }
 
 type SettingsService interface {
@@ -22,4 +23,5 @@ type SettingsService interface {
 	GetFixCost(c *fiber.Ctx, userID string) (*domain.FixCostSetting, error)
 	ChangeFixCost(c *fiber.Ctx, userFixCost *domain.ChangeFixCostSetting) error
 	GetColorExpired(c *fiber.Ctx, userID string) (*domain.ExpirationDateSetting, error)
+	ChangeColorExpired(c *fiber.Ctx, userColorExpired *domain.ChangeExpirationDateSetting) error
 }

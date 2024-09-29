@@ -62,6 +62,7 @@ func NewRouter(a *fiber.App, ingredientHandler IngredientHandler, recipeHandler 
 			setting.Get("/getFixCost", settingsHandler.GetFixCost)
 			setting.Put("/changeFixCost", settingsHandler.ChangeFixCost)
 			setting.Get("/getColorExpired", settingsHandler.GetColorExpired)
+			setting.Put("/changeColorExpired", settingsHandler.ChangeColorExpired)
 
 		}
 

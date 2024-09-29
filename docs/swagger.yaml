@@ -1,5 +1,16 @@
 basePath: /api
 definitions:
+  domain.ChangeExpirationDateSetting:
+    properties:
+      black_expiration_date:
+        type: integer
+      red_expiration_date:
+        type: integer
+      user_id:
+        type: string
+      yellow_expiration_date:
+        type: integer
+    type: object
   domain.ChangeFixCostSetting:
     properties:
       advertising:
@@ -417,6 +428,32 @@ paths:
       summary: Get recipe details
       tags:
       - recipe
+  /settings/changeColorExpired:
+    put:
+      consumes:
+      - application/json
+      description: Change the color of expired icon by user id
+      parameters:
+      - description: Change Color Expired Icon
+        in: body
+        name: change_color_expired_icon
+        required: true
+        schema:
+          $ref: '#/definitions/domain.ChangeExpirationDateSetting'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully change the color of expiration icon
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot change the color of expiration icon
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Change the color of expired icon
+      tags:
+      - settings
   /settings/changeFixCost:
     put:
       consumes:

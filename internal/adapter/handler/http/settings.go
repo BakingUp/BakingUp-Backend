@@ -172,3 +172,36 @@ func (sh *SettingsHandler) GetColorExpired(c *fiber.Ctx) error {
 	handleSuccess(c, ColorExpiredIcons)
 	return nil
 }
+
+// ChangeColorExpired godoc
+// @Summary      Change the color of expired icon
+// @Description  Change the color of expired icon by user id
+// @Tags         settings
+// @Accept       json
+// @Produce      json
+// @Param        change_color_expired_icon  body  domain.ChangeExpirationDateSetting  true  "Change Color Expired Icon"
+// @Success      200  {object}  response  "Successfully change the color of expiration icon"
+// @Failure      400  {object}  response     "Cannot change the color of expiration icon"
+// @Router       /settings/changeColorExpired [put]
+func (sh *SettingsHandler) ChangeColorExpired(c *fiber.Ctx) error {
+	var userColorExpired domain.ChangeExpirationDateSetting
+
+	if err := c.BodyParser(&userColorExpired); err != nil {
+		handleError(c, 400, "Failed to parse request body", err.Error())
+		return nil
+	}
+
+	if userColorExpired.UserID == "" {
+		handleError(c, 400, "UserID is required", "")
+		return nil
+	}
+
+	err := sh.svc.ChangeColorExpired(c, &userColorExpired)
+	if err != nil {
+		handleError(c, 400, "Cannot change the color of expiration icon", err.Error())
+		return nil
+	}
+
+	handleSuccessMessage(c, "Successfully change the color of expiration icon")
+	return nil
+}
