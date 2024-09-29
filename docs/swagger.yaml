@@ -119,6 +119,30 @@ definitions:
       sell_by_date:
         type: string
     type: object
+  domain.StockItem:
+    properties:
+      lst:
+        type: integer
+      lst_status:
+        type: string
+      quantity:
+        type: integer
+      selling_price:
+        type: number
+      stock_id:
+        type: string
+      stock_name:
+        type: string
+      stock_url:
+        type: string
+    type: object
+  domain.StockList:
+    properties:
+      stocks:
+        items:
+          $ref: '#/definitions/domain.StockItem'
+        type: array
+    type: object
   http.response:
     properties:
       data: {}
@@ -311,6 +335,31 @@ paths:
           schema:
             $ref: '#/definitions/http.response'
       summary: Delete a stock
+      tags:
+      - stock
+  /stock/getAllStocks:
+    get:
+      consumes:
+      - application/json
+      description: Get all stocks by user ID
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/domain.StockList'
+        "400":
+          description: Cannot get all stocks
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get all stocks
       tags:
       - stock
   /stock/getStockDetail:

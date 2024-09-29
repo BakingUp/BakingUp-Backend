@@ -15,6 +15,16 @@ func NewStockHandler(svc port.StockService) *StockHandler {
 	}
 }
 
+// GetAllStocks godoc
+// @Summary      Get all stocks
+// @Description  Get all stocks by user ID
+// @Tags         stock
+// @Accept       json
+// @Produce      json
+// @Param        user_id  query  string  true  "User ID"
+// @Success      200  {object}  domain.StockList  "Success"
+// @Failure      400  {object}  response     "Cannot get all stocks"
+// @Router       /stock/getAllStocks [get]
 func (sh *StockHandler) GetAllStocks(c *fiber.Ctx) error {
 	userID := c.Query("user_id")
 
