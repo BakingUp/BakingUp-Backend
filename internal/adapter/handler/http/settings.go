@@ -1,6 +1,7 @@
 package http
 
 import (
+	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
 	"github.com/BakingUp/BakingUp-Backend/internal/core/port"
 	"github.com/gofiber/fiber/v2"
 )
@@ -58,5 +59,38 @@ func (sh *SettingsHandler) GetLanguage(c *fiber.Ctx) error {
 	}
 
 	handleSuccess(c, userLanguage)
+	return nil
+}
+
+// ChangeLanguage godoc
+// @Summary      Change the application language
+// @Description  Change the application language by user id
+// @Tags         settings
+// @Accept       json
+// @Produce      json
+// @Param        change_language  body  domain.ChangeUserLanguage  true  "Change Language"
+// @Success      200  {object}  domain.UserLanguage  "Success"
+// @Failure      400  {object}  response     "Cannot chnage the language"
+// @Router       /settings/changeLanguage [put]
+func (sh *SettingsHandler) ChangeLanguage(c *fiber.Ctx) error {
+	var userLanguage domain.ChangeUserLanguage
+
+	if err := c.BodyParser(&userLanguage); err != nil {
+		handleError(c, 400, "Failed to parse request body", err.Error())
+		return nil
+	}
+
+	if userLanguage.UserID == "" {
+		handleError(c, 400, "UserID is required", "")
+		return nil
+	}
+
+	err := sh.svc.ChangeLanguage(c, &userLanguage)
+	if err != nil {
+		handleError(c, 400, "Cannot chnage the language", err.Error())
+		return nil
+	}
+
+	handleSuccessMessage(c, "Successfully chnage the language.")
 	return nil
 }

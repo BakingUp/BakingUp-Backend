@@ -1,5 +1,12 @@
 basePath: /api
 definitions:
+  domain.ChangeUserLanguage:
+    properties:
+      language:
+        type: string
+      user_id:
+        type: string
+    type: object
   domain.Ingredient:
     properties:
       expiration_status:
@@ -353,6 +360,32 @@ paths:
       summary: Get recipe details
       tags:
       - recipe
+  /settings/changeLanguage:
+    put:
+      consumes:
+      - application/json
+      description: Change the application language by user id
+      parameters:
+      - description: Change Language
+        in: body
+        name: change_language
+        required: true
+        schema:
+          $ref: '#/definitions/domain.ChangeUserLanguage'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/domain.UserLanguage'
+        "400":
+          description: Cannot chnage the language
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Change the application language
+      tags:
+      - settings
   /settings/deleteAccount:
     delete:
       consumes:

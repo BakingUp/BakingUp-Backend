@@ -275,6 +275,46 @@
                 }
             }
         },
+        "/settings/changeLanguage": {
+            "put": {
+                "description": "Change the application language by user id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Change the application language",
+                "parameters": [
+                    {
+                        "description": "Change Language",
+                        "name": "change_language",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.ChangeUserLanguage"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.UserLanguage"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot chnage the language",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/settings/deleteAccount": {
             "delete": {
                 "description": "Delete an account by user id",
@@ -469,6 +509,17 @@
         }
     },
     "definitions": {
+        "domain.ChangeUserLanguage": {
+            "type": "object",
+            "properties": {
+                "language": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.Ingredient": {
             "type": "object",
             "properties": {

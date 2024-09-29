@@ -42,3 +42,12 @@ func (s *SettingsService) GetLanguage(c *fiber.Ctx, userID string) (*domain.User
 
 	return userLanguageResponse, nil
 }
+
+func (s *SettingsService) ChangeLanguage(c *fiber.Ctx, userLanguage *domain.ChangeUserLanguage) error {
+	err := s.settingsRepo.ChangeLanguage(c, userLanguage)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
