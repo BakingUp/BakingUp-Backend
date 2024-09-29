@@ -55,7 +55,11 @@ func main() {
 	orderService := service.NewOrderService(orderRepo, userService)
 	orderHandler := http.NewOrderHandler(orderService)
 
-	_, err = http.NewRouter(app, *ingredientHandler, *recipeHandler, *authHandler, *stockHandler, *userHandler, *orderHandler)
+	settingsRepo := repository.NewSettingsRepository(client)
+	settingsService := service.NewSettingsService(settingsRepo, userService)
+	settingsHandler := http.NewSetingsHandler(settingsService)
+
+	_, err = http.NewRouter(app, *ingredientHandler, *recipeHandler, *authHandler, *stockHandler, *userHandler, *orderHandler, *settingsHandler)
 
 	port := config.HTTP.Port
 	if port == "" {

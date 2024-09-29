@@ -348,6 +348,31 @@ paths:
       summary: Get recipe details
       tags:
       - recipe
+  /settings/deleteAccount:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an account by user id
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully delete an account
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot delete an account
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Delete an account
+      tags:
+      - settings
   /stock/deleteStock:
     delete:
       consumes:
