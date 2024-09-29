@@ -51,6 +51,19 @@ definitions:
           $ref: '#/definitions/domain.IngredientNote'
         type: array
     type: object
+  domain.ManageUserRequest:
+    properties:
+      first_name:
+        type: string
+      last_name:
+        type: string
+      store_name:
+        type: string
+      tel:
+        type: string
+      user_id:
+        type: string
+    type: object
   domain.RecipeDetail:
     properties:
       instruction_steps:
@@ -338,4 +351,30 @@ paths:
       summary: Get stock details
       tags:
       - stock
+  /user/editUserInfo:
+    put:
+      consumes:
+      - application/json
+      description: Edit user information by using user information request
+      parameters:
+      - description: Edit User Info
+        in: body
+        name: edit_user_info
+        required: true
+        schema:
+          $ref: '#/definitions/domain.ManageUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully edit the user information.
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot edit the user information
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Edit user information
+      tags:
+      - user
 swagger: "2.0"

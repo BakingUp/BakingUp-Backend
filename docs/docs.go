@@ -318,6 +318,46 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/user/editUserInfo": {
+            "put": {
+                "description": "Edit user information by using user information request",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Edit user information",
+                "parameters": [
+                    {
+                        "description": "Edit User Info",
+                        "name": "edit_user_info",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.ManageUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully edit the user information.",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot edit the user information",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -396,6 +436,26 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/domain.IngredientNote"
                     }
+                }
+            }
+        },
+        "domain.ManageUserRequest": {
+            "type": "object",
+            "properties": {
+                "first_name": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "store_name": {
+                    "type": "string"
+                },
+                "tel": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
                 }
             }
         },

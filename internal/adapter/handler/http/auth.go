@@ -17,7 +17,7 @@ func NewAuthHandler(userService *service.UserService) *AuthHandler {
 }
 
 func (h *AuthHandler) Register(c *fiber.Ctx) error {
-	var req domain.RegisterUserRequest
+	var req domain.ManageUserRequest
 
 	if err := c.BodyParser(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(domain.UserResponse{
