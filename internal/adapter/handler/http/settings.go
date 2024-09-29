@@ -70,7 +70,7 @@ func (sh *SettingsHandler) GetLanguage(c *fiber.Ctx) error {
 // @Produce      json
 // @Param        change_language  body  domain.ChangeUserLanguage  true  "Change Language"
 // @Success      200  {object}  domain.UserLanguage  "Success"
-// @Failure      400  {object}  response     "Cannot chnage the language"
+// @Failure      400  {object}  response     "Cannot change the language"
 // @Router       /settings/changeLanguage [put]
 func (sh *SettingsHandler) ChangeLanguage(c *fiber.Ctx) error {
 	var userLanguage domain.ChangeUserLanguage
@@ -92,5 +92,27 @@ func (sh *SettingsHandler) ChangeLanguage(c *fiber.Ctx) error {
 	}
 
 	handleSuccessMessage(c, "Successfully chnage the language.")
+	return nil
+}
+
+// GetFixCost godoc
+// @Summary      Get the fix cost
+// @Description  Get the fix cost by user id
+// @Tags         settings
+// @Accept       json
+// @Produce      json
+// @Param        user_id  query  string  true  "User ID"
+// @Success      200  {object}  domain.FixCostSetting  "Success"
+// @Failure      400  {object}  response     "Cannot get the fix cost"
+// @Router       /settings/getFixCost [get]
+func (sh *SettingsHandler) GetFixCost(c *fiber.Ctx) error {
+	userID := c.Query("user_id")
+
+	userFixCost, err := sh.svc.GetFixCost(c, userID)
+	if err != nil {
+		handleError(c, 400, "Cannot get the fix cost", err.Error())
+	}
+
+	handleSuccess(c, userFixCost)
 	return nil
 }

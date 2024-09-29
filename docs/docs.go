@@ -313,7 +313,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Cannot chnage the language",
+                        "description": "Cannot change the language",
                         "schema": {
                             "$ref": "#/definitions/http.response"
                         }
@@ -352,6 +352,44 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Cannot delete an account",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/settings/getFixCost": {
+            "get": {
+                "description": "Get the fix cost by user id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Get the fix cost",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.FixCostSetting"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get the fix cost",
                         "schema": {
                             "$ref": "#/definitions/http.response"
                         }
@@ -523,6 +561,41 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "type": "string"
+                }
+            }
+        },
+        "domain.FixCostSetting": {
+            "type": "object",
+            "properties": {
+                "advertising": {
+                    "type": "number"
+                },
+                "electricity": {
+                    "type": "number"
+                },
+                "gas": {
+                    "type": "number"
+                },
+                "insurance": {
+                    "type": "number"
+                },
+                "note": {
+                    "type": "string"
+                },
+                "other": {
+                    "type": "number"
+                },
+                "rent": {
+                    "type": "number"
+                },
+                "salaries": {
+                    "type": "number"
+                },
+                "subscriptions": {
+                    "type": "number"
+                },
+                "water": {
+                    "type": "number"
                 }
             }
         },

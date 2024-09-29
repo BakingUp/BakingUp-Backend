@@ -7,6 +7,29 @@ definitions:
       user_id:
         type: string
     type: object
+  domain.FixCostSetting:
+    properties:
+      advertising:
+        type: number
+      electricity:
+        type: number
+      gas:
+        type: number
+      insurance:
+        type: number
+      note:
+        type: string
+      other:
+        type: number
+      rent:
+        type: number
+      salaries:
+        type: number
+      subscriptions:
+        type: number
+      water:
+        type: number
+    type: object
   domain.Ingredient:
     properties:
       expiration_status:
@@ -380,7 +403,7 @@ paths:
           schema:
             $ref: '#/definitions/domain.UserLanguage'
         "400":
-          description: Cannot chnage the language
+          description: Cannot change the language
           schema:
             $ref: '#/definitions/http.response'
       summary: Change the application language
@@ -409,6 +432,31 @@ paths:
           schema:
             $ref: '#/definitions/http.response'
       summary: Delete an account
+      tags:
+      - settings
+  /settings/getFixCost:
+    get:
+      consumes:
+      - application/json
+      description: Get the fix cost by user id
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/domain.FixCostSetting'
+        "400":
+          description: Cannot get the fix cost
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get the fix cost
       tags:
       - settings
   /settings/getLanguage:

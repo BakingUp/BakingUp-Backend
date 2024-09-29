@@ -10,10 +10,12 @@ type SettingsRepository interface {
 	DeleteAccount(c *fiber.Ctx, userID string) error
 	GetLanguage(c *fiber.Ctx, userID string) (*db.UsersModel, error)
 	ChangeLanguage(c *fiber.Ctx, userLanguage *domain.ChangeUserLanguage) error
+	GetFixCost(c *fiber.Ctx, userID string) (*db.UsersModel, error)
 }
 
 type SettingsService interface {
 	DeleteAccount(c *fiber.Ctx, userID string) error
 	GetLanguage(c *fiber.Ctx, userID string) (*domain.UserLanguage, error)
 	ChangeLanguage(c *fiber.Ctx, userLanguage *domain.ChangeUserLanguage) error
+	GetFixCost(c *fiber.Ctx, userID string) (*domain.FixCostSetting, error)
 }
