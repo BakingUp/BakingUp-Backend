@@ -57,3 +57,14 @@ func (nr *NotificationRepository) CreateNotification(c *fiber.Ctx, notificationI
 
 	return nil
 }
+
+func (nr *NotificationRepository) DeleteNotification(c *fiber.Ctx, notiID string) error {
+	_, err := nr.db.Notifications.FindUnique(
+		db.Notifications.NotiID.Equals(notiID),
+	).Delete().Exec(c.Context())
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

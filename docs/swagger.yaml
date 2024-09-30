@@ -467,6 +467,31 @@ paths:
       summary: Create a new notification
       tags:
       - notification
+  /noti/deleteNotification:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a notification by notification id
+      parameters:
+      - description: Noti ID
+        in: query
+        name: noti_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully delete a notification.
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot delete a notification.
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Delete a notification
+      tags:
+      - notification
   /noti/getAllNotifications:
     get:
       consumes:

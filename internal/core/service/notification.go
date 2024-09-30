@@ -60,3 +60,12 @@ func (ns *NotificationService) CreateNotification(c *fiber.Ctx, notificationItem
 
 	return nil
 }
+
+func (ns *NotificationService) DeleteNotification(c *fiber.Ctx, notiID string) error {
+	err := ns.notificationRepo.DeleteNotification(c, notiID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

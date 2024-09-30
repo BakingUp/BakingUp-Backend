@@ -71,3 +71,26 @@ func (nh *NotificationHandler) CreateNotification(c *fiber.Ctx) error {
 	handleSuccessMessage(c, "Successfully add a new notification.")
 	return nil
 }
+
+// DeleteNotification godoc
+// @Summary      Delete a notification
+// @Description  Delete a notification by notification id
+// @Tags         notification
+// @Accept       json
+// @Produce      json
+// @Param        noti_id  query  string  true  "Noti ID"
+// @Success      200  {object}  response  "Successfully delete a notification."
+// @Failure      400  {object}  response     "Cannot delete a notification."
+// @Router       /noti/deleteNotification [delete]
+func (nh *NotificationHandler) DeleteNotification(c *fiber.Ctx) error {
+	notiID := c.Query("noti_id")
+
+	err := nh.svc.DeleteNotification(c, notiID)
+	if err != nil {
+		handleError(c, 400, "Cannot delete a notification.", err.Error())
+		return nil
+	}
+
+	handleSuccessMessage(c, "Successfully delete a notification.")
+	return nil
+}
