@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"sort"
 
 	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
@@ -129,7 +128,7 @@ func (s *RecipeService) GetRecipeDetail(c *fiber.Ctx, recipeID string) (*domain.
 		Status:            1,
 		RecipeName:        util.GetRecipeName(recipe, language),
 		RecipeURL:         recipeURLs,
-		TotalTime:         fmt.Sprintf("%d hr %d mins", totalTimeHours, totalTimeMinutes),
+		TotalTime:         util.FormatTotalTime(totalTimeHours, totalTimeMinutes),
 		Servings:          recipe.Serving,
 		Stars:             4,
 		NumOfOrder:        orderAmount,
