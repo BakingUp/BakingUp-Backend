@@ -11,6 +11,7 @@ type NotificationRepository interface {
 	CreateNotification(c *fiber.Ctx, notificationItem *domain.CreateNotificationItem) error
 	DeleteNotification(c *fiber.Ctx, notiID string) error
 	ReadNotification(c *fiber.Ctx, notiID string) error
+	ReadAllNotifications(c *fiber.Ctx, userID string) error
 }
 
 type NotificationService interface {
@@ -18,4 +19,5 @@ type NotificationService interface {
 	CreateNotification(c *fiber.Ctx, notificationItem *domain.CreateNotificationItem) error
 	DeleteNotification(c *fiber.Ctx, notiID string) error
 	ReadNotification(c *fiber.Ctx, notiID string) error
+	ReadAllNotifications(c *fiber.Ctx, userID string) error
 }

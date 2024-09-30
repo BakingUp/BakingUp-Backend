@@ -78,3 +78,12 @@ func (ns *NotificationService) ReadNotification(c *fiber.Ctx, notiID string) err
 
 	return nil
 }
+
+func (ns *NotificationService) ReadAllNotifications(c *fiber.Ctx, userID string) error {
+	err := ns.notificationRepo.ReadAllNotifications(c, userID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

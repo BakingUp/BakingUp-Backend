@@ -81,3 +81,17 @@ func (nr *NotificationRepository) ReadNotification(c *fiber.Ctx, notiID string) 
 
 	return nil
 }
+
+func (nr *NotificationRepository) ReadAllNotifications(c *fiber.Ctx, userID string) error {
+	_, err := nr.db.Notifications.FindMany(
+		db.Notifications.UserID.Equals(userID),
+		db.Notifications.IsRead.Equals(false),
+	).Update(
+		db.Notifications.IsRead.Set(true),
+	).Exec(c.Context())
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

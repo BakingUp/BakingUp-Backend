@@ -117,3 +117,26 @@ func (nh *NotificationHandler) ReadNotification(c *fiber.Ctx) error {
 	handleSuccessMessage(c, "Successfully update the read status of the notification.")
 	return nil
 }
+
+// ReadAllNotifications godoc
+// @Summary      Read all notification messages
+// @Description  Read all notification messages by user id
+// @Tags         notification
+// @Accept       json
+// @Produce      json
+// @Param        user_id  query  string  true  "User ID"
+// @Success      200  {object}  response  "Successfully update the read status of all the notifications."
+// @Failure      400  {object}  response     "Cannot update the read status of all the notifications."
+// @Router       /noti/readAllNotifications [put]
+func (nh *NotificationHandler) ReadAllNotifications(c *fiber.Ctx) error {
+	userID := c.Query("user_id")
+
+	err := nh.svc.ReadAllNotifications(c, userID)
+	if err != nil {
+		handleError(c, 400, "Cannot update the read status of all the notifications.", err.Error())
+		return nil
+	}
+
+	handleSuccessMessage(c, "Successfully update the read status of all the notifications.")
+	return nil
+}

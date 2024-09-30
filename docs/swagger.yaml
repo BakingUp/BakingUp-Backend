@@ -517,6 +517,31 @@ paths:
       summary: Get all notifications
       tags:
       - notification
+  /noti/readAllNotifications:
+    put:
+      consumes:
+      - application/json
+      description: Read all notification messages by user id
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully update the read status of all the notifications.
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot update the read status of all the notifications.
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Read all notification messages
+      tags:
+      - notification
   /noti/readNotification:
     put:
       consumes:
