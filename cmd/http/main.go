@@ -59,7 +59,11 @@ func main() {
 	settingsService := service.NewSettingsService(settingsRepo, userService)
 	settingsHandler := http.NewSetingsHandler(settingsService)
 
-	_, err = http.NewRouter(app, *ingredientHandler, *recipeHandler, *authHandler, *stockHandler, *userHandler, *orderHandler, *settingsHandler)
+	homeRepo := repository.NewHomeRepository(client)
+	homeService := service.NewHomeService(homeRepo, userService)
+	homeHandler := http.NewHomeHandler(homeService)
+
+	_, err = http.NewRouter(app, *ingredientHandler, *recipeHandler, *authHandler, *stockHandler, *userHandler, *orderHandler, *settingsHandler, *homeHandler)
 
 	port := config.HTTP.Port
 	if port == "" {

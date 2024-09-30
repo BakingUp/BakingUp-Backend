@@ -9,7 +9,7 @@ type Router struct {
 	router fiber.Router
 }
 
-func NewRouter(a *fiber.App, ingredientHandler IngredientHandler, recipeHandler RecipeHandler, authHandler AuthHandler, stockHandler StockHandler, userHandler UserHandler, orderHandler OrderHandler, settingsHandler SettingsHandler) (*Router, error) {
+func NewRouter(a *fiber.App, ingredientHandler IngredientHandler, recipeHandler RecipeHandler, authHandler AuthHandler, stockHandler StockHandler, userHandler UserHandler, orderHandler OrderHandler, settingsHandler SettingsHandler, homeHandler HomeHandler) (*Router, error) {
 	a.Get("/swagger/*", swagger.HandlerDefault)
 
 	api := a.Group("/api")
@@ -26,6 +26,12 @@ func NewRouter(a *fiber.App, ingredientHandler IngredientHandler, recipeHandler 
 			auth.Delete("/deleteDeviceToken", authHandler.DeleteDeviceToken)
 			auth.Delete("/deleteAllExceptDeviceToken", authHandler.DeleteAllExceptDeviceToken)
 		}
+
+		home := api.Group("/home")
+		{
+			home.Get("getUnreadNotification", homeHandler.GetUnreadNotification)
+		}
+
 		ingredient := api.Group("/ingredient")
 		{
 			ingredient.Get("/getAllIngredients", ingredientHandler.GetAllIngredients)

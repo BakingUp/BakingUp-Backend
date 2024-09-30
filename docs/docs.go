@@ -15,6 +15,44 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/home/getUnreadNotification": {
+            "get": {
+                "description": "Get unread notification amount of user by user ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "home"
+                ],
+                "summary": "Get unread notification amount of user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.UnreadNotification"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get unread notification amount.",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/ingredient/deleteIngredient": {
             "delete": {
                 "description": "Delete an ingredient by using ingredient id",
@@ -1094,6 +1132,14 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/domain.StockItem"
                     }
+                }
+            }
+        },
+        "domain.UnreadNotification": {
+            "type": "object",
+            "properties": {
+                "unread_noti_amount": {
+                    "type": "integer"
                 }
             }
         },

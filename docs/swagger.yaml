@@ -253,6 +253,11 @@ definitions:
           $ref: '#/definitions/domain.StockItem'
         type: array
     type: object
+  domain.UnreadNotification:
+    properties:
+      unread_noti_amount:
+        type: integer
+    type: object
   domain.UserLanguage:
     properties:
       language:
@@ -277,6 +282,31 @@ info:
   title: BakingUp Backend API
   version: "1.0"
 paths:
+  /home/getUnreadNotification:
+    get:
+      consumes:
+      - application/json
+      description: Get unread notification amount of user by user ID
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/domain.UnreadNotification'
+        "400":
+          description: Cannot get unread notification amount.
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get unread notification amount of user
+      tags:
+      - home
   /ingredient/deleteIngredient:
     delete:
       consumes:
