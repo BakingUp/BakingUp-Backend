@@ -69,6 +69,7 @@ func NewRouter(a *fiber.App, ingredientHandler IngredientHandler, recipeHandler 
 		notification := api.Group("noti")
 		{
 			notification.Get("getAllNotifications", notificationHandler.GetAllNotifications)
+			notification.Post("createNotification", notificationHandler.CreateNotification)
 		}
 	}
 

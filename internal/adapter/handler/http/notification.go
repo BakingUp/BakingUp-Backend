@@ -1,6 +1,7 @@
 package http
 
 import (
+	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
 	"github.com/BakingUp/BakingUp-Backend/internal/core/port"
 	"github.com/gofiber/fiber/v2"
 )
@@ -35,5 +36,38 @@ func (nh *NotificationHandler) GetAllNotifications(c *fiber.Ctx) error {
 	}
 
 	handleSuccess(c, notifications)
+	return nil
+}
+
+// CreateNotification godoc
+// @Summary      Create a new notification
+// @Description  Create a new notification by user id
+// @Tags         notification
+// @Accept       json
+// @Produce      json
+// @Param        notification_item  body  domain.CreateNotificationItem  true  "Notification Item"
+// @Success      200  {object}  response  "Successfully add a new notification."
+// @Failure      400  {object}  response     "Cannot add a new notification."
+// @Router       /noti/createNotification [post]
+func (nh *NotificationHandler) CreateNotification(c *fiber.Ctx) error {
+	var notificationItem domain.CreateNotificationItem
+
+	if err := c.BodyParser(&notificationItem); err != nil {
+		handleError(c, 400, "Failed to parse request body", err.Error())
+		return nil
+	}
+
+	if notificationItem.UserID == "" {
+		handleError(c, 400, "UserID is required", "")
+		return nil
+	}
+
+	err := nh.svc.CreateNotification(c, &notificationItem)
+	if err != nil {
+		handleError(c, 400, "Cannot add a new notification.", err.Error())
+		return nil
+	}
+
+	handleSuccessMessage(c, "Successfully add a new notification.")
 	return nil
 }

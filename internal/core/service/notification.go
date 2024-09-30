@@ -51,3 +51,12 @@ func (ns *NotificationService) GetAllNotifications(c *fiber.Ctx, userID string) 
 
 	return notificationList, err
 }
+
+func (ns *NotificationService) CreateNotification(c *fiber.Ctx, notificationItem *domain.CreateNotificationItem) error {
+	err := ns.notificationRepo.CreateNotification(c, notificationItem)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

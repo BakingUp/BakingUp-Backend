@@ -205,6 +205,46 @@ const docTemplate = `{
                 }
             }
         },
+        "/noti/createNotification": {
+            "post": {
+                "description": "Create a new notification by user id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notification"
+                ],
+                "summary": "Create a new notification",
+                "parameters": [
+                    {
+                        "description": "Notification Item",
+                        "name": "notification_item",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.CreateNotificationItem"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully add a new notification.",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot add a new notification.",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/noti/getAllNotifications": {
             "get": {
                 "description": "Get all notifications by user ID",
@@ -806,6 +846,35 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "language": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.CreateNotificationItem": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "eng_message": {
+                    "type": "string"
+                },
+                "eng_title": {
+                    "type": "string"
+                },
+                "is_read": {
+                    "type": "boolean"
+                },
+                "noti_type": {
+                    "type": "string"
+                },
+                "thai_message": {
+                    "type": "string"
+                },
+                "thai_title": {
                     "type": "string"
                 },
                 "user_id": {

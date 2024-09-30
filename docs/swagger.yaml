@@ -43,6 +43,25 @@ definitions:
       user_id:
         type: string
     type: object
+  domain.CreateNotificationItem:
+    properties:
+      created_at:
+        type: string
+      eng_message:
+        type: string
+      eng_title:
+        type: string
+      is_read:
+        type: boolean
+      noti_type:
+        type: string
+      thai_message:
+        type: string
+      thai_title:
+        type: string
+      user_id:
+        type: string
+    type: object
   domain.ExpirationDateSetting:
     properties:
       black_expiration_date:
@@ -422,6 +441,32 @@ paths:
       summary: Get ingredient stock details
       tags:
       - ingredient
+  /noti/createNotification:
+    post:
+      consumes:
+      - application/json
+      description: Create a new notification by user id
+      parameters:
+      - description: Notification Item
+        in: body
+        name: notification_item
+        required: true
+        schema:
+          $ref: '#/definitions/domain.CreateNotificationItem'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully add a new notification.
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot add a new notification.
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Create a new notification
+      tags:
+      - notification
   /noti/getAllNotifications:
     get:
       consumes:
