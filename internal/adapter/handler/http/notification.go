@@ -94,3 +94,26 @@ func (nh *NotificationHandler) DeleteNotification(c *fiber.Ctx) error {
 	handleSuccessMessage(c, "Successfully delete a notification.")
 	return nil
 }
+
+// ReadNotification godoc
+// @Summary      Read a notification message
+// @Description  Read a notification message by notification id
+// @Tags         notification
+// @Accept       json
+// @Produce      json
+// @Param        noti_id  query  string  true  "Noti ID"
+// @Success      200  {object}  response  "Successfully update the read status of the notification."
+// @Failure      400  {object}  response     "Cannot update the read status of the notification."
+// @Router       /noti/readNotification [put]
+func (nh *NotificationHandler) ReadNotification(c *fiber.Ctx) error {
+	notiID := c.Query("noti_id")
+
+	err := nh.svc.ReadNotification(c, notiID)
+	if err != nil {
+		handleError(c, 400, "Cannot update the read status of the notification.", err.Error())
+		return nil
+	}
+
+	handleSuccessMessage(c, "Successfully update the read status of the notification.")
+	return nil
+}

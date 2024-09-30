@@ -68,3 +68,16 @@ func (nr *NotificationRepository) DeleteNotification(c *fiber.Ctx, notiID string
 
 	return nil
 }
+
+func (nr *NotificationRepository) ReadNotification(c *fiber.Ctx, notiID string) error {
+	_, err := nr.db.Notifications.FindUnique(
+		db.Notifications.NotiID.Equals(notiID),
+	).Update(
+		db.Notifications.IsRead.Set(true),
+	).Exec(c.Context())
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

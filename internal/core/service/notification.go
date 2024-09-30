@@ -69,3 +69,12 @@ func (ns *NotificationService) DeleteNotification(c *fiber.Ctx, notiID string) e
 
 	return nil
 }
+
+func (ns *NotificationService) ReadNotification(c *fiber.Ctx, notiID string) error {
+	err := ns.notificationRepo.ReadNotification(c, notiID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

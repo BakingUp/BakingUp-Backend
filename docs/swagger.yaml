@@ -517,6 +517,31 @@ paths:
       summary: Get all notifications
       tags:
       - notification
+  /noti/readNotification:
+    put:
+      consumes:
+      - application/json
+      description: Read a notification message by notification id
+      parameters:
+      - description: Noti ID
+        in: query
+        name: noti_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully update the read status of the notification.
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot update the read status of the notification.
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Read a notification message
+      tags:
+      - notification
   /recipe/deleteRecipe:
     delete:
       consumes:

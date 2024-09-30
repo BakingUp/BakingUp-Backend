@@ -10,10 +10,12 @@ type NotificationRepository interface {
 	GetAllNotifications(c *fiber.Ctx, userID string) ([]db.NotificationsModel, error)
 	CreateNotification(c *fiber.Ctx, notificationItem *domain.CreateNotificationItem) error
 	DeleteNotification(c *fiber.Ctx, notiID string) error
+	ReadNotification(c *fiber.Ctx, notiID string) error
 }
 
 type NotificationService interface {
 	GetAllNotifications(c *fiber.Ctx, userID string) (*domain.NotificationList, error)
 	CreateNotification(c *fiber.Ctx, notificationItem *domain.CreateNotificationItem) error
 	DeleteNotification(c *fiber.Ctx, notiID string) error
+	ReadNotification(c *fiber.Ctx, notiID string) error
 }

@@ -71,6 +71,7 @@ func NewRouter(a *fiber.App, ingredientHandler IngredientHandler, recipeHandler 
 			notification.Get("getAllNotifications", notificationHandler.GetAllNotifications)
 			notification.Post("createNotification", notificationHandler.CreateNotification)
 			notification.Delete("deleteNotification", notificationHandler.DeleteNotification)
+			notification.Put("readNotification", notificationHandler.ReadNotification)
 		}
 	}
 

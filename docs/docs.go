@@ -321,6 +321,44 @@ const docTemplate = `{
                 }
             }
         },
+        "/noti/readNotification": {
+            "put": {
+                "description": "Read a notification message by notification id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notification"
+                ],
+                "summary": "Read a notification message",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Noti ID",
+                        "name": "noti_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully update the read status of the notification.",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot update the read status of the notification.",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/recipe/deleteRecipe": {
             "delete": {
                 "description": "Delete a recipe by using recipe id",
