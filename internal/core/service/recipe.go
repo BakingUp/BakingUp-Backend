@@ -83,7 +83,11 @@ func (s *RecipeService) GetRecipeDetail(c *fiber.Ctx, recipeID string) (*domain.
 
 	var recipeIngredients []domain.RecipeIngredient
 	for _, recipeIngredientItem := range recipe.RecipeIngredients() {
-		firstIngredientURL := recipeIngredientItem.Ingredient().IngredientImages()[0].IngredientURL
+		images := recipeIngredientItem.Ingredient().IngredientImages()
+		firstIngredientURL := ""
+		if len(images) != 0 {
+			firstIngredientURL = images[0].IngredientURL
+		}
 		recipeIngredient := &domain.RecipeIngredient{
 			IngredientName:     util.GetIngredientName(recipeIngredientItem.Ingredient(), language),
 			IngredientURL:      firstIngredientURL,
