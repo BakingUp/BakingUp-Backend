@@ -17,10 +17,11 @@ type StockList struct {
 }
 
 type StockDetail struct {
-	CreatedAt    time.Time  `json:"created_at"`
-	LSTStatus    string  	`json:"lst_status"`
-	Quantity	 int     	`json:"quantity"`
-	SellByDate   string  	`json:"sell_by_date"`
+	StockDetailId string  	`json:"stock_detail_id"`
+	CreatedAt     time.Time `json:"created_at"`
+	LSTStatus     string  	`json:"lst_status"`
+	Quantity	  int     	`json:"quantity"`
+	SellByDate    string  	`json:"sell_by_date"`
 }
 
 type StockItemDetail struct {

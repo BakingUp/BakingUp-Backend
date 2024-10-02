@@ -92,7 +92,7 @@ func (s *StockService) GetStockDetail(c *fiber.Ctx, recipeID string) (*domain.St
 		totalQuantity += stockDetail.Quantity
 
 		var detail domain.StockDetail
-
+		detail.StockDetailId = stockDetail.StockDetailID
 		detail.CreatedAt = stockDetail.CreatedAt
 		detail.LSTStatus = util.CalculateLstStatus(stock.Lst, stockDetail.Quantity)
 		detail.Quantity = stockDetail.Quantity
