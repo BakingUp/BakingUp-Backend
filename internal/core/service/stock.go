@@ -127,3 +127,33 @@ func (s *StockService) DeleteStock(c *fiber.Ctx, recipeID string) error {
 
 	return nil
 }
+
+func (s *StockService) GetStockBatch(c *fiber.Ctx, stockDetailID string) (*domain.StockBatch, error) {
+	stockDetail, err := s.stockRepo.GetStockBatch(c, stockDetailID)
+	if err != nil {
+		return nil, err
+	}
+
+	language, err := s.userService.GetUserLanguage(c, stockDetail.Stock().Recipe().UserID)
+	if err != nil {
+		return nil, err
+	}
+
+	images := stockDetail.Stock().Recipe().RecipeImages()
+		firstRecipeURL := ""
+		if len(images) != 0 {
+			firstRecipeURL = images[0].RecipeURL
+		}
+	stockNote, _ := stockDetail.Note()
+	stockBatch := &domain.StockBatch{
+		StockDetailId: stockDetail.StockDetailID,
+		RecipeName:    util.GetRecipeName(stockDetail.Stock().Recipe(), language),
+		RecipeURL:     firstRecipeURL,
+		Quantity:      stockDetail.Quantity,
+		SellByDate:    stockDetail.SellByDate.Format("02/01/2006"),
+		Note:          stockNote,
+		NoteCreatedAt: stockDetail.CreatedAt.Format("02/01/2006"),
+	}
+
+	return stockBatch, nil
+}

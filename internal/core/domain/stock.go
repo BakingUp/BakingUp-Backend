@@ -33,3 +33,13 @@ type StockItemDetail struct {
 	StockLessThan   int  			`json:"stock_less_than"`
 	StockDetails    []StockDetail 	`json:"stock_details"`
 }
+
+type StockBatch struct {
+	StockDetailId string `json:"stock_detail_id"`
+	RecipeName    string `json:"recipe_name"`
+	RecipeURL     string `json:"recipe_url"`
+	Quantity      int    `json:"quantity"`
+	SellByDate    string `json:"sell_by_date"`
+	Note		  string `json:"note"`
+	NoteCreatedAt string `json:"note_created_at"`
+}

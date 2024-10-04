@@ -60,3 +60,21 @@ func (sr *StockRepository) DeleteStock(c *fiber.Ctx, recipeID string) error {
 
 	return nil
 }
+
+func (sr *StockRepository) GetStockBatch(c *fiber.Ctx, stockDetailID string) (*db.StockDetailModel, error) {
+	stockDetail, err := sr.db.StockDetail.FindFirst(
+		db.StockDetail.RecipeID.Equals(stockDetailID),
+	).With(
+		db.StockDetail.Stock.Fetch().With(
+			db.Stocks.Recipe.Fetch().With(
+				db.Recipes.RecipeImages.Fetch(),
+			),
+		),
+	).Exec(c.Context())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return stockDetail, nil
+}

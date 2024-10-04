@@ -821,6 +821,44 @@ const docTemplate = `{
                 }
             }
         },
+        "/stock/getStockBatch": {
+            "get": {
+                "description": "Get stock batch by stock detail ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stock"
+                ],
+                "summary": "Get stock batch",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Stock Detail ID",
+                        "name": "stock_detail_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.StockBatch"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get stock batch",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/stock/getStockDetail": {
             "get": {
                 "description": "Get stock details by recipe ID and user ID",
@@ -1295,6 +1333,32 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.StockBatch": {
+            "type": "object",
+            "properties": {
+                "note": {
+                    "type": "string"
+                },
+                "note_created_at": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "integer"
+                },
+                "recipe_name": {
+                    "type": "string"
+                },
+                "recipe_url": {
+                    "type": "string"
+                },
+                "sell_by_date": {
+                    "type": "string"
+                },
+                "stock_detail_id": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.StockDetail": {
             "type": "object",
             "properties": {
@@ -1308,6 +1372,9 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "sell_by_date": {
+                    "type": "string"
+                },
+                "stock_detail_id": {
                     "type": "string"
                 }
             }
