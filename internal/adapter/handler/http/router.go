@@ -9,7 +9,7 @@ type Router struct {
 	router fiber.Router
 }
 
-func NewRouter(a *fiber.App, ingredientHandler IngredientHandler, recipeHandler RecipeHandler, authHandler AuthHandler, stockHandler StockHandler, userHandler UserHandler, orderHandler OrderHandler, settingsHandler SettingsHandler, homeHandler HomeHandler) (*Router, error) {
+func NewRouter(a *fiber.App, ingredientHandler IngredientHandler, recipeHandler RecipeHandler, authHandler AuthHandler, stockHandler StockHandler, userHandler UserHandler, orderHandler OrderHandler, settingsHandler SettingsHandler, notificationHandler NotificationHandler, homeHandler HomeHandler) (*Router, error) {
 	a.Get("/swagger/*", swagger.HandlerDefault)
 
 	api := a.Group("/api")
@@ -72,6 +72,14 @@ func NewRouter(a *fiber.App, ingredientHandler IngredientHandler, recipeHandler 
 
 		}
 
+		notification := api.Group("noti")
+		{
+			notification.Get("getAllNotifications", notificationHandler.GetAllNotifications)
+			notification.Post("createNotification", notificationHandler.CreateNotification)
+			notification.Delete("deleteNotification", notificationHandler.DeleteNotification)
+			notification.Put("readNotification", notificationHandler.ReadNotification)
+			notification.Put("readAllNotifications", notificationHandler.ReadAllNotifications)
+		}
 	}
 
 	return &Router{api}, nil

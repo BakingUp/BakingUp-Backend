@@ -43,6 +43,25 @@ definitions:
       user_id:
         type: string
     type: object
+  domain.CreateNotificationItem:
+    properties:
+      created_at:
+        type: string
+      eng_message:
+        type: string
+      eng_title:
+        type: string
+      is_read:
+        type: boolean
+      noti_type:
+        type: string
+      thai_message:
+        type: string
+      thai_title:
+        type: string
+      user_id:
+        type: string
+    type: object
   domain.ExpirationDateSetting:
     properties:
       black_expiration_date:
@@ -160,6 +179,26 @@ definitions:
         type: string
       user_id:
         type: string
+    type: object
+  domain.NotificationItem:
+    properties:
+      created_at:
+        type: string
+      is_read:
+        type: boolean
+      message:
+        type: string
+      noti_type:
+        type: string
+      title:
+        type: string
+    type: object
+  domain.NotificationList:
+    properties:
+      notis:
+        items:
+          $ref: '#/definitions/domain.NotificationItem'
+        type: array
     type: object
   domain.RecipeDetail:
     properties:
@@ -432,6 +471,132 @@ paths:
       summary: Get ingredient stock details
       tags:
       - ingredient
+  /noti/createNotification:
+    post:
+      consumes:
+      - application/json
+      description: Create a new notification by user id
+      parameters:
+      - description: Notification Item
+        in: body
+        name: notification_item
+        required: true
+        schema:
+          $ref: '#/definitions/domain.CreateNotificationItem'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully add a new notification.
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot add a new notification.
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Create a new notification
+      tags:
+      - notification
+  /noti/deleteNotification:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a notification by notification id
+      parameters:
+      - description: Noti ID
+        in: query
+        name: noti_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully delete a notification.
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot delete a notification.
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Delete a notification
+      tags:
+      - notification
+  /noti/getAllNotifications:
+    get:
+      consumes:
+      - application/json
+      description: Get all notifications by user ID
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/domain.NotificationList'
+        "400":
+          description: Cannot get all notifications of the user.
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get all notifications
+      tags:
+      - notification
+  /noti/readAllNotifications:
+    put:
+      consumes:
+      - application/json
+      description: Read all notification messages by user id
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully update the read status of all the notifications.
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot update the read status of all the notifications.
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Read all notification messages
+      tags:
+      - notification
+  /noti/readNotification:
+    put:
+      consumes:
+      - application/json
+      description: Read a notification message by notification id
+      parameters:
+      - description: Noti ID
+        in: query
+        name: noti_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully update the read status of the notification.
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot update the read status of the notification.
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Read a notification message
+      tags:
+      - notification
   /recipe/deleteRecipe:
     delete:
       consumes:

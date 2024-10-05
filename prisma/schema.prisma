@@ -254,6 +254,7 @@ model Stocks {
 }
 
 model Stock_detail {
+  stock_detail_id          String     @id @unique
   stock                    Stocks     @relation(fields: [recipe_id], references: [recipe_id], onDelete: Cascade)
   recipe_id                String
   created_at               DateTime
@@ -261,6 +262,4 @@ model Stock_detail {
   quantity                 Int
   note                     String?
   cooking_time             DateTime
-
-  @@id([recipe_id, created_at])
 }

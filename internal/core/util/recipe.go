@@ -65,20 +65,28 @@ func CalculateIngredientPrice(value []db.IngredientDetailModel) float64 {
 }
 
 func FormatTotalTime(totalTimeHours, totalTimeMinutes int) string {
-    return fmt.Sprintf("%d %s %d %s",
-        totalTimeHours, 
-        func() string {
+    var result string
+
+    if totalTimeHours > 0 {
+        result += fmt.Sprintf("%d %s", totalTimeHours, func() string {
             if totalTimeHours == 1 {
                 return "hr"
             }
             return "hrs"
-        }(),
-        totalTimeMinutes, 
-        func() string {
+        }())
+    }
+
+    if totalTimeMinutes > 0 {
+        if result != "" {
+            result += " "
+        }
+        result += fmt.Sprintf("%d %s", totalTimeMinutes, func() string {
             if totalTimeMinutes == 1 {
                 return "min"
             }
             return "mins"
-        }(),
-    )
+        }())
+    }
+
+    return result
 }

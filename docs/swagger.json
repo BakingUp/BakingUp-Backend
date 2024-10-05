@@ -237,6 +237,198 @@
                 }
             }
         },
+        "/noti/createNotification": {
+            "post": {
+                "description": "Create a new notification by user id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notification"
+                ],
+                "summary": "Create a new notification",
+                "parameters": [
+                    {
+                        "description": "Notification Item",
+                        "name": "notification_item",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.CreateNotificationItem"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully add a new notification.",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot add a new notification.",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/noti/deleteNotification": {
+            "delete": {
+                "description": "Delete a notification by notification id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notification"
+                ],
+                "summary": "Delete a notification",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Noti ID",
+                        "name": "noti_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully delete a notification.",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot delete a notification.",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/noti/getAllNotifications": {
+            "get": {
+                "description": "Get all notifications by user ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notification"
+                ],
+                "summary": "Get all notifications",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.NotificationList"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get all notifications of the user.",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/noti/readAllNotifications": {
+            "put": {
+                "description": "Read all notification messages by user id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notification"
+                ],
+                "summary": "Read all notification messages",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully update the read status of all the notifications.",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot update the read status of all the notifications.",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/noti/readNotification": {
+            "put": {
+                "description": "Read a notification message by notification id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notification"
+                ],
+                "summary": "Read a notification message",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Noti ID",
+                        "name": "noti_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully update the read status of the notification.",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot update the read status of the notification.",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/recipe/deleteRecipe": {
             "delete": {
                 "description": "Delete a recipe by using recipe id",
@@ -807,6 +999,35 @@
                 }
             }
         },
+        "domain.CreateNotificationItem": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "eng_message": {
+                    "type": "string"
+                },
+                "eng_title": {
+                    "type": "string"
+                },
+                "is_read": {
+                    "type": "boolean"
+                },
+                "noti_type": {
+                    "type": "string"
+                },
+                "thai_message": {
+                    "type": "string"
+                },
+                "thai_title": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.ExpirationDateSetting": {
             "type": "object",
             "properties": {
@@ -985,6 +1206,37 @@
                 },
                 "user_id": {
                     "type": "string"
+                }
+            }
+        },
+        "domain.NotificationItem": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "is_read": {
+                    "type": "boolean"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "noti_type": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.NotificationList": {
+            "type": "object",
+            "properties": {
+                "notis": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.NotificationItem"
+                    }
                 }
             }
         },
