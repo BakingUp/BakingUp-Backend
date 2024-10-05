@@ -257,6 +257,23 @@ definitions:
       stock_url:
         type: string
     type: object
+  domain.StockBatch:
+    properties:
+      note:
+        type: string
+      note_created_at:
+        type: string
+      quantity:
+        type: integer
+      recipe_name:
+        type: string
+      recipe_url:
+        type: string
+      sell_by_date:
+        type: string
+      stock_detail_id:
+        type: string
+    type: object
   domain.StockDetail:
     properties:
       created_at:
@@ -266,6 +283,8 @@ definitions:
       quantity:
         type: integer
       sell_by_date:
+        type: string
+      stock_detail_id:
         type: string
     type: object
   domain.StockItem:
@@ -843,6 +862,31 @@ paths:
           schema:
             $ref: '#/definitions/http.response'
       summary: Get all stocks
+      tags:
+      - stock
+  /stock/getStockBatch:
+    get:
+      consumes:
+      - application/json
+      description: Get stock batch by stock detail ID
+      parameters:
+      - description: Stock Detail ID
+        in: query
+        name: stock_detail_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/domain.StockBatch'
+        "400":
+          description: Cannot get stock batch
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get stock batch
       tags:
       - stock
   /stock/getStockDetail:
