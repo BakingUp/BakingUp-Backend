@@ -59,10 +59,10 @@ enum NotificationType {
 }
 
 model Orders {
-  order_id String @id @unique
+  order_id String @id @unique @default(uuid())
   user   Users    @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
   user_id String 
-  order_taken_by String
+  order_taken_by String @default("-")
   customer_name String? @default("-")
   customer_phone_num String? @default("-")
   order_platform OrderPlatform
@@ -72,7 +72,7 @@ model Orders {
   order_status OrderStatus
   pick_up_date_time DateTime @default(now())
   pick_up_method PickUpMethod?
-  order_index Int @unique
+  order_index Int @default(autoincrement())
   order_products Order_products[]
   order_note_text String? @default("-")
   order_note_create_at DateTime?
