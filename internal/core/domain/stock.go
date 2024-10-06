@@ -17,10 +17,11 @@ type StockList struct {
 }
 
 type StockDetail struct {
-	CreatedAt    time.Time  `json:"created_at"`
-	LSTStatus    string  	`json:"lst_status"`
-	Quantity	 int     	`json:"quantity"`
-	SellByDate   string  	`json:"sell_by_date"`
+	StockDetailId string  	`json:"stock_detail_id"`
+	CreatedAt     time.Time `json:"created_at"`
+	LSTStatus     string  	`json:"lst_status"`
+	Quantity	  int     	`json:"quantity"`
+	SellByDate    string  	`json:"sell_by_date"`
 }
 
 type StockItemDetail struct {
@@ -31,4 +32,14 @@ type StockItemDetail struct {
 	SellingPrice 	float64 		`json:"selling_price"`
 	StockLessThan   int  			`json:"stock_less_than"`
 	StockDetails    []StockDetail 	`json:"stock_details"`
+}
+
+type StockBatch struct {
+	StockDetailId string `json:"stock_detail_id"`
+	RecipeName    string `json:"recipe_name"`
+	RecipeURL     string `json:"recipe_url"`
+	Quantity      int    `json:"quantity"`
+	SellByDate    string `json:"sell_by_date"`
+	Note		  string `json:"note"`
+	NoteCreatedAt string `json:"note_created_at"`
 }

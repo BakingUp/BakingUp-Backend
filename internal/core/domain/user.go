@@ -8,7 +8,7 @@ type ExpirationDate struct {
 	BlackExpirationDate  time.Time `json:"black_expiration_date"`
 }
 
-type RegisterUserRequest struct {
+type ManageUserRequest struct {
 	UserID    string `json:"user_id"`
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`

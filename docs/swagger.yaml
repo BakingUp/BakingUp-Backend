@@ -1,5 +1,114 @@
 basePath: /api
 definitions:
+  domain.ChangeExpirationDateSetting:
+    properties:
+      black_expiration_date:
+        type: integer
+      red_expiration_date:
+        type: integer
+      user_id:
+        type: string
+      yellow_expiration_date:
+        type: integer
+    type: object
+  domain.ChangeFixCostSetting:
+    properties:
+      advertising:
+        type: number
+      electricity:
+        type: number
+      gas:
+        type: number
+      insurance:
+        type: number
+      note:
+        type: string
+      other:
+        type: number
+      rent:
+        type: number
+      salaries:
+        type: number
+      subscriptions:
+        type: number
+      user_id:
+        type: string
+      water:
+        type: number
+    type: object
+  domain.ChangeUserLanguage:
+    properties:
+      language:
+        type: string
+      user_id:
+        type: string
+    type: object
+  domain.CreateNotificationItem:
+    properties:
+      created_at:
+        type: string
+      eng_message:
+        type: string
+      eng_title:
+        type: string
+      is_read:
+        type: boolean
+      noti_type:
+        type: string
+      thai_message:
+        type: string
+      thai_title:
+        type: string
+      user_id:
+        type: string
+    type: object
+  domain.ExpirationDateSetting:
+    properties:
+      black_expiration_date:
+        type: integer
+      red_expiration_date:
+        type: integer
+      yellow_expiration_date:
+        type: integer
+    type: object
+  domain.FixCostSetting:
+    properties:
+      advertising:
+        type: number
+      electricity:
+        type: number
+      gas:
+        type: number
+      insurance:
+        type: number
+      note:
+        type: string
+      other:
+        type: number
+      rent:
+        type: number
+      salaries:
+        type: number
+      subscriptions:
+        type: number
+      water:
+        type: number
+    type: object
+  domain.Ingredient:
+    properties:
+      expiration_status:
+        type: string
+      ingredient_id:
+        type: string
+      ingredient_name:
+        type: string
+      ingredient_url:
+        type: string
+      quantity:
+        type: string
+      stock:
+        type: integer
+    type: object
   domain.IngredientDetail:
     properties:
       ingredient_less_than:
@@ -17,6 +126,13 @@ definitions:
       stocks:
         items:
           $ref: '#/definitions/domain.Stock'
+        type: array
+    type: object
+  domain.IngredientList:
+    properties:
+      ingredients:
+        items:
+          $ref: '#/definitions/domain.Ingredient'
         type: array
     type: object
   domain.IngredientNote:
@@ -49,6 +165,39 @@ definitions:
       notes:
         items:
           $ref: '#/definitions/domain.IngredientNote'
+        type: array
+    type: object
+  domain.ManageUserRequest:
+    properties:
+      first_name:
+        type: string
+      last_name:
+        type: string
+      store_name:
+        type: string
+      tel:
+        type: string
+      user_id:
+        type: string
+    type: object
+  domain.NotificationItem:
+    properties:
+      created_at:
+        type: string
+      is_read:
+        type: boolean
+      message:
+        type: string
+      noti_type:
+        type: string
+      title:
+        type: string
+    type: object
+  domain.NotificationList:
+    properties:
+      notis:
+        items:
+          $ref: '#/definitions/domain.NotificationItem'
         type: array
     type: object
   domain.RecipeDetail:
@@ -108,6 +257,23 @@ definitions:
       stock_url:
         type: string
     type: object
+  domain.StockBatch:
+    properties:
+      note:
+        type: string
+      note_created_at:
+        type: string
+      quantity:
+        type: integer
+      recipe_name:
+        type: string
+      recipe_url:
+        type: string
+      sell_by_date:
+        type: string
+      stock_detail_id:
+        type: string
+    type: object
   domain.StockDetail:
     properties:
       created_at:
@@ -117,6 +283,37 @@ definitions:
       quantity:
         type: integer
       sell_by_date:
+        type: string
+      stock_detail_id:
+        type: string
+    type: object
+  domain.StockItem:
+    properties:
+      lst:
+        type: integer
+      lst_status:
+        type: string
+      quantity:
+        type: integer
+      selling_price:
+        type: number
+      stock_id:
+        type: string
+      stock_name:
+        type: string
+      stock_url:
+        type: string
+    type: object
+  domain.StockList:
+    properties:
+      stocks:
+        items:
+          $ref: '#/definitions/domain.StockItem'
+        type: array
+    type: object
+  domain.UserLanguage:
+    properties:
+      language:
         type: string
     type: object
   http.response:
@@ -188,6 +385,31 @@ paths:
       summary: Delete ingredient batch note
       tags:
       - ingredient
+  /ingredient/getAllIngredients:
+    get:
+      consumes:
+      - application/json
+      description: Get all ingredients by user ID
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/domain.IngredientList'
+        "400":
+          description: Cannot get all ingredients
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get all ingredients
+      tags:
+      - ingredient
   /ingredient/getIngredientDetail:
     get:
       consumes:
@@ -238,6 +460,132 @@ paths:
       summary: Get ingredient stock details
       tags:
       - ingredient
+  /noti/createNotification:
+    post:
+      consumes:
+      - application/json
+      description: Create a new notification by user id
+      parameters:
+      - description: Notification Item
+        in: body
+        name: notification_item
+        required: true
+        schema:
+          $ref: '#/definitions/domain.CreateNotificationItem'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully add a new notification.
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot add a new notification.
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Create a new notification
+      tags:
+      - notification
+  /noti/deleteNotification:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a notification by notification id
+      parameters:
+      - description: Noti ID
+        in: query
+        name: noti_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully delete a notification.
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot delete a notification.
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Delete a notification
+      tags:
+      - notification
+  /noti/getAllNotifications:
+    get:
+      consumes:
+      - application/json
+      description: Get all notifications by user ID
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/domain.NotificationList'
+        "400":
+          description: Cannot get all notifications of the user.
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get all notifications
+      tags:
+      - notification
+  /noti/readAllNotifications:
+    put:
+      consumes:
+      - application/json
+      description: Read all notification messages by user id
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully update the read status of all the notifications.
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot update the read status of all the notifications.
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Read all notification messages
+      tags:
+      - notification
+  /noti/readNotification:
+    put:
+      consumes:
+      - application/json
+      description: Read a notification message by notification id
+      parameters:
+      - description: Noti ID
+        in: query
+        name: noti_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully update the read status of the notification.
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot update the read status of the notification.
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Read a notification message
+      tags:
+      - notification
   /recipe/deleteRecipe:
     delete:
       consumes:
@@ -288,6 +636,184 @@ paths:
       summary: Get recipe details
       tags:
       - recipe
+  /settings/changeColorExpired:
+    put:
+      consumes:
+      - application/json
+      description: Change the color of expired icon by user id
+      parameters:
+      - description: Change Color Expired Icon
+        in: body
+        name: change_color_expired_icon
+        required: true
+        schema:
+          $ref: '#/definitions/domain.ChangeExpirationDateSetting'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully change the color of expiration icon
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot change the color of expiration icon
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Change the color of expired icon
+      tags:
+      - settings
+  /settings/changeFixCost:
+    put:
+      consumes:
+      - application/json
+      description: Change the fix cost by user id
+      parameters:
+      - description: Change Fix Cost
+        in: body
+        name: change_fix_cost
+        required: true
+        schema:
+          $ref: '#/definitions/domain.ChangeFixCostSetting'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully change the fix cost
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot change the fix cost
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Change the fix cost
+      tags:
+      - settings
+  /settings/changeLanguage:
+    put:
+      consumes:
+      - application/json
+      description: Change the application language by user id
+      parameters:
+      - description: Change Language
+        in: body
+        name: change_language
+        required: true
+        schema:
+          $ref: '#/definitions/domain.ChangeUserLanguage'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully change the language.
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot change the language
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Change the application language
+      tags:
+      - settings
+  /settings/deleteAccount:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an account by user id
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully delete an account
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot delete an account
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Delete an account
+      tags:
+      - settings
+  /settings/getColorExpired:
+    get:
+      consumes:
+      - application/json
+      description: Get the color of expired icon by user id
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/domain.ExpirationDateSetting'
+        "400":
+          description: Cannot get the color of expiration icon
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get the color of expired icon
+      tags:
+      - settings
+  /settings/getFixCost:
+    get:
+      consumes:
+      - application/json
+      description: Get the fix cost by user id
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/domain.FixCostSetting'
+        "400":
+          description: Cannot get the fix cost
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get the fix cost
+      tags:
+      - settings
+  /settings/getLanguage:
+    get:
+      consumes:
+      - application/json
+      description: Get the application language by user id
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/domain.UserLanguage'
+        "400":
+          description: Cannot get the language
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get the application language
+      tags:
+      - settings
   /stock/deleteStock:
     delete:
       consumes:
@@ -311,6 +837,56 @@ paths:
           schema:
             $ref: '#/definitions/http.response'
       summary: Delete a stock
+      tags:
+      - stock
+  /stock/getAllStocks:
+    get:
+      consumes:
+      - application/json
+      description: Get all stocks by user ID
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/domain.StockList'
+        "400":
+          description: Cannot get all stocks
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get all stocks
+      tags:
+      - stock
+  /stock/getStockBatch:
+    get:
+      consumes:
+      - application/json
+      description: Get stock batch by stock detail ID
+      parameters:
+      - description: Stock Detail ID
+        in: query
+        name: stock_detail_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/domain.StockBatch'
+        "400":
+          description: Cannot get stock batch
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get stock batch
       tags:
       - stock
   /stock/getStockDetail:
@@ -338,4 +914,30 @@ paths:
       summary: Get stock details
       tags:
       - stock
+  /user/editUserInfo:
+    put:
+      consumes:
+      - application/json
+      description: Edit user information by using user information request
+      parameters:
+      - description: Edit User Info
+        in: body
+        name: edit_user_info
+        required: true
+        schema:
+          $ref: '#/definitions/domain.ManageUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully edit the user information.
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot edit the user information
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Edit user information
+      tags:
+      - user
 swagger: "2.0"

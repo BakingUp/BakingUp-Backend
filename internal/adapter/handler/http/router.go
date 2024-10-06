@@ -9,7 +9,7 @@ type Router struct {
 	router fiber.Router
 }
 
-func NewRouter(a *fiber.App, ingredientHandler IngredientHandler, recipeHandler RecipeHandler, authHandler AuthHandler, stockHandler StockHandler, userHandler UserHandler, orderHandler OrderHandler) (*Router, error) {
+func NewRouter(a *fiber.App, ingredientHandler IngredientHandler, recipeHandler RecipeHandler, authHandler AuthHandler, stockHandler StockHandler, userHandler UserHandler, orderHandler OrderHandler, settingsHandler SettingsHandler, notificationHandler NotificationHandler) (*Router, error) {
 	a.Get("/swagger/*", swagger.HandlerDefault)
 
 	api := a.Group("/api")
@@ -17,6 +17,7 @@ func NewRouter(a *fiber.App, ingredientHandler IngredientHandler, recipeHandler 
 		user := api.Group("/user")
 		{
 			user.Get("/getUserInfo", userHandler.GetUserInfo)
+			user.Put("/editUserInfo", userHandler.EditUserInfo)
 		}
 		auth := api.Group("/auth")
 		{
@@ -46,12 +47,33 @@ func NewRouter(a *fiber.App, ingredientHandler IngredientHandler, recipeHandler 
 			stock.Get("/getAllStocks", stockHandler.GetAllStocks)
 			stock.Get("/getStockDetail", stockHandler.GetStockDetail)
 			stock.Delete("/deleteStock", stockHandler.DeleteStock)
+			stock.Get("/getStockBatch", stockHandler.GetStockBatch)
 		}
 
 		order := api.Group("/order")
 		{
 			order.Get("/getAllOrders", orderHandler.GetAllOrders)
 			order.Get("/getOrderDetail", orderHandler.GetOrderDeatil)
+		}
+		setting := api.Group("/settings")
+		{
+			setting.Delete("/deleteAccount", settingsHandler.DeleteAccount)
+			setting.Get("/getLanguage", settingsHandler.GetLanguage)
+			setting.Put("/changeLanguage", settingsHandler.ChangeLanguage)
+			setting.Get("/getFixCost", settingsHandler.GetFixCost)
+			setting.Put("/changeFixCost", settingsHandler.ChangeFixCost)
+			setting.Get("/getColorExpired", settingsHandler.GetColorExpired)
+			setting.Put("/changeColorExpired", settingsHandler.ChangeColorExpired)
+
+		}
+
+		notification := api.Group("noti")
+		{
+			notification.Get("getAllNotifications", notificationHandler.GetAllNotifications)
+			notification.Post("createNotification", notificationHandler.CreateNotification)
+			notification.Delete("deleteNotification", notificationHandler.DeleteNotification)
+			notification.Put("readNotification", notificationHandler.ReadNotification)
+			notification.Put("readAllNotifications", notificationHandler.ReadAllNotifications)
 		}
 	}
 
