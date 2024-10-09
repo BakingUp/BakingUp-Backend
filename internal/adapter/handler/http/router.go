@@ -30,6 +30,7 @@ func NewRouter(a *fiber.App, ingredientHandler IngredientHandler, recipeHandler 
 		home := api.Group("/home")
 		{
 			home.Get("getUnreadNotification", homeHandler.GetUnreadNotification)
+			home.Post("getTopProducts", homeHandler.GetTopProducts)
 		}
 
 		ingredient := api.Group("/ingredient")

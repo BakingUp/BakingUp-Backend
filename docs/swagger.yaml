@@ -71,6 +71,41 @@ definitions:
       yellow_expiration_date:
         type: integer
     type: object
+  domain.FilterItemResponse:
+    properties:
+      detail:
+        type: string
+      name:
+        type: string
+      url:
+        type: string
+    type: object
+  domain.FilterProductResponse:
+    properties:
+      products:
+        items:
+          $ref: '#/definitions/domain.FilterItemResponse'
+        type: array
+    type: object
+  domain.FilterSellingRequest:
+    properties:
+      filter_type:
+        type: string
+      order_types:
+        items:
+          type: string
+        type: array
+      sales_channel:
+        items:
+          type: string
+        type: array
+      sort_type:
+        type: string
+      unit_type:
+        type: string
+      user_id:
+        type: string
+    type: object
   domain.FixCostSetting:
     properties:
       advertising:
@@ -267,6 +302,8 @@ definitions:
         type: integer
       sell_by_date:
         type: string
+      stock_detail_id:
+        type: string
     type: object
   domain.StockItem:
     properties:
@@ -321,6 +358,33 @@ info:
   title: BakingUp Backend API
   version: "1.0"
 paths:
+  /home/getTopProducts:
+    post:
+      consumes:
+      - application/json
+      description: Get top products to display in the intelligent dashboard by user
+        ID
+      parameters:
+      - description: Filter Request
+        in: body
+        name: filter_request
+        required: true
+        schema:
+          $ref: '#/definitions/domain.FilterSellingRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/domain.FilterProductResponse'
+        "400":
+          description: Cannot get the filter response.
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get top products to display in the intelligent dashboard
+      tags:
+      - home
   /home/getUnreadNotification:
     get:
       consumes:

@@ -30,3 +30,46 @@ func (hr *HomeRepository) GetUnreadNotification(c *fiber.Ctx, userID string) (*d
 	unReadNotificationAmount.UnreadNotiAmount = count
 	return &unReadNotificationAmount, nil
 }
+
+func (hr *HomeRepository) GetTopProducts(c *fiber.Ctx, userID string, saleChannels []string, orderTypes []string) ([]db.OrdersModel, error) {
+	var orderTypeValues []db.OrderType
+	for _, orderType := range orderTypes {
+		orderTypeValues = append(orderTypeValues, db.OrderType(orderType))
+	}
+
+	var saleChannelValues []db.OrderPlatform
+	for _, saleChannel := range saleChannels {
+		saleChannelValues = append(saleChannelValues, db.OrderPlatform(saleChannel))
+	}
+
+	orders, err := hr.db.Orders.FindMany(
+		db.Orders.UserID.Equals(userID),
+		db.Orders.OrderType.In(orderTypeValues),
+		db.Orders.OrderPlatform.In(saleChannelValues),
+	).With(
+		db.Orders.OrderProducts.Fetch().With(db.OrderProducts.Recipe.Fetch().With(db.Recipes.Stocks.Fetch().With(db.Stocks.StockDetail.Fetch()), db.Recipes.RecipeImages.Fetch())),
+		db.Orders.User.Fetch(),
+	).Exec(c.Context())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return orders, nil
+}
+
+func (hr *HomeRepository) GetTopWastedStock(c *fiber.Ctx, userID string) ([]db.RecipesModel, error) {
+	recipes, err := hr.db.Recipes.FindMany(
+		db.Recipes.UserID.Equals(userID),
+	).With(
+		db.Recipes.OrderProducts.Fetch(),
+		db.Recipes.RecipeImages.Fetch(),
+		db.Recipes.Stocks.Fetch().With(db.Stocks.StockDetail.Fetch()),
+	).Exec(c.Context())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return recipes, nil
+}

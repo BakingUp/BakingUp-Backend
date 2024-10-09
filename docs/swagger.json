@@ -9,6 +9,46 @@
     "host": "localhost:8000",
     "basePath": "/api",
     "paths": {
+        "/home/getTopProducts": {
+            "post": {
+                "description": "Get top products to display in the intelligent dashboard by user ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "home"
+                ],
+                "summary": "Get top products to display in the intelligent dashboard",
+                "parameters": [
+                    {
+                        "description": "Filter Request",
+                        "name": "filter_request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.FilterSellingRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.FilterProductResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get the filter response.",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/home/getUnreadNotification": {
             "get": {
                 "description": "Get unread notification amount of user by user ID",
@@ -1042,6 +1082,60 @@
                 }
             }
         },
+        "domain.FilterItemResponse": {
+            "type": "object",
+            "properties": {
+                "detail": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.FilterProductResponse": {
+            "type": "object",
+            "properties": {
+                "products": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.FilterItemResponse"
+                    }
+                }
+            }
+        },
+        "domain.FilterSellingRequest": {
+            "type": "object",
+            "properties": {
+                "filter_type": {
+                    "type": "string"
+                },
+                "order_types": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "sales_channel": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "sort_type": {
+                    "type": "string"
+                },
+                "unit_type": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.FixCostSetting": {
             "type": "object",
             "properties": {
@@ -1340,6 +1434,9 @@
                     "type": "integer"
                 },
                 "sell_by_date": {
+                    "type": "string"
+                },
+                "stock_detail_id": {
                     "type": "string"
                 }
             }
