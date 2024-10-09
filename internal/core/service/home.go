@@ -217,8 +217,12 @@ func (hs *HomeService) GetWastedProduct(c *fiber.Ctx, userID string, filterType 
 		})
 	}
 
+	topProducts := productList
+	if len(productList) > 5 {
+		topProducts = productList[:5]
+	}
 	response := &domain.FilterProductResponse{
-		Products: productList,
+		Products: topProducts,
 	}
 
 	return response, nil
