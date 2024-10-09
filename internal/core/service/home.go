@@ -274,7 +274,6 @@ func (hs *HomeService) GetDashboardChartData(c *fiber.Ctx, userID string) (*doma
 				profit := (stock.SellingPrice - stock.Cost) * float64(orderProduct.ProductQuantity)
 
 				_, ok1 := costRevenueData[month]
-				// _, ok2 := netProfit[month]
 				if ok1 {
 					costRevenueData[month] = domain.CostRevenueChartItem{
 						Month:     month,
@@ -291,11 +290,6 @@ func (hs *HomeService) GetDashboardChartData(c *fiber.Ctx, userID string) (*doma
 						NetProfit: profit - fixCost,
 					}
 
-					// netProfitItem := domain.NetProfitChartItem{
-					// 	Month:  month,
-					// 	Profit: profit - fixCost,
-					// }
-					// netProfit[month] = netProfitItem
 					costRevenueData[month] = costRevenueItem
 				}
 				recipeProfit += profit
