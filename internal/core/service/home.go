@@ -3,7 +3,9 @@ package service
 import (
 	"fmt"
 	"math"
+	"regexp"
 	"sort"
+	"strconv"
 	"time"
 
 	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
@@ -111,13 +113,33 @@ func (hs *HomeService) GetTopProducts(c *fiber.Ctx, userID string, chartType str
 
 	}
 
+	re := regexp.MustCompile(`[-+]?\d*\.?\d+`)
+
 	if chartType != "Worst Selling" {
-		sort.SliceStable(productList, func(i, j int) bool {
-			return productList[i].Detail > productList[j].Detail
+		sort.Slice(productList, func(i, j int) bool {
+			// Extract and convert the numeric value from Detail for product i
+			detailI := re.FindString(productList[i].Detail)
+			valueI, _ := strconv.ParseFloat(detailI, 64)
+
+			// Extract and convert the numeric value from Detail for product j
+			detailJ := re.FindString(productList[j].Detail)
+			valueJ, _ := strconv.ParseFloat(detailJ, 64)
+
+			// Compare the values
+			return valueI > valueJ
 		})
 	} else {
-		sort.SliceStable(productList, func(i, j int) bool {
-			return productList[i].Detail < productList[j].Detail
+		sort.Slice(productList, func(i, j int) bool {
+			// Extract and convert the numeric value from Detail for product i
+			detailI := re.FindString(productList[i].Detail)
+			valueI, _ := strconv.ParseFloat(detailI, 64)
+
+			// Extract and convert the numeric value from Detail for product j
+			detailJ := re.FindString(productList[j].Detail)
+			valueJ, _ := strconv.ParseFloat(detailJ, 64)
+
+			// Compare the values
+			return valueI < valueJ
 		})
 	}
 
