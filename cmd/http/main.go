@@ -63,7 +63,11 @@ func main() {
 	notificationService := service.NewNotificationService(notificationRepo, userService)
 	notificationHandler := http.NewNotificationHandler(notificationService)
 
-	_, err = http.NewRouter(app, *ingredientHandler, *recipeHandler, *authHandler, *stockHandler, *userHandler, *orderHandler, *settingsHandler, *notificationHandler)
+	homeRepo := repository.NewHomeRepository(client)
+	homeService := service.NewHomeService(homeRepo, userService, settingsService, recipeRepo, ingredientRepo)
+	homeHandler := http.NewHomeHandler(homeService)
+
+	_, err = http.NewRouter(app, *ingredientHandler, *recipeHandler, *authHandler, *stockHandler, *userHandler, *orderHandler, *settingsHandler, *notificationHandler, *homeHandler)
 
 	port := config.HTTP.Port
 	if port == "" {
