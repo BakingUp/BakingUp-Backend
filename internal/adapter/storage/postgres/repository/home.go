@@ -73,3 +73,17 @@ func (hr *HomeRepository) GetTopWastedStock(c *fiber.Ctx, userID string) ([]db.R
 
 	return recipes, nil
 }
+
+func (hr *HomeRepository) GetDashboardChartData(c *fiber.Ctx, userID string) ([]db.RecipesModel, error) {
+	recipes, err := hr.db.Recipes.FindMany(
+		db.Recipes.UserID.Equals(userID),
+	).With(
+		db.Recipes.OrderProducts.Fetch().With(db.OrderProducts.Order.Fetch()),
+		db.Recipes.Stocks.Fetch(),
+	).Exec(c.Context())
+	if err != nil {
+		return nil, err
+	}
+
+	return recipes, nil
+}

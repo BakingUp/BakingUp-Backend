@@ -32,3 +32,26 @@ type ProductPricing struct {
 	SellingPrice float64 `json:"selling_price"`
 	Cost         float64 `json:"cost"`
 }
+
+type DashboardChartDataResponse struct {
+	CostRevenue     []CostRevenueChartItem     `json:"cost_revenue"`
+	NetProfit       []NetProfitChartItem       `json:"net_profit"`
+	ProfitThreshold []ProfitThresholdChartItem `json:"profit_threshold"`
+}
+
+type CostRevenueChartItem struct {
+	Month     string  `json:"month"`
+	Revenue   float64 `json:"revenue"`
+	Cost      float64 `json:"cost"`
+	NetProfit float64 `json:"net_profit"`
+}
+
+type NetProfitChartItem struct {
+	Month  string  `json:"month"`
+	Profit float64 `json:"profit"`
+}
+
+type ProfitThresholdChartItem struct {
+	Name      string  `json:"name"`
+	Threshold float64 `json:"threshold"`
+}

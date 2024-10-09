@@ -43,6 +43,17 @@ definitions:
       user_id:
         type: string
     type: object
+  domain.CostRevenueChartItem:
+    properties:
+      cost:
+        type: number
+      month:
+        type: string
+      net_profit:
+        type: number
+      revenue:
+        type: number
+    type: object
   domain.CreateNotificationItem:
     properties:
       created_at:
@@ -61,6 +72,21 @@ definitions:
         type: string
       user_id:
         type: string
+    type: object
+  domain.DashboardChartDataResponse:
+    properties:
+      cost_revenue:
+        items:
+          $ref: '#/definitions/domain.CostRevenueChartItem'
+        type: array
+      net_profit:
+        items:
+          $ref: '#/definitions/domain.NetProfitChartItem'
+        type: array
+      profit_threshold:
+        items:
+          $ref: '#/definitions/domain.ProfitThresholdChartItem'
+        type: array
     type: object
   domain.ExpirationDateSetting:
     properties:
@@ -215,6 +241,13 @@ definitions:
       user_id:
         type: string
     type: object
+  domain.NetProfitChartItem:
+    properties:
+      month:
+        type: string
+      profit:
+        type: number
+    type: object
   domain.NotificationItem:
     properties:
       created_at:
@@ -234,6 +267,13 @@ definitions:
         items:
           $ref: '#/definitions/domain.NotificationItem'
         type: array
+    type: object
+  domain.ProfitThresholdChartItem:
+    properties:
+      name:
+        type: string
+      threshold:
+        type: number
     type: object
   domain.RecipeDetail:
     properties:
@@ -358,6 +398,31 @@ info:
   title: BakingUp Backend API
   version: "1.0"
 paths:
+  /home/getDashboardChartData:
+    get:
+      consumes:
+      - application/json
+      description: Get data of each chart on dashboard by user ID
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/domain.DashboardChartDataResponse'
+        "400":
+          description: Cannot get data for all charts.
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get data of each chart on dashboard
+      tags:
+      - home
   /home/getTopProducts:
     post:
       consumes:

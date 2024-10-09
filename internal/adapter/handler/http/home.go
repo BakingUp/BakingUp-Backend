@@ -81,3 +81,26 @@ func (hh *HomeHandler) GetTopProducts(c *fiber.Ctx) error {
 	handleSuccess(c, filterResponse)
 	return nil
 }
+
+// GetDashboardChartData godoc
+// @Summary      Get data of each chart on dashboard
+// @Description  Get data of each chart on dashboard by user ID
+// @Tags         home
+// @Accept       json
+// @Produce      json
+// @Param        user_id  query string  true  "User ID"
+// @Success      200  {object}  domain.DashboardChartDataResponse  "Success"
+// @Failure      400  {object}  response     "Cannot get data for all charts."
+// @Router       /home/getDashboardChartData [get]
+func (hh *HomeHandler) GetDashboardChartData(c *fiber.Ctx) error {
+	userID := c.Query("user_id")
+
+	response, err := hh.homeService.GetDashboardChartData(c, userID)
+	if err != nil {
+		handleError(c, 400, "Cannot get data for all charts.", err.Error())
+		return nil
+	}
+
+	handleSuccess(c, response)
+	return nil
+}

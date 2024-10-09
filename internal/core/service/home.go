@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"math"
 	"sort"
 	"time"
 
@@ -227,4 +228,119 @@ func (hs *HomeService) GetWastedProduct(c *fiber.Ctx, userID string, filterType 
 
 	return response, nil
 
+}
+
+func (hs *HomeService) GetDashboardChartData(c *fiber.Ctx, userID string) (*domain.DashboardChartDataResponse, error) {
+	recipes, err := hs.homeRepo.GetDashboardChartData(c, userID)
+	if err != nil {
+		return nil, err
+	}
+	allFixCost, err := hs.settingService.GetFixCost(c, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	language, err := hs.userService.GetUserLanguage(c, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	var monthOrder = map[string]int{
+		"January":   1,
+		"February":  2,
+		"March":     3,
+		"April":     4,
+		"May":       5,
+		"June":      6,
+		"July":      7,
+		"August":    8,
+		"September": 9,
+		"October":   10,
+		"November":  11,
+		"December":  12,
+	}
+
+	fixCost := allFixCost.Rent + allFixCost.Salaries + allFixCost.Insurance + allFixCost.Subscriptions + allFixCost.Advertising + allFixCost.Electricity + allFixCost.Water + allFixCost.Gas + allFixCost.Other
+	costRevenueData := make(map[string]domain.CostRevenueChartItem)
+	var allProfit float64
+	var profitThreshold []domain.ProfitThresholdChartItem
+	for _, recipe := range recipes {
+		var recipeProfit float64
+		if stock, ok := recipe.Stocks(); ok {
+			for _, orderProduct := range recipe.OrderProducts() {
+				month := orderProduct.Order().OrderDate.Month().String()
+				revenue := stock.SellingPrice * float64(orderProduct.ProductQuantity)
+				cost := stock.Cost * float64(orderProduct.ProductQuantity)
+				profit := (stock.SellingPrice - stock.Cost) * float64(orderProduct.ProductQuantity)
+
+				_, ok1 := costRevenueData[month]
+				// _, ok2 := netProfit[month]
+				if ok1 {
+					costRevenueData[month] = domain.CostRevenueChartItem{
+						Month:     month,
+						Revenue:   revenue + costRevenueData[month].Revenue,
+						Cost:      cost + costRevenueData[month].Cost,
+						NetProfit: profit + costRevenueData[month].NetProfit,
+					}
+				} else {
+
+					costRevenueItem := domain.CostRevenueChartItem{
+						Month:     month,
+						Revenue:   revenue,
+						Cost:      cost,
+						NetProfit: profit - fixCost,
+					}
+
+					// netProfitItem := domain.NetProfitChartItem{
+					// 	Month:  month,
+					// 	Profit: profit - fixCost,
+					// }
+					// netProfit[month] = netProfitItem
+					costRevenueData[month] = costRevenueItem
+				}
+				recipeProfit += profit
+			}
+			name := util.GetRecipeName(&recipe, language)
+			profitThresholdItem := &domain.ProfitThresholdChartItem{
+				Name:      name,
+				Threshold: recipeProfit,
+			}
+
+			profitThreshold = append(profitThreshold, *profitThresholdItem)
+		}
+		allProfit += recipeProfit
+	}
+
+	var costRevenueResponse []domain.CostRevenueChartItem
+	var netProfitResponse []domain.NetProfitChartItem
+
+	for i := 0; i < len(profitThreshold); i++ {
+		profitThresholdValue := (profitThreshold[i].Threshold / allProfit) * 100
+		profitThreshold[i].Threshold = math.Round(profitThresholdValue*100) / 100
+	}
+
+	for month, item := range costRevenueData {
+		costRevenueResponse = append(costRevenueResponse, item)
+		netProfitItem := &domain.NetProfitChartItem{
+			Month:  month,
+			Profit: item.NetProfit,
+		}
+		netProfitResponse = append(netProfitResponse, *netProfitItem)
+	}
+
+	sort.Slice(costRevenueResponse, func(i, j int) bool {
+		return monthOrder[costRevenueResponse[i].Month] < monthOrder[costRevenueResponse[j].Month]
+	})
+
+	sort.Slice(netProfitResponse, func(i, j int) bool {
+		return monthOrder[netProfitResponse[i].Month] < monthOrder[netProfitResponse[j].Month]
+	})
+
+	response := &domain.DashboardChartDataResponse{
+		CostRevenue:     costRevenueResponse,
+		NetProfit:       netProfitResponse,
+		ProfitThreshold: profitThreshold,
+	}
+
+	return response, nil
 }

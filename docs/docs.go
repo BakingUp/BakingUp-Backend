@@ -15,6 +15,44 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/home/getDashboardChartData": {
+            "get": {
+                "description": "Get data of each chart on dashboard by user ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "home"
+                ],
+                "summary": "Get data of each chart on dashboard",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.DashboardChartDataResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get data for all charts.",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/home/getTopProducts": {
             "post": {
                 "description": "Get top products to display in the intelligent dashboard by user ID",
@@ -1045,6 +1083,23 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.CostRevenueChartItem": {
+            "type": "object",
+            "properties": {
+                "cost": {
+                    "type": "number"
+                },
+                "month": {
+                    "type": "string"
+                },
+                "net_profit": {
+                    "type": "number"
+                },
+                "revenue": {
+                    "type": "number"
+                }
+            }
+        },
         "domain.CreateNotificationItem": {
             "type": "object",
             "properties": {
@@ -1071,6 +1126,29 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "type": "string"
+                }
+            }
+        },
+        "domain.DashboardChartDataResponse": {
+            "type": "object",
+            "properties": {
+                "cost_revenue": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.CostRevenueChartItem"
+                    }
+                },
+                "net_profit": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.NetProfitChartItem"
+                    }
+                },
+                "profit_threshold": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.ProfitThresholdChartItem"
+                    }
                 }
             }
         },
@@ -1309,6 +1387,17 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.NetProfitChartItem": {
+            "type": "object",
+            "properties": {
+                "month": {
+                    "type": "string"
+                },
+                "profit": {
+                    "type": "number"
+                }
+            }
+        },
         "domain.NotificationItem": {
             "type": "object",
             "properties": {
@@ -1337,6 +1426,17 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/domain.NotificationItem"
                     }
+                }
+            }
+        },
+        "domain.ProfitThresholdChartItem": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "threshold": {
+                    "type": "number"
                 }
             }
         },
