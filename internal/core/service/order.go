@@ -164,3 +164,11 @@ func (s *OrderService) GetOrderDetail(c *fiber.Ctx, orderID string) (interface{}
 		return detail, nil
 	}
 }
+
+func (s *OrderService) DeleteOrder(c *fiber.Ctx, orderID string) error {
+	err := s.orderRepo.DeleteOrder(c, orderID)
+	if err != nil {
+		return err
+	}
+	return nil
+}

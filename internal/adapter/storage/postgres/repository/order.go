@@ -36,3 +36,13 @@ func (or *OrderRespository) GetOrderDetail(c *fiber.Ctx, orderID string) (*db.Or
 
 	return order, nil
 }
+
+func (or *OrderRespository) DeleteOrder(c *fiber.Ctx, orderID string) error {
+	_, err := or.db.Orders.FindUnique(db.Orders.OrderID.Equals(orderID), ).Delete().Exec(c.Context())
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

@@ -40,3 +40,16 @@ func (oh *OrderHandler) GetOrderDeatil(c *fiber.Ctx) error {
 	handleSuccess(c, orderDetail)
 	return nil
 }
+
+func (oh *OrderHandler) DeleteOrder(c *fiber.Ctx) error {
+	orderID := c.Query("order_id")
+
+	err := oh.svc.DeleteOrder(c, orderID)
+	if err != nil {
+		handleError(c, 400, "Cannot delete an order.", err.Error())
+		return nil
+	}
+
+	handleSuccess(c, nil)
+	return nil
+}
