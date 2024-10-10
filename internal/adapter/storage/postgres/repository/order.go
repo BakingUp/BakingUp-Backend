@@ -89,6 +89,7 @@ func (or *OrderRepository) AddInStoreOrder(c *fiber.Ctx, inStoreOrder *domain.Ad
 		db.Orders.OrderIndex.Set(nextOrderIndex),
 		db.Orders.OrderNoteText.Set(inStoreOrder.NoteText),
 		db.Orders.OrderNoteCreateAt.Set(time.Now()),
+		db.Orders.OrderTakenBy.Set(inStoreOrder.OrderTakenBy),
 	).Exec(ctx)
 	if err != nil {
 		return err
