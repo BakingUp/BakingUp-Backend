@@ -3,10 +3,11 @@ package repository
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
 	"github.com/BakingUp/BakingUp-Backend/prisma/db"
 	"github.com/gofiber/fiber/v2"
-	"time"
 )
 
 type OrderRepository struct {
@@ -81,12 +82,11 @@ func (or *OrderRepository) AddInStoreOrder(c *fiber.Ctx, inStoreOrder *domain.Ad
 	order, err := or.db.Orders.CreateOne(
 		db.Orders.User.Link(db.Users.UserID.Equals(inStoreOrder.UserID)),
 		db.Orders.OrderPlatform.Set(db.OrderPlatform(inStoreOrder.OrderPlatform)),
-		db.Orders.OrderTakenBy.Set(inStoreOrder.OrderTakenBy),
+		db.Orders.OrderDate.Set(createdAt),
 		db.Orders.OrderType.Set(db.OrderType(inStoreOrder.OrderType)),
 		db.Orders.IsPreOrder.Set(inStoreOrder.IsPreOrder),
 		db.Orders.OrderStatus.Set(db.OrderStatus(inStoreOrder.OrderStatus)),
 		db.Orders.OrderIndex.Set(nextOrderIndex),
-		db.Orders.OrderDate.Set(createdAt),
 		db.Orders.OrderNoteText.Set(inStoreOrder.NoteText),
 		db.Orders.OrderNoteCreateAt.Set(time.Now()),
 	).Exec(ctx)
