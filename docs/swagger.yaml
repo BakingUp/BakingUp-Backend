@@ -1,5 +1,24 @@
 basePath: /api
 definitions:
+  domain.AddIngredientRequest:
+    properties:
+      day_before_expire:
+        type: string
+      img:
+        items:
+          type: string
+        type: array
+      ingredient_eng_name:
+        type: string
+      ingredient_thai_name:
+        type: string
+      stock_less_than:
+        type: string
+      unit:
+        type: string
+      user_id:
+        type: string
+    type: object
   domain.ChangeExpirationDateSetting:
     properties:
       black_expiration_date:
@@ -492,6 +511,32 @@ paths:
       summary: Get unread notification amount of user
       tags:
       - home
+  /ingredient/addIngredients:
+    post:
+      consumes:
+      - application/json
+      description: Add ingredient by using ingredient request
+      parameters:
+      - description: Ingredient Request
+        in: body
+        name: AddIngredientRequest
+        required: true
+        schema:
+          $ref: '#/definitions/domain.AddIngredientRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot add ingredients
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Add ingredient
+      tags:
+      - ingredient
   /ingredient/deleteIngredient:
     delete:
       consumes:
