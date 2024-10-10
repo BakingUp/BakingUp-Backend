@@ -1,6 +1,7 @@
 package http
 
 import (
+	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
 	"github.com/BakingUp/BakingUp-Backend/internal/core/port"
 	"github.com/gofiber/fiber/v2"
 )
@@ -128,4 +129,31 @@ func (ih *IngredientHandler) DeleteIngredient(c *fiber.Ctx) error {
 
 	handleSuccess(c, nil)
 	return nil
+}
+
+// AddIngredient godoc
+// @Summary      Add ingredient
+// @Description  Add ingredient by using ingredient request
+// @Tags         ingredient
+// @Accept       json
+// @Produce      json
+// @Param        AddIngredientRequest  body  domain.AddIngredientRequest  true  "Ingredient Request"
+// @Success      200  {object}  response  "Success"
+// @Failure      400  {object}  response  "Cannot add ingredients"
+// @Router       /ingredient/addIngredients [post]
+func (ih *IngredientHandler) AddIngredient(c *fiber.Ctx) error {
+    var addIngredientRequest domain.AddIngredientRequest
+    if err := c.BodyParser(&addIngredientRequest); err != nil {
+        handleError(c, 400, "Cannot add ingredients", err.Error())
+        return nil
+    }
+	
+    err := ih.svc.AddIngredient(c, &addIngredientRequest)
+    if err != nil {
+        handleError(c, 400, "Cannot add ingredients", err.Error())
+        return nil
+    }
+
+    handleSuccess(c, nil)
+    return nil
 }

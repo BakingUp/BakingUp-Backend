@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
 	"github.com/BakingUp/BakingUp-Backend/prisma/db"
 	"github.com/gofiber/fiber/v2"
 )
@@ -76,6 +77,42 @@ func (ir *IngredientRepository) DeleteIngredient(c *fiber.Ctx, ingredientID stri
 	_, err := ir.db.Ingredients.FindMany(
 		db.Ingredients.IngredientID.Equals(ingredientID),
 	).Delete().Exec(c.Context())
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (ir *IngredientRepository) AddIngredient(c *fiber.Ctx, ingredient *domain.AddIngredientPayload) error {
+	_, err := ir.db.Ingredients.CreateOne(
+		db.Ingredients.IngredientID.Set(ingredient.IngredientID),
+		db.Ingredients.User.Link(
+			db.Users.UserID.Equals(ingredient.UserID),
+		),
+		db.Ingredients.IngredientEngName.Set(ingredient.IngredientEngName),
+		db.Ingredients.IngredientThaiName.Set(ingredient.IngredientThaiName),
+		db.Ingredients.Unit.Set(db.Unit(ingredient.Unit)),
+		db.Ingredients.IngredientLessThan.Set(float64(ingredient.StockLessThan)),
+		db.Ingredients.DayBeforeExpire.Set(ingredient.DayBeforeExpire),
+	).Exec(c.Context())
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (ir *IngredientRepository) AddIngredientImage(c *fiber.Ctx, ingredientImage *domain.AddIngredientImagePayload) error {
+	_, err := ir.db.IngredientImages.CreateOne(
+		db.IngredientImages.IngredientImageIndex.Set(ingredientImage.ImageIndex),
+		db.IngredientImages.Ingredient.Link(
+			db.Ingredients.IngredientID.Equals(ingredientImage.IngredientID),
+		),
+		db.IngredientImages.IngredientURL.Set(ingredientImage.ImgUrl),
+	).Exec(c.Context())
+
 	if err != nil {
 		return err
 	}

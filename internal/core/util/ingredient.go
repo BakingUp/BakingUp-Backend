@@ -1,7 +1,10 @@
 package util
 
 import (
+	"encoding/base64"
 	"fmt"
+	"os"
+	"path/filepath"
 	"strconv"
 	"time"
 
@@ -75,4 +78,44 @@ func DaysSince2000(date time.Time) int {
 	startDate := time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC)
 	duration := date.Sub(startDate)
 	return int(duration.Hours() / 24)
+}
+
+func ExpirationDate(daysSince2000 string) time.Time {
+	baseDate := time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC)
+	days, _ := strconv.Atoi(daysSince2000)
+	expirationDate := baseDate.AddDate(0, 0, days)
+	return expirationDate
+}
+
+func UploadImage(userId string, ingredientId string, imgBase64 string) (string, error) {
+	// Decode the base64 string to a byte slice
+	imgBytes, err := base64.StdEncoding.DecodeString(imgBase64)
+	if err != nil {
+		return "", err
+	}
+
+	// Generate a unique filename based on the current timestamp
+	filename := fmt.Sprintf("%d.jpg", time.Now().UnixNano())
+	// Create the path based on userId, and ingredientId
+	filePath := filepath.Join(fmt.Sprintf("images/%s/ingredients/%s", userId, ingredientId), filename)
+
+	// Create the directory if it doesn't exist
+	if err := os.MkdirAll(filepath.Dir(filePath), os.ModePerm); err != nil {
+		return "", err
+	}
+
+	// Create the file
+	file, err := os.Create(filePath)
+	if err != nil {
+		return "", err
+	}
+	defer file.Close()
+
+	// Write the byte slice to the file
+	if _, err := file.Write(imgBytes); err != nil {
+		return "", err
+	}
+
+	// Return the file path as the image URL
+	return filePath, nil
 }

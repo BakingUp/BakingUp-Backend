@@ -125,6 +125,46 @@
                 }
             }
         },
+        "/ingredient/addIngredients": {
+            "post": {
+                "description": "Add ingredient by using ingredient request",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ingredient"
+                ],
+                "summary": "Add ingredient",
+                "parameters": [
+                    {
+                        "description": "Ingredient Request",
+                        "name": "AddIngredientRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.AddIngredientRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot add ingredients",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/ingredient/deleteIngredient": {
             "delete": {
                 "description": "Delete an ingredient by using ingredient id",
@@ -1049,6 +1089,35 @@
         }
     },
     "definitions": {
+        "domain.AddIngredientRequest": {
+            "type": "object",
+            "properties": {
+                "day_before_expire": {
+                    "type": "string"
+                },
+                "img": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "ingredient_eng_name": {
+                    "type": "string"
+                },
+                "ingredient_thai_name": {
+                    "type": "string"
+                },
+                "stock_less_than": {
+                    "type": "string"
+                },
+                "unit": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.ChangeExpirationDateSetting": {
             "type": "object",
             "properties": {

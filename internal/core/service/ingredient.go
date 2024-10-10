@@ -11,6 +11,7 @@ import (
 	"github.com/BakingUp/BakingUp-Backend/internal/core/port"
 	"github.com/BakingUp/BakingUp-Backend/internal/core/util"
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 )
 
 type IngredientService struct {
@@ -193,6 +194,46 @@ func (s *IngredientService) DeleteIngredientBatchNote(c *fiber.Ctx, ingredientNo
 
 func (s *IngredientService) DeleteIngredient(c *fiber.Ctx, ingredientID string) error {
 	err := s.ingredientRepo.DeleteIngredient(c, ingredientID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *IngredientService) AddIngredient(c *fiber.Ctx, ingredients *domain.AddIngredientRequest) error {
+	userID := ingredients.UserID
+	ingredientID := uuid.NewString()
+	dayBeforeExpire := util.ExpirationDate(ingredients.DayBeforeExpire)
+	stockLessThan, _ := strconv.Atoi(ingredients.StockLessThan)
+
+	addIngredientPayload := &domain.AddIngredientPayload{
+		UserID:             userID,
+		IngredientID:       ingredientID,
+		IngredientEngName:  ingredients.IngredientEngName,
+		IngredientThaiName: ingredients.IngredientThaiName,
+		StockLessThan:      stockLessThan,
+		Unit:               ingredients.Unit,
+		DayBeforeExpire:    dayBeforeExpire,
+	}
+	err := s.ingredientRepo.AddIngredient(c, addIngredientPayload)
+	imgIndex := 1
+	for _, img := range ingredients.Img {
+		imgUrl, err := util.UploadImage(userID, ingredientID, img)
+		if err != nil {
+			return err
+		}
+		addIngredientImagePayload := &domain.AddIngredientImagePayload{
+			IngredientID: ingredientID,
+			ImgUrl:       imgUrl,
+			ImageIndex:   strconv.Itoa(imgIndex),
+		}
+		err = s.ingredientRepo.AddIngredientImage(c, addIngredientImagePayload)
+		if err != nil {
+			return err
+		}
+		imgIndex++
+	}
 	if err != nil {
 		return err
 	}

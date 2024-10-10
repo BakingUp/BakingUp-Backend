@@ -41,6 +41,7 @@ func NewRouter(a *fiber.App, ingredientHandler IngredientHandler, recipeHandler 
 			ingredient.Get("/getIngredientStockDetail", ingredientHandler.GetIngredientStockDetail)
 			ingredient.Delete("/deleteIngredientBatchNote", ingredientHandler.DeleteIngredientBatchNote)
 			ingredient.Delete("/deleteIngredient", ingredientHandler.DeleteIngredient)
+			ingredient.Post("/addIngredient", ingredientHandler.AddIngredient)
 		}
 
 		recipe := api.Group("/recipe")

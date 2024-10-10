@@ -22,6 +22,7 @@ import (
 func main() {
 
 	app := fiber.New()
+	app.Static("/images", "./images")
 	config, err := config.New()
 
 	if err != nil {
