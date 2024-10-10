@@ -1,6 +1,7 @@
 package http
 
 import (
+	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
 	"github.com/BakingUp/BakingUp-Backend/internal/core/port"
 	"github.com/gofiber/fiber/v2"
 )
@@ -51,5 +52,27 @@ func (oh *OrderHandler) DeleteOrder(c *fiber.Ctx) error {
 	}
 
 	handleSuccess(c, nil)
+	return nil
+}
+
+func (oh *OrderHandler) AddInStoreOrder(c *fiber.Ctx) error {
+	var inStoreOrder domain.AddInStoreOrderRequest
+
+	if err := c.BodyParser(&inStoreOrder); err != nil {
+		handleError(c, 400, "Failed to parse request body", err.Error())
+		return nil
+	}
+	if inStoreOrder.UserID == "" {
+		handleError(c, 400, "UserID is required", "")
+		return nil
+	}
+
+	err := oh.svc.AddInStoreOrder(c, &inStoreOrder)
+	if err != nil {
+		handleError(c, 400, "Cannot add a new in-store order.", err.Error())
+		return nil
+	}
+
+	handleSuccessMessage(c, "Successfully add a new in-store order.")
 	return nil
 }
