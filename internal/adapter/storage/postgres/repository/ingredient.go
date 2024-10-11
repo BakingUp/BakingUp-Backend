@@ -119,3 +119,41 @@ func (ir *IngredientRepository) AddIngredientImage(c *fiber.Ctx, ingredientImage
 
 	return nil
 }
+
+func (ir *IngredientRepository) AddIngredientStock(c *fiber.Ctx, ingredientStock *domain.AddIngredientStockPayload) error {
+    _, err := ir.db.IngredientDetail.CreateOne(
+        db.IngredientDetail.IngredientStockID.Set(ingredientStock.IngredientStockID),
+        db.IngredientDetail.Ingredient.Link(
+            db.Ingredients.IngredientID.Equals(ingredientStock.IngredientID),
+        ),
+		db.IngredientDetail.Price.Set(ingredientStock.Price),
+		db.IngredientDetail.IngredientQuantity.Set(ingredientStock.IngredientQuantity),
+		db.IngredientDetail.ExpirationDate.Set(ingredientStock.ExpirationDate),
+		db.IngredientDetail.IngredientSupplier.Set(ingredientStock.IngredientSupplier),
+		db.IngredientDetail.IngredientBrand.Set(ingredientStock.IngredientBrand),
+		db.IngredientDetail.IngredientStockURL.Set(ingredientStock.IngredientStockURL),
+		
+    ).Exec(c.Context())
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (ir *IngredientRepository) AddIngredientNote(c *fiber.Ctx, ingredientNote *domain.AddIngredientNotePayload) error {
+	_, err := ir.db.IngredientNotes.CreateOne(
+		db.IngredientNotes.IngredientNoteID.Set(ingredientNote.IngredientNoteID),
+		db.IngredientNotes.IngredientDetail.Link(
+			db.IngredientDetail.IngredientStockID.Equals(ingredientNote.IngredientStockID),
+		),
+		db.IngredientNotes.NoteCreatedAt.Set(ingredientNote.NoteCreatedAt),
+		db.IngredientNotes.IngredientNote.Set(ingredientNote.Note),
+	).Exec(c.Context())
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

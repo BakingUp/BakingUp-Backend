@@ -219,7 +219,7 @@ func (s *IngredientService) AddIngredient(c *fiber.Ctx, ingredients *domain.AddI
 	err := s.ingredientRepo.AddIngredient(c, addIngredientPayload)
 	imgIndex := 1
 	for _, img := range ingredients.Img {
-		imgUrl, err := util.UploadImage(userID, ingredientID, img)
+		imgUrl, err := util.UploadIngredientImage(userID, ingredientID, img)
 		if err != nil {
 			return err
 		}
@@ -234,6 +234,67 @@ func (s *IngredientService) AddIngredient(c *fiber.Ctx, ingredients *domain.AddI
 		}
 		imgIndex++
 	}
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *IngredientService) AddIngredientStock(c *fiber.Ctx, ingredientStock *domain.AddIngredientStockRequest) error {
+	ingredientID := ingredientStock.IngredientID
+	ingredientStockID := uuid.NewString()
+	ingredientNoteID := uuid.NewString()
+	price, _ := strconv.ParseFloat(ingredientStock.Price, 64)
+	quantity, _ := strconv.ParseFloat(ingredientStock.Quantity, 64)
+	expirationDate, _ := time.Parse("02/01/2006", ingredientStock.ExpirationDate)
+	noteCreatedAt := time.Now()
+	userID := ingredientStock.UserID
+	ingredientStockImg := ingredientStock.Img
+
+	var ingredientStockPayload *domain.AddIngredientStockPayload
+	if ingredientStockImg != "" {
+		ingredientStockURL, err := util.UploadIngredientStockImage(userID, ingredientID, ingredientStockID, ingredientStockImg)
+		if err != nil {
+			return err
+		}
+		ingredientStockPayload = &domain.AddIngredientStockPayload{
+			IngredientStockID:  ingredientStockID,
+			IngredientID:       ingredientID,
+			IngredientQuantity: quantity,
+			Price:              price,
+			ExpirationDate:     expirationDate,
+			IngredientSupplier: ingredientStock.Supplier,
+			IngredientBrand:    ingredientStock.IngredientBrand,
+			IngredientStockURL: ingredientStockURL,
+			Note:               ingredientStock.Note,
+		}
+	} else {
+		ingredientStockPayload = &domain.AddIngredientStockPayload{
+			IngredientStockID:  ingredientStockID,
+			IngredientID:       ingredientID,
+			IngredientQuantity: quantity,
+			Price:              price,
+			ExpirationDate:     expirationDate,
+			IngredientSupplier: ingredientStock.Supplier,
+			IngredientBrand:    ingredientStock.IngredientBrand,
+			Note:               ingredientStock.Note,
+		}
+	}
+
+	err := s.ingredientRepo.AddIngredientStock(c, ingredientStockPayload)
+	if err != nil {
+		return err
+	}
+
+	ingredientNote := &domain.AddIngredientNotePayload{
+		IngredientNoteID:  ingredientNoteID,
+		IngredientStockID: ingredientStockID,
+		Note:              ingredientStock.Note,
+		NoteCreatedAt:     noteCreatedAt,
+	}
+
+	err = s.ingredientRepo.AddIngredientNote(c, ingredientNote)
 	if err != nil {
 		return err
 	}

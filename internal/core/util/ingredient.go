@@ -87,7 +87,7 @@ func ExpirationDate(daysSince2000 string) time.Time {
 	return expirationDate
 }
 
-func UploadImage(userId string, ingredientId string, imgBase64 string) (string, error) {
+func UploadIngredientImage(userId string, ingredientId string, imgBase64 string) (string, error) {
 	// Decode the base64 string to a byte slice
 	imgBytes, err := base64.StdEncoding.DecodeString(imgBase64)
 	if err != nil {
@@ -98,6 +98,40 @@ func UploadImage(userId string, ingredientId string, imgBase64 string) (string, 
 	filename := fmt.Sprintf("%d.jpg", time.Now().UnixNano())
 	// Create the path based on userId, and ingredientId
 	filePath := filepath.Join(fmt.Sprintf("images/%s/ingredients/%s", userId, ingredientId), filename)
+
+	// Create the directory if it doesn't exist
+	if err := os.MkdirAll(filepath.Dir(filePath), os.ModePerm); err != nil {
+		return "", err
+	}
+
+	// Create the file
+	file, err := os.Create(filePath)
+	if err != nil {
+		return "", err
+	}
+	defer file.Close()
+
+	// Write the byte slice to the file
+	if _, err := file.Write(imgBytes); err != nil {
+		return "", err
+	}
+
+	// Return the file path as the image URL
+	return filePath, nil
+}
+
+
+func UploadIngredientStockImage(userId string, ingredientId string, ingredientStockId string, imgBase64 string) (string, error) {
+	// Decode the base64 string to a byte slice
+	imgBytes, err := base64.StdEncoding.DecodeString(imgBase64)
+	if err != nil {
+		return "", err
+	}
+
+	// Generate a unique filename based on the current timestamp
+	filename := fmt.Sprintf("%d.jpg", time.Now().UnixNano())
+	// Create the path based on userId, and ingredientId
+	filePath := filepath.Join(fmt.Sprintf("images/%s/ingredients/%s/%s", userId, ingredientId, ingredientStockId), filename)
 
 	// Create the directory if it doesn't exist
 	if err := os.MkdirAll(filepath.Dir(filePath), os.ModePerm); err != nil {

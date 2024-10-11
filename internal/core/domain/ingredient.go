@@ -78,3 +78,34 @@ type AddIngredientImagePayload struct {
 	ImgUrl       string `json:"img"`
 	ImageIndex   string `json:"image_index"`
 }
+
+type AddIngredientStockRequest struct {
+	UserID		    string   `json:"user_id"`
+	IngredientID    string   `json:"ingredient_id"`
+	Price           string   `json:"price"`
+	Quantity        string   `json:"quantity"`
+	ExpirationDate  string   `json:"expiration_date"`
+	Supplier        string   `json:"supplier"`
+	IngredientBrand string   `json:"ingredient_brand"`
+	Img             string   `json:"img"`
+	Note            string   `json:"note"`
+}
+
+type AddIngredientStockPayload struct {
+	IngredientStockID  string    `json:"ingredient_stock_id"`
+	IngredientID       string    `json:"ingredient_id"`
+	IngredientQuantity float64   `json:"ingredient_quantity"`
+	Price              float64   `json:"price"`
+	ExpirationDate     time.Time `json:"expiration_date"`
+	IngredientSupplier string    `json:"ingredient_supplier"`
+	IngredientBrand    string    `json:"ingredient_brand"`
+	IngredientStockURL string    `json:"ingredient_stock_url"`
+	Note               string    `json:"note"`
+}
+
+type AddIngredientNotePayload struct {
+	IngredientNoteID  string    `json:"ingredient_note_id"`
+	IngredientStockID string    `json:"ingredient_stock_id"`
+	Note              string    `json:"note"`
+	NoteCreatedAt	  time.Time `json:"note_created_at"`
+}
