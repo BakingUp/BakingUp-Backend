@@ -6,6 +6,7 @@ import (
 	"github.com/BakingUp/BakingUp-Backend/internal/core/util"
 	"github.com/BakingUp/BakingUp-Backend/prisma/db"
 	"github.com/gofiber/fiber/v2"
+	"time"
 )
 
 type StockService struct {
@@ -74,6 +75,66 @@ func (s *StockService) GetAllStocks(c *fiber.Ctx, userID string) (*domain.StockL
 
 }
 
+func (s *StockService) GetAllStocksForOrder(c *fiber.Ctx, userID string) (*domain.OrderStockList, error) {
+	stocks, err := s.stockRepo.GetAllStocks(c, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	language, err := s.userService.GetUserLanguage(c, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	var stockOrderPages []domain.StockOrderPage
+	recipe := make(map[string]db.RecipesModel)
+
+	for _, recipeItem := range stocks {
+		recipe[recipeItem.RecipeID] = recipeItem
+	}
+
+	for _, recipe := range stocks {
+		var stockOrderPage domain.StockOrderPage
+
+		stockOrderPage.RecipeID = recipe.RecipeID
+		stockOrderPage.RecipeName = util.GetRecipeName(&recipe, language)
+
+		if stockItem, ok := recipe.Stocks(); ok {
+			var dateTime time.Time
+			for _, stockDetail := range stockItem.StockDetail() {
+				stockOrderPage.Quantity += stockDetail.Quantity
+
+				if dateTime.IsZero() {
+					dateTime = stockDetail.SellByDate
+				} else if stockDetail.SellByDate.Before(dateTime) {
+					dateTime = stockDetail.SellByDate
+				}
+			}
+			profit := stockItem.SellingPrice - stockItem.Cost
+			stockOrderPage.SellByDate = dateTime.Format("02/01/2006")
+			stockOrderPage.SellingPrice = stockItem.SellingPrice
+			stockOrderPage.Profit = profit
+		} else {
+			continue
+		}
+
+		for _, recipeImage := range recipe.RecipeImages() {
+			if recipeImage.RecipeID == recipe.RecipeID {
+				stockOrderPage.RecipeURL = recipeImage.RecipeURL
+				break
+			}
+		}
+
+		stockOrderPages = append(stockOrderPages, stockOrderPage)
+	}
+
+	orderStockList := &domain.OrderStockList{
+		OrderStocks: stockOrderPages,
+	}
+
+	return orderStockList, nil
+}
+
 func (s *StockService) GetStockDetail(c *fiber.Ctx, recipeID string) (*domain.StockItemDetail, error) {
 	stock, err := s.stockRepo.GetStockDetail(c, recipeID)
 	if err != nil {
@@ -140,10 +201,10 @@ func (s *StockService) GetStockBatch(c *fiber.Ctx, stockDetailID string) (*domai
 	}
 
 	images := stockDetail.Stock().Recipe().RecipeImages()
-		firstRecipeURL := ""
-		if len(images) != 0 {
-			firstRecipeURL = images[0].RecipeURL
-		}
+	firstRecipeURL := ""
+	if len(images) != 0 {
+		firstRecipeURL = images[0].RecipeURL
+	}
 	stockNote, _ := stockDetail.Note()
 	stockBatch := &domain.StockBatch{
 		StockDetailId: stockDetail.StockDetailID,
