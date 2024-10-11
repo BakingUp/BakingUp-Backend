@@ -14,6 +14,8 @@ type IngredientRepository interface {
 	DeleteIngredient(c *fiber.Ctx, ingredientID string) error
 	AddIngredient(c *fiber.Ctx, ingredients *domain.AddIngredientPayload) error
 	AddIngredientImage(c *fiber.Ctx, ingredientImage *domain.AddIngredientImagePayload) error
+	AddIngredientStock(c *fiber.Ctx, ingredientStock *domain.AddIngredientStockPayload) error
+	AddIngredientNote(c *fiber.Ctx, ingredientNote *domain.AddIngredientNotePayload) error
 }
 
 type IngredientService interface {
@@ -23,4 +25,5 @@ type IngredientService interface {
 	DeleteIngredientBatchNote(c *fiber.Ctx, ingredientNoteID string) error
 	DeleteIngredient(c *fiber.Ctx, ingredientID string) error
 	AddIngredient(c *fiber.Ctx, ingredients *domain.AddIngredientRequest) error
+	AddIngredientStock(c *fiber.Ctx, ingredientStock *domain.AddIngredientStockRequest) error
 }

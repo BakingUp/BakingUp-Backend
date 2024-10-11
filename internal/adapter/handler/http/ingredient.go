@@ -157,3 +157,31 @@ func (ih *IngredientHandler) AddIngredient(c *fiber.Ctx) error {
     handleSuccess(c, nil)
     return nil
 }
+
+// AddIngredientStock godoc
+// @Summary      Add ingredient stock
+// @Description  Add ingredient stock by using ingredient stock request
+// @Tags         ingredient
+// @Accept       json
+// @Produce      json
+// @Param        AddIngredientStockRequest  body  domain.AddIngredientStockRequest  true  "Ingredient Stock Request"
+// @Success      200  {object}  response  "Success"
+// @Failure      400  {object}  response  "Cannot add ingredient stock"'
+// @Router       /ingredient/addIngredientStock [post]
+func (ih *IngredientHandler) AddIngredientStock(c *fiber.Ctx) error {
+	var addIngredientStock domain.AddIngredientStockRequest
+
+	if err := c.BodyParser(&addIngredientStock); err != nil {
+		handleError(c, 400, "Cannot add ingredient stock", err.Error())
+		return nil
+	}
+
+	err := ih.svc.AddIngredientStock(c, &addIngredientStock)
+	if err != nil {
+		handleError(c, 400, "Cannot add ingredient stock", err.Error())
+		return nil
+	}
+
+	handleSuccessMessage(c, "Successfully add ingredient stock")
+	return nil
+}
