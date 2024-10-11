@@ -183,10 +183,10 @@ model Recipes {
   recipe_thai_name              String
   total_time                    DateTime
   serving                       Int
-  scale_servings                Int
-  hidden_cost                   Float
-  labor_cost                    Float
-  profit_margin                 Float
+  scale_servings                Int @default(-1)
+  hidden_cost                   Float   @default(10)
+  labor_cost                    Float  @default(150)
+  profit_margin                 Float @default(30)
   recipe_images                 Recipe_images[]
   recipe_ingredients            Recipe_ingredients[]
   recipe_eng_instruction_steps  Recipe_eng_instruction_steps[]

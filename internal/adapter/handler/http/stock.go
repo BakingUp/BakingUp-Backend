@@ -38,6 +38,19 @@ func (sh *StockHandler) GetAllStocks(c *fiber.Ctx) error {
 	return nil
 }
 
+func (sh *StockHandler) GetAllStocksForOrder(c *fiber.Ctx) error {
+	userID := c.Query("user_id")
+
+	stocks, err := sh.svc.GetAllStocksForOrder(c, userID)
+	if err != nil {
+		handleError(c, 400, "Cannot get all stocks for order page.", err.Error())
+		return nil
+	}
+
+	handleSuccess(c, stocks)
+	return nil
+}
+
 // GetStockDetail godoc
 // @Summary      Get stock details
 // @Description  Get stock details by recipe ID and user ID
