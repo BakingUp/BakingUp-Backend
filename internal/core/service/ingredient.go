@@ -110,10 +110,11 @@ func (s *IngredientService) GetIngredientDetail(c *fiber.Ctx, ingredientID strin
 
 	totalQuantity := 0.0
 	var stocks []domain.Stock
+	var stockDetails []domain.Stock
 	for _, detail := range ingredient.IngredientDetail() {
 		ingredientStockURL, _ := detail.IngredientStockURL()
 		totalQuantity += detail.IngredientQuantity
-		stocks = append(stocks, domain.Stock{
+		stockDetails = append(stockDetails, domain.Stock{
 			StockID:          detail.IngredientStockID,
 			StockURL:         ingredientStockURL,
 			Price:            util.CombinePrice(detail.Price, ingredient.Unit),
@@ -121,8 +122,15 @@ func (s *IngredientService) GetIngredientDetail(c *fiber.Ctx, ingredientID strin
 			ExpirationDate:   detail.ExpirationDate.Format("02/01/2006"),
 			ExpirationStatus: util.CalculateExpirationStatus(detail.ExpirationDate, expirationDate.BlackExpirationDate, expirationDate.RedExpirationDate, expirationDate.YellowExpirationDate),
 		})
-
 	}
+
+	sort.Slice(stockDetails, func(i, j int) bool {
+        dateI, _ := time.Parse("02/01/2006", stockDetails[i].ExpirationDate)
+        dateJ, _ := time.Parse("02/01/2006", stockDetails[j].ExpirationDate)
+        return dateI.After(dateJ)
+    })
+
+	stocks = append(stocks, stockDetails...)
 
 	var ingredientURLs []string
 	ingredientImages := ingredient.IngredientImages()
