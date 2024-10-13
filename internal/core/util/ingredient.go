@@ -131,7 +131,7 @@ func UploadIngredientStockImage(userId string, ingredientId string, ingredientSt
 	// Generate a unique filename based on the current timestamp
 	filename := fmt.Sprintf("%d.jpg", time.Now().UnixNano())
 	// Create the path based on userId, and ingredientId
-	filePath := filepath.Join(fmt.Sprintf("images/%s/ingredient/%s/%s", userId, ingredientId, ingredientStockId), filename)
+	filePath := filepath.Join(fmt.Sprintf("images/%s/ingredients/%s/%s", userId, ingredientId, ingredientStockId), filename)
 
 	// Create the directory if it doesn't exist
 	if err := os.MkdirAll(filepath.Dir(filePath), os.ModePerm); err != nil {
