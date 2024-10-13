@@ -84,6 +84,17 @@ func (ir *IngredientRepository) DeleteIngredient(c *fiber.Ctx, ingredientID stri
 	return nil
 }
 
+func (ir *IngredientRepository) DeleteIngredientStock(c *fiber.Ctx, ingredientStockID string) error {
+	_, err := ir.db.IngredientDetail.FindMany(
+		db.IngredientDetail.IngredientStockID.Equals(ingredientStockID),
+	).Delete().Exec(c.Context())
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (ir *IngredientRepository) AddIngredient(c *fiber.Ctx, ingredient *domain.AddIngredientPayload) error {
 	_, err := ir.db.Ingredients.CreateOne(
 		db.Ingredients.IngredientID.Set(ingredient.IngredientID),

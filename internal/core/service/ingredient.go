@@ -201,6 +201,15 @@ func (s *IngredientService) DeleteIngredient(c *fiber.Ctx, ingredientID string) 
 	return nil
 }
 
+func (s *IngredientService) DeleteIngredientStock(c *fiber.Ctx, ingredientStockID string) error {
+	err := s.ingredientRepo.DeleteIngredientStock(c, ingredientStockID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (s *IngredientService) AddIngredient(c *fiber.Ctx, ingredients *domain.AddIngredientRequest) error {
 	userID := ingredients.UserID
 	ingredientID := uuid.NewString()
