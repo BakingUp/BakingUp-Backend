@@ -17,7 +17,6 @@ model Users{
   red_expiration_date    DateTime
   yellow_expiration_date DateTime
   language               Language
-  note                   String?
   notifications          Notifications[]
   orders                 Orders[]
   ingredients            Ingredients[]
@@ -40,6 +39,7 @@ model FixCost {
   water           Float?
   gas             Float?
   other           Float?
+  note            String?
 }
 
 model Notifications {

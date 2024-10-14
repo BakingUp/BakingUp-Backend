@@ -41,7 +41,7 @@ func (hs *HomeService) GetUnreadNotification(c *fiber.Ctx, userID string) (*doma
 	return unreadNotiAmount, nil
 }
 
-func (hs *HomeService) GetTopProducts(c *fiber.Ctx, userID string, chartType string, saleChannels []string, orderTypes []string) (*domain.FilterProductResponse, error) {
+func (hs *HomeService) GetTopProducts(c *fiber.Ctx, userID string, chartType string, saleChannels []string, orderTypes []string, created_at time.Time) (*domain.FilterProductResponse, error) {
 	orders, err := hs.homeRepo.GetTopProducts(c, userID, saleChannels, orderTypes)
 	if err != nil {
 		return nil, err
@@ -85,7 +85,7 @@ func (hs *HomeService) GetTopProducts(c *fiber.Ctx, userID string, chartType str
 		}
 	}
 
-	fixCost, _ := hs.settingService.GetFixCost(c, userID)
+	fixCost, _ := hs.settingService.GetFixCost(c, userID, created_at)
 	var response domain.FilterProductResponse
 	for i := 0; i < len(productList); i++ {
 		name := productList[i].Name
@@ -252,12 +252,12 @@ func (hs *HomeService) GetWastedProduct(c *fiber.Ctx, userID string, filterType 
 
 }
 
-func (hs *HomeService) GetDashboardChartData(c *fiber.Ctx, userID string) (*domain.DashboardChartDataResponse, error) {
+func (hs *HomeService) GetDashboardChartData(c *fiber.Ctx, userID string, created_at time.Time) (*domain.DashboardChartDataResponse, error) {
 	recipes, err := hs.homeRepo.GetDashboardChartData(c, userID)
 	if err != nil {
 		return nil, err
 	}
-	allFixCost, err := hs.settingService.GetFixCost(c, userID)
+	allFixCost, err := hs.settingService.GetFixCost(c, userID, created_at)
 	if err != nil {
 		return nil, err
 	}
