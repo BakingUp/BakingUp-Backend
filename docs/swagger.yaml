@@ -1,5 +1,45 @@
 basePath: /api
 definitions:
+  domain.AddIngredientRequest:
+    properties:
+      day_before_expire:
+        type: string
+      img:
+        items:
+          type: string
+        type: array
+      ingredient_eng_name:
+        type: string
+      ingredient_thai_name:
+        type: string
+      stock_less_than:
+        type: string
+      unit:
+        type: string
+      user_id:
+        type: string
+    type: object
+  domain.AddIngredientStockRequest:
+    properties:
+      expiration_date:
+        type: string
+      img:
+        type: string
+      ingredient_brand:
+        type: string
+      ingredient_id:
+        type: string
+      note:
+        type: string
+      price:
+        type: string
+      quantity:
+        type: string
+      supplier:
+        type: string
+      user_id:
+        type: string
+    type: object
   domain.ChangeExpirationDateSetting:
     properties:
       black_expiration_date:
@@ -332,6 +372,23 @@ definitions:
       stock_url:
         type: string
     type: object
+  domain.StockBatch:
+    properties:
+      note:
+        type: string
+      note_created_at:
+        type: string
+      quantity:
+        type: integer
+      recipe_name:
+        type: string
+      recipe_url:
+        type: string
+      sell_by_date:
+        type: string
+      stock_detail_id:
+        type: string
+    type: object
   domain.StockDetail:
     properties:
       created_at:
@@ -475,6 +532,58 @@ paths:
       summary: Get unread notification amount of user
       tags:
       - home
+  /ingredient/addIngredientStock:
+    post:
+      consumes:
+      - application/json
+      description: Add ingredient stock by using ingredient stock request
+      parameters:
+      - description: Ingredient Stock Request
+        in: body
+        name: AddIngredientStockRequest
+        required: true
+        schema:
+          $ref: '#/definitions/domain.AddIngredientStockRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot add ingredient stock"'
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Add ingredient stock
+      tags:
+      - ingredient
+  /ingredient/addIngredients:
+    post:
+      consumes:
+      - application/json
+      description: Add ingredient by using ingredient request
+      parameters:
+      - description: Ingredient Request
+        in: body
+        name: AddIngredientRequest
+        required: true
+        schema:
+          $ref: '#/definitions/domain.AddIngredientRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot add ingredients
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Add ingredient
+      tags:
+      - ingredient
   /ingredient/deleteIngredient:
     delete:
       consumes:
@@ -523,6 +632,31 @@ paths:
           schema:
             $ref: '#/definitions/http.response'
       summary: Delete ingredient batch note
+      tags:
+      - ingredient
+  /ingredient/deleteIngredientStock:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an ingredient stock by using ingredient stock id
+      parameters:
+      - description: Ingredient Stock ID
+        in: query
+        name: ingredient_stock_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot delete an ingredient stock
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Delete an ingredient stock
       tags:
       - ingredient
   /ingredient/getAllIngredients:
@@ -1002,6 +1136,31 @@ paths:
           schema:
             $ref: '#/definitions/http.response'
       summary: Get all stocks
+      tags:
+      - stock
+  /stock/getStockBatch:
+    get:
+      consumes:
+      - application/json
+      description: Get stock batch by stock detail ID
+      parameters:
+      - description: Stock Detail ID
+        in: query
+        name: stock_detail_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/domain.StockBatch'
+        "400":
+          description: Cannot get stock batch
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get stock batch
       tags:
       - stock
   /stock/getStockDetail:

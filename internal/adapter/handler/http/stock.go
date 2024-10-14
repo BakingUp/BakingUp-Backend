@@ -38,6 +38,19 @@ func (sh *StockHandler) GetAllStocks(c *fiber.Ctx) error {
 	return nil
 }
 
+func (sh *StockHandler) GetAllStocksForOrder(c *fiber.Ctx) error {
+	userID := c.Query("user_id")
+
+	stocks, err := sh.svc.GetAllStocksForOrder(c, userID)
+	if err != nil {
+		handleError(c, 400, "Cannot get all stocks for order page.", err.Error())
+		return nil
+	}
+
+	handleSuccess(c, stocks)
+	return nil
+}
+
 // GetStockDetail godoc
 // @Summary      Get stock details
 // @Description  Get stock details by recipe ID and user ID
@@ -81,5 +94,28 @@ func (sh *StockHandler) DeleteStock(c *fiber.Ctx) error {
 	}
 
 	handleSuccess(c, nil)
+	return nil
+}
+
+// GetStockBatch godoc
+// @Summary      Get stock batch
+// @Description  Get stock batch by stock detail ID
+// @Tags         stock
+// @Accept       json
+// @Produce      json
+// @Param        stock_detail_id  query  string  true  "Stock Detail ID"
+// @Success      200  {object}  domain.StockBatch  "Success"
+// @Failure      400  {object}  response     "Cannot get stock batch"
+// @Router       /stock/getStockBatch [get]
+func (sh *StockHandler) GetStockBatch(c *fiber.Ctx) error {
+	stockDetailID := c.Query("stock_detail_id")
+
+	batch, err := sh.svc.GetStockBatch(c, stockDetailID)
+	if err != nil {
+		handleError(c, 400, "Cannot get stock batch.", err.Error())
+		return nil
+	}
+
+	handleSuccess(c, batch)
 	return nil
 }

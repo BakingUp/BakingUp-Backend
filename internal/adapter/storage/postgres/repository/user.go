@@ -114,7 +114,7 @@ func (ur *UserRepository) GetUserProductionQueue(c *fiber.Ctx, userID string) ([
 	orders, err := ur.db.Orders.FindMany(
 		db.Orders.UserID.Equals(userID), db.Orders.PickUpDateTime.Gt(now), db.Orders.IsPreOrder.Equals(true),
 	).With(
-		db.Orders.OrderProducts.Fetch().With(db.OrderProducts.Recipe.Fetch()),
+		db.Orders.OrderProducts.Fetch().With(db.OrderProducts.Recipe.Fetch().With(db.Recipes.RecipeImages.Fetch())),
 	).Exec(c.Context())
 
 	if err != nil {

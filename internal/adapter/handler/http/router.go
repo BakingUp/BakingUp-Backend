@@ -41,6 +41,9 @@ func NewRouter(a *fiber.App, ingredientHandler IngredientHandler, recipeHandler 
 			ingredient.Get("/getIngredientStockDetail", ingredientHandler.GetIngredientStockDetail)
 			ingredient.Delete("/deleteIngredientBatchNote", ingredientHandler.DeleteIngredientBatchNote)
 			ingredient.Delete("/deleteIngredient", ingredientHandler.DeleteIngredient)
+			ingredient.Delete("/deleteIngredientStock", ingredientHandler.DeleteIngredientStock)
+			ingredient.Post("/addIngredient", ingredientHandler.AddIngredient)
+			ingredient.Post("/addIngredientStock", ingredientHandler.AddIngredientStock)
 		}
 
 		recipe := api.Group("/recipe")
@@ -55,12 +58,16 @@ func NewRouter(a *fiber.App, ingredientHandler IngredientHandler, recipeHandler 
 			stock.Get("/getAllStocks", stockHandler.GetAllStocks)
 			stock.Get("/getStockDetail", stockHandler.GetStockDetail)
 			stock.Delete("/deleteStock", stockHandler.DeleteStock)
+			stock.Get("/getStockBatch", stockHandler.GetStockBatch)
+			stock.Get("/getAllStocksForOrder", stockHandler.GetAllStocksForOrder)
 		}
 
 		order := api.Group("/order")
 		{
 			order.Get("/getAllOrders", orderHandler.GetAllOrders)
 			order.Get("/getOrderDetail", orderHandler.GetOrderDeatil)
+			order.Delete("/deleteOrder", orderHandler.DeleteOrder)
+			order.Post("/addInStoreOrder", orderHandler.AddInStoreOrder)
 		}
 		setting := api.Group("/settings")
 		{

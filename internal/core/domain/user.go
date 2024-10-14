@@ -31,6 +31,7 @@ type ProductionQueueItem struct {
 	Name       string `json:"name"`
 	Quantity   int    `json:"quantity"`
 	PickUpDate string `json:"pick_up_date"`
+	ImgURL     string `json:"recipe_url"`
 }
 
 type UserInfo struct {

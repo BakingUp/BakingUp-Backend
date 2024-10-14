@@ -131,6 +131,86 @@ const docTemplate = `{
                 }
             }
         },
+        "/ingredient/addIngredientStock": {
+            "post": {
+                "description": "Add ingredient stock by using ingredient stock request",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ingredient"
+                ],
+                "summary": "Add ingredient stock",
+                "parameters": [
+                    {
+                        "description": "Ingredient Stock Request",
+                        "name": "AddIngredientStockRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.AddIngredientStockRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot add ingredient stock\"'",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/ingredient/addIngredients": {
+            "post": {
+                "description": "Add ingredient by using ingredient request",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ingredient"
+                ],
+                "summary": "Add ingredient",
+                "parameters": [
+                    {
+                        "description": "Ingredient Request",
+                        "name": "AddIngredientRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.AddIngredientRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot add ingredients",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/ingredient/deleteIngredient": {
             "delete": {
                 "description": "Delete an ingredient by using ingredient id",
@@ -200,6 +280,44 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Cannot delete ingredient batch note",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/ingredient/deleteIngredientStock": {
+            "delete": {
+                "description": "Delete an ingredient stock by using ingredient stock id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ingredient"
+                ],
+                "summary": "Delete an ingredient stock",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Ingredient Stock ID",
+                        "name": "ingredient_stock_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot delete an ingredient stock",
                         "schema": {
                             "$ref": "#/definitions/http.response"
                         }
@@ -937,6 +1055,44 @@ const docTemplate = `{
                 }
             }
         },
+        "/stock/getStockBatch": {
+            "get": {
+                "description": "Get stock batch by stock detail ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stock"
+                ],
+                "summary": "Get stock batch",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Stock Detail ID",
+                        "name": "stock_detail_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.StockBatch"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get stock batch",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/stock/getStockDetail": {
             "get": {
                 "description": "Get stock details by recipe ID and user ID",
@@ -1017,6 +1173,67 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "domain.AddIngredientRequest": {
+            "type": "object",
+            "properties": {
+                "day_before_expire": {
+                    "type": "string"
+                },
+                "img": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "ingredient_eng_name": {
+                    "type": "string"
+                },
+                "ingredient_thai_name": {
+                    "type": "string"
+                },
+                "stock_less_than": {
+                    "type": "string"
+                },
+                "unit": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.AddIngredientStockRequest": {
+            "type": "object",
+            "properties": {
+                "expiration_date": {
+                    "type": "string"
+                },
+                "img": {
+                    "type": "string"
+                },
+                "ingredient_brand": {
+                    "type": "string"
+                },
+                "ingredient_id": {
+                    "type": "string"
+                },
+                "note": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "string"
+                },
+                "supplier": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.ChangeExpirationDateSetting": {
             "type": "object",
             "properties": {
@@ -1523,6 +1740,32 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "stock_url": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.StockBatch": {
+            "type": "object",
+            "properties": {
+                "note": {
+                    "type": "string"
+                },
+                "note_created_at": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "integer"
+                },
+                "recipe_name": {
+                    "type": "string"
+                },
+                "recipe_url": {
+                    "type": "string"
+                },
+                "sell_by_date": {
+                    "type": "string"
+                },
+                "stock_detail_id": {
                     "type": "string"
                 }
             }
