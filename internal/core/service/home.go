@@ -195,7 +195,7 @@ func (hs *HomeService) GetWastedProduct(c *fiber.Ctx, userID string, filterType 
 			if unitType == "Solid" {
 				productItem.Detail = fmt.Sprintf("Wasted Item: %.3f kg", productAmount)
 			} else {
-				productItem.Detail = fmt.Sprintf("Wasted Item: %.3f l", productAmount)
+				productItem.Detail = fmt.Sprintf("Wasted Item: %.3f L", productAmount)
 			}
 			productList = append(productList, productItem)
 		}
@@ -230,11 +230,11 @@ func (hs *HomeService) GetWastedProduct(c *fiber.Ctx, userID string, filterType 
 		}
 	}
 
-	if sortType == "Ascending" {
+	if sortType == "Ascending Order" {
 		sort.SliceStable(productList, func(i, j int) bool {
 			return productList[i].Detail < productList[j].Detail
 		})
-	} else if sortType == "Descending" {
+	} else if sortType == "Descending Order" {
 		sort.SliceStable(productList, func(i, j int) bool {
 			return productList[i].Detail > productList[j].Detail
 		})
