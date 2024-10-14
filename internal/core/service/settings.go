@@ -1,6 +1,8 @@
 package service
 
 import (
+	"time"
+
 	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
 	"github.com/BakingUp/BakingUp-Backend/internal/core/port"
 	"github.com/BakingUp/BakingUp-Backend/internal/core/util"
@@ -53,8 +55,8 @@ func (s *SettingsService) ChangeLanguage(c *fiber.Ctx, userLanguage *domain.Chan
 	return nil
 }
 
-func (s *SettingsService) GetFixCost(c *fiber.Ctx, userID string) (*domain.FixCostSetting, error) {
-	user, err := s.settingsRepo.GetFixCost(c, userID)
+func (s *SettingsService) GetFixCost(c *fiber.Ctx, userID string, created_at time.Time) (*domain.FixCostSetting, error) {
+	user, err := s.settingsRepo.GetFixCost(c, userID, created_at)
 	if err != nil {
 		return nil, err
 	}
