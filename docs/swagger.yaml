@@ -1113,6 +1113,31 @@ paths:
       summary: Delete a stock
       tags:
       - stock
+  /stock/deleteStockBatch:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a stock batch by stock detail ID
+      parameters:
+      - description: Stock Detail ID
+        in: query
+        name: stock_detail_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot delete a stock batch
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Delete a stock batch
+      tags:
+      - stock
   /stock/getAllStocks:
     get:
       consumes:

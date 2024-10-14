@@ -97,6 +97,29 @@ func (sh *StockHandler) DeleteStock(c *fiber.Ctx) error {
 	return nil
 }
 
+// DeleteStockBatch godoc
+// @Summary      Delete a stock batch
+// @Description  Delete a stock batch by stock detail ID
+// @Tags         stock
+// @Accept       json
+// @Produce      json
+// @Param        stock_detail_id  query  string  true  "Stock Detail ID"
+// @Success      200  {object}  response  "Success"
+// @Failure      400  {object}  response     "Cannot delete a stock batch"
+// @Router       /stock/deleteStockBatch [delete]
+func (sh *StockHandler) DeleteStockBatch(c *fiber.Ctx) error {
+	stockDetailID := c.Query("stock_detail_id")
+
+	err := sh.svc.DeleteStockBatch(c, stockDetailID)
+	if err != nil {
+		handleError(c, 400, "Cannot delete a stock batch.", err.Error())
+		return nil
+	}
+
+	handleSuccess(c, nil)
+	return nil
+}
+
 // GetStockBatch godoc
 // @Summary      Get stock batch
 // @Description  Get stock batch by stock detail ID
