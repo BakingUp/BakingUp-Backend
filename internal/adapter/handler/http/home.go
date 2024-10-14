@@ -1,6 +1,8 @@
 package http
 
 import (
+	"time"
+
 	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
 	"github.com/BakingUp/BakingUp-Backend/internal/core/service"
 	"github.com/gofiber/fiber/v2"
@@ -64,8 +66,9 @@ func (hh *HomeHandler) GetTopProducts(c *fiber.Ctx) error {
 
 	var filterResponse *domain.FilterProductResponse
 	var err error
+	created_at := time.Now()
 	if filterRequest.FilterType != "Wasted Ingredients" && filterRequest.FilterType != "Wasted Bakery Stock" {
-		filterResponse, err = hh.homeService.GetTopProducts(c, filterRequest.UserID, filterRequest.FilterType, filterRequest.SalesChannel, filterRequest.OrderTypes)
+		filterResponse, err = hh.homeService.GetTopProducts(c, filterRequest.UserID, filterRequest.FilterType, filterRequest.SalesChannel, filterRequest.OrderTypes, created_at)
 		if err != nil {
 			handleError(c, 400, "Cannot get the filter response.", err.Error())
 			return nil
@@ -95,7 +98,8 @@ func (hh *HomeHandler) GetTopProducts(c *fiber.Ctx) error {
 func (hh *HomeHandler) GetDashboardChartData(c *fiber.Ctx) error {
 	userID := c.Query("user_id")
 
-	response, err := hh.homeService.GetDashboardChartData(c, userID)
+	created_at := time.Now()
+	response, err := hh.homeService.GetDashboardChartData(c, userID, created_at)
 	if err != nil {
 		handleError(c, 400, "Cannot get data for all charts.", err.Error())
 		return nil
