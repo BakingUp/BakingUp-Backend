@@ -17,21 +17,29 @@ model Users{
   red_expiration_date    DateTime
   yellow_expiration_date DateTime
   language               Language
-  rent                   Float?
-  salaries               Float?
-  insurance              Float?
-  subscriptions          Float?
-  advertising            Float?
-  electricity            Float?
-  water                  Float?
-  gas                    Float?
-  other                  Float?
   note                   String?
   notifications          Notifications[]
   orders                 Orders[]
   ingredients            Ingredients[]
   devices                Devices[]
   recipes                Recipes[]
+  fixCosts               FixCost[]
+}
+
+model FixCost {
+  fix_cost_id     String   @id @unique @default(uuid())
+  user            Users    @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  user_id         String
+  created_at      DateTime
+  rent            Float?
+  salaries        Float?
+  insurance       Float?
+  subscriptions   Float?
+  advertising     Float?
+  electricity     Float?
+  water           Float?
+  gas             Float?
+  other           Float?
 }
 
 model Notifications {
