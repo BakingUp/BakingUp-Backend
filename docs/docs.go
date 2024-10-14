@@ -1017,6 +1017,44 @@ const docTemplate = `{
                 }
             }
         },
+        "/stock/deleteStockBatch": {
+            "delete": {
+                "description": "Delete a stock batch by stock detail ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stock"
+                ],
+                "summary": "Delete a stock batch",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Stock Detail ID",
+                        "name": "stock_detail_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot delete a stock batch",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/stock/getAllStocks": {
             "get": {
                 "description": "Get all stocks by user ID",
