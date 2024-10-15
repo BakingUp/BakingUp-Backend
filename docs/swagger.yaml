@@ -19,6 +19,27 @@ definitions:
       user_id:
         type: string
     type: object
+  domain.AddIngredientStockRequest:
+    properties:
+      expiration_date:
+        type: string
+      img:
+        type: string
+      ingredient_brand:
+        type: string
+      ingredient_id:
+        type: string
+      note:
+        type: string
+      price:
+        type: string
+      quantity:
+        type: string
+      supplier:
+        type: string
+      user_id:
+        type: string
+    type: object
   domain.ChangeExpirationDateSetting:
     properties:
       black_expiration_date:
@@ -511,6 +532,32 @@ paths:
       summary: Get unread notification amount of user
       tags:
       - home
+  /ingredient/addIngredientStock:
+    post:
+      consumes:
+      - application/json
+      description: Add ingredient stock by using ingredient stock request
+      parameters:
+      - description: Ingredient Stock Request
+        in: body
+        name: AddIngredientStockRequest
+        required: true
+        schema:
+          $ref: '#/definitions/domain.AddIngredientStockRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot add ingredient stock"'
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Add ingredient stock
+      tags:
+      - ingredient
   /ingredient/addIngredients:
     post:
       consumes:
@@ -585,6 +632,31 @@ paths:
           schema:
             $ref: '#/definitions/http.response'
       summary: Delete ingredient batch note
+      tags:
+      - ingredient
+  /ingredient/deleteIngredientStock:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an ingredient stock by using ingredient stock id
+      parameters:
+      - description: Ingredient Stock ID
+        in: query
+        name: ingredient_stock_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot delete an ingredient stock
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Delete an ingredient stock
       tags:
       - ingredient
   /ingredient/getAllIngredients:
@@ -1039,6 +1111,31 @@ paths:
           schema:
             $ref: '#/definitions/http.response'
       summary: Delete a stock
+      tags:
+      - stock
+  /stock/deleteStockBatch:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a stock batch by stock detail ID
+      parameters:
+      - description: Stock Detail ID
+        in: query
+        name: stock_detail_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot delete a stock batch
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Delete a stock batch
       tags:
       - stock
   /stock/getAllStocks:

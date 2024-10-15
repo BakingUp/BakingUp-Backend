@@ -131,6 +131,29 @@ func (ih *IngredientHandler) DeleteIngredient(c *fiber.Ctx) error {
 	return nil
 }
 
+// DeleteIngredientStock godoc
+// @Summary      Delete an ingredient stock
+// @Description  Delete an ingredient stock by using ingredient stock id
+// @Tags         ingredient
+// @Accept       json
+// @Produce      json
+// @Param        ingredient_stock_id  query  string  true  "Ingredient Stock ID"
+// @Success      200  {object}  response  "Success"
+// @Failure      400  {object}  response  "Cannot delete an ingredient stock"
+// @Router       /ingredient/deleteIngredientStock [delete]
+func (ih *IngredientHandler) DeleteIngredientStock(c *fiber.Ctx) error {
+	ingredientStockID := c.Query("ingredient_stock_id")
+
+	err := ih.svc.DeleteIngredientStock(c, ingredientStockID)
+	if err != nil {
+		handleError(c, 400, "Cannot delete an ingredient stock", err.Error())
+		return nil
+	}
+
+	handleSuccess(c, nil)
+	return nil
+}
+
 // AddIngredient godoc
 // @Summary      Add ingredient
 // @Description  Add ingredient by using ingredient request

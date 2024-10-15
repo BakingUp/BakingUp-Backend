@@ -189,6 +189,15 @@ func (s *StockService) DeleteStock(c *fiber.Ctx, recipeID string) error {
 	return nil
 }
 
+func (s *StockService) DeleteStockBatch(c *fiber.Ctx, stockDetailID string) error {
+	err := s.stockRepo.DeleteStockBatch(c, stockDetailID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (s *StockService) GetStockBatch(c *fiber.Ctx, stockDetailID string) (*domain.StockBatch, error) {
 	stockDetail, err := s.stockRepo.GetStockBatch(c, stockDetailID)
 	if err != nil {

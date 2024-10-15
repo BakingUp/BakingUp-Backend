@@ -131,6 +131,46 @@ const docTemplate = `{
                 }
             }
         },
+        "/ingredient/addIngredientStock": {
+            "post": {
+                "description": "Add ingredient stock by using ingredient stock request",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ingredient"
+                ],
+                "summary": "Add ingredient stock",
+                "parameters": [
+                    {
+                        "description": "Ingredient Stock Request",
+                        "name": "AddIngredientStockRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.AddIngredientStockRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot add ingredient stock\"'",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/ingredient/addIngredients": {
             "post": {
                 "description": "Add ingredient by using ingredient request",
@@ -240,6 +280,44 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Cannot delete ingredient batch note",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/ingredient/deleteIngredientStock": {
+            "delete": {
+                "description": "Delete an ingredient stock by using ingredient stock id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ingredient"
+                ],
+                "summary": "Delete an ingredient stock",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Ingredient Stock ID",
+                        "name": "ingredient_stock_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot delete an ingredient stock",
                         "schema": {
                             "$ref": "#/definitions/http.response"
                         }
@@ -939,6 +1017,44 @@ const docTemplate = `{
                 }
             }
         },
+        "/stock/deleteStockBatch": {
+            "delete": {
+                "description": "Delete a stock batch by stock detail ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stock"
+                ],
+                "summary": "Delete a stock batch",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Stock Detail ID",
+                        "name": "stock_detail_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot delete a stock batch",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/stock/getAllStocks": {
             "get": {
                 "description": "Get all stocks by user ID",
@@ -1117,6 +1233,38 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "unit": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.AddIngredientStockRequest": {
+            "type": "object",
+            "properties": {
+                "expiration_date": {
+                    "type": "string"
+                },
+                "img": {
+                    "type": "string"
+                },
+                "ingredient_brand": {
+                    "type": "string"
+                },
+                "ingredient_id": {
+                    "type": "string"
+                },
+                "note": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "string"
+                },
+                "supplier": {
                     "type": "string"
                 },
                 "user_id": {
