@@ -23,6 +23,7 @@ model Users{
   devices                Devices[]
   recipes                Recipes[]
   fixCosts               FixCost[]
+  production_queue   Production_queue[]
 }
 
 model FixCost {
@@ -84,6 +85,7 @@ model Orders {
   order_products     Order_products[]
   order_note_text    String?     @default("-")
   order_note_create_at DateTime? @default(now())
+  production_queue   Production_queue[]
 }
 
 
@@ -124,6 +126,17 @@ model Order_products {
   recipe            Recipes   @relation(fields: [recipe_id], references: [recipe_id], onDelete: Cascade)
 
   @@id([order_id, recipe_id])
+}
+
+model Production_queue{
+  production_id       String   @id @unique @default(uuid())
+  user                Users    @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  user_id             String
+  recipe_id           String
+  recipe              Recipes  @relation(fields: [recipe_id], references: [recipe_id], onDelete: Cascade)
+  order_id            String
+  order               Orders   @relation(fields: [order_id], references: [order_id], onDelete: Cascade)
+  production_quantity Int
 }
 
 model Ingredients {
@@ -202,6 +215,7 @@ model Recipes {
   recipe_instruction_images     Recipe_instruction_images[]
   stocks                        Stocks?
   order_products                Order_products[]
+  production_queue   Production_queue[]
 }
 
 model Recipe_images {
