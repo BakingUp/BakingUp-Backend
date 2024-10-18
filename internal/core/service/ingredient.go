@@ -236,7 +236,7 @@ func (s *IngredientService) AddIngredient(c *fiber.Ctx, ingredients *domain.AddI
 	err := s.ingredientRepo.AddIngredient(c, addIngredientPayload)
 	imgIndex := 1
 	for _, img := range ingredients.Img {
-		imgUrl, err := util.UploadIngredientImage(userID, ingredientID, img)
+		imgUrl, err := util.UploadIngredientImage(userID, ingredientID, img, strconv.Itoa(imgIndex))
 		if err != nil {
 			return err
 		}
