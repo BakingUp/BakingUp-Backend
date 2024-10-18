@@ -1,12 +1,14 @@
 package service
 
 import (
+	"sort"
+	"time"
+
 	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
 	"github.com/BakingUp/BakingUp-Backend/internal/core/port"
 	"github.com/BakingUp/BakingUp-Backend/internal/core/util"
 	"github.com/BakingUp/BakingUp-Backend/prisma/db"
 	"github.com/gofiber/fiber/v2"
-	"time"
 )
 
 type StockService struct {
@@ -161,6 +163,12 @@ func (s *StockService) GetStockDetail(c *fiber.Ctx, recipeID string) (*domain.St
 
 		stockDetails = append(stockDetails, detail)
 	}
+
+	sort.Slice(stockDetails, func(i, j int) bool {
+		dateI, _ := time.Parse("02/01/2006", stockDetails[i].SellByDate)
+		dateJ, _ := time.Parse("02/01/2006", stockDetails[j].SellByDate)
+		return dateI.Before(dateJ)
+	})
 
 	var stockURLs []string
 	for _, image := range stock.Recipe().RecipeImages() {
