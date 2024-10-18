@@ -14,7 +14,41 @@ Welcome to the BakingUp Backend Repository!
 - <b>Container Management:</b> Docker
 - <b>Hosting:</b> Azure Virtual Machine
 - <b>DNS:</b> Cloudflare
-- <b>CI/CD:</b> GitHub Actions / GitLab CI/CD
+- <b>CI/CD:</b> GitHub Actions
+
+## Installation Guide
+### 1. Clone the Repository
+- For viewers on GitHub:
+  
+  ```bash
+  git clone https://github.com/BakingUp/BakingUp-Backend.git
+  ```
+- For viewers in CS GitLab:
+  
+  ```bash
+  git clone https://csgit.sit.kmutt.ac.th/csc498-499-bakingup/bakingup-backend.git
+  ```
+### 2. Generate Prisma Client
+- Navigate to the root directory and run the following command:
+  
+  ```bash
+  go run github.com/steebchen/prisma-client-go generate
+  ```
+### 3. Setup Environment Variables
+ - Create a .env file in the root directory of the project and add the following environment variables:
+   
+   ```env
+   HTTP_PORT=
+   DATABASE_URL=postgresql://username:password@localhost:5432/yourdatabase
+   HTTP_ALLOWED_ORIGINS=
+   ```
+ - **Note:** Replace `username`, `password`, and `yourdatabase` with your actual PostgreSQL credentials.
+### 4. Start the Server
+ - Run the following command to start the server:
+   
+   ```bash
+   go run cmd/http/main.go
+   ```
 
 ## More Information
 For more information, please refer to the "Wiki" section at 
