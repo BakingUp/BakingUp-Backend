@@ -53,6 +53,12 @@ type IngredientStockDetail struct {
 	Notes              []IngredientNote `json:"notes"`
 }
 
+type AddEditIngredientStockDetail struct {
+	IngredientEngName  string `json:"ingredient_eng_name"`
+	IngredientThaiName string `json:"ingredient_thai_name"`
+	Unit               string `json:"unit"`
+}
+
 type AddIngredientRequest struct {
 	UserID             string   `json:"user_id"`
 	IngredientEngName  string   `json:"ingredient_eng_name"`

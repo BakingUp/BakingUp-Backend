@@ -39,6 +39,7 @@ func NewRouter(a *fiber.App, ingredientHandler IngredientHandler, recipeHandler 
 			ingredient.Get("/getAllIngredients", ingredientHandler.GetAllIngredients)
 			ingredient.Get("/getIngredientDetail", ingredientHandler.GetIngredientDetail)
 			ingredient.Get("/getIngredientStockDetail", ingredientHandler.GetIngredientStockDetail)
+			ingredient.Get("/getAddEditIngredientStockDetail", ingredientHandler.GetAddEditIngredientStockDetail)
 			ingredient.Delete("/deleteIngredientBatchNote", ingredientHandler.DeleteIngredientBatchNote)
 			ingredient.Delete("/deleteIngredient", ingredientHandler.DeleteIngredient)
 			ingredient.Delete("/deleteIngredientStock", ingredientHandler.DeleteIngredientStock)

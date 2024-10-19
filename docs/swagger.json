@@ -319,6 +319,44 @@
                 }
             }
         },
+        "/ingredient/getAddEditIngredientStockDetail": {
+            "get": {
+                "description": "Get add edit ingredient stock details by ingredient ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ingredient"
+                ],
+                "summary": "Get add edit ingredient stock details",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Ingredient ID",
+                        "name": "ingredient_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.AddEditIngredientStockDetail"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get add edit ingredient stock detail",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/ingredient/getAllIngredients": {
             "get": {
                 "description": "Get all ingredients by user ID",
@@ -1205,6 +1243,20 @@
         }
     },
     "definitions": {
+        "domain.AddEditIngredientStockDetail": {
+            "type": "object",
+            "properties": {
+                "ingredient_eng_name": {
+                    "type": "string"
+                },
+                "ingredient_thai_name": {
+                    "type": "string"
+                },
+                "unit": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.AddIngredientRequest": {
             "type": "object",
             "properties": {
@@ -1291,6 +1343,9 @@
                 },
                 "electricity": {
                     "type": "number"
+                },
+                "fix_cost_id": {
+                    "type": "string"
                 },
                 "gas": {
                     "type": "number"
