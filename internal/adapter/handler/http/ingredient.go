@@ -85,6 +85,30 @@ func (ih *IngredientHandler) GetIngredientStockDetail(c *fiber.Ctx) error {
 	return nil
 }
 
+// GetAddEditIngredientStockDetail godoc
+// @Summary      Get add edit ingredient stock details
+// @Description  Get add edit ingredient stock details by ingredient ID
+// @Tags         ingredient
+// @Accept       json
+// @Produce      json
+// @Param        ingredient_id  query  string  true  "Ingredient ID"
+// @Success      200  {object}  domain.AddEditIngredientStockDetail  "Success"
+// @Failure      400  {object}  response     "Cannot get add edit ingredient stock detail"
+// @Router       /ingredient/getAddEditIngredientStockDetail [get]
+func (ih *IngredientHandler) GetAddEditIngredientStockDetail(c *fiber.Ctx) error {
+	ingredientID := c.Query("ingredient_id")
+
+	ingredient, err := ih.svc.GetAddEditIngredientStockDetail(c, ingredientID)
+
+	if err != nil {
+		handleError(c, 400, "Cannot get add edit ingredient stock detail", err.Error())
+		return nil
+	}
+
+	handleSuccess(c, ingredient)
+	return nil
+}
+
 // DeleteIngredientBatchNote godoc
 // @Summary      Delete ingredient batch note
 // @Description  Delete ingredient batch note by ingredient note ID

@@ -1,5 +1,14 @@
 basePath: /api
 definitions:
+  domain.AddEditIngredientStockDetail:
+    properties:
+      ingredient_eng_name:
+        type: string
+      ingredient_thai_name:
+        type: string
+      unit:
+        type: string
+    type: object
   domain.AddIngredientRequest:
     properties:
       day_before_expire:
@@ -57,6 +66,8 @@ definitions:
         type: number
       electricity:
         type: number
+      fix_cost_id:
+        type: string
       gas:
         type: number
       insurance:
@@ -657,6 +668,31 @@ paths:
           schema:
             $ref: '#/definitions/http.response'
       summary: Delete an ingredient stock
+      tags:
+      - ingredient
+  /ingredient/getAddEditIngredientStockDetail:
+    get:
+      consumes:
+      - application/json
+      description: Get add edit ingredient stock details by ingredient ID
+      parameters:
+      - description: Ingredient ID
+        in: query
+        name: ingredient_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/domain.AddEditIngredientStockDetail'
+        "400":
+          description: Cannot get add edit ingredient stock detail
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get add edit ingredient stock details
       tags:
       - ingredient
   /ingredient/getAllIngredients:

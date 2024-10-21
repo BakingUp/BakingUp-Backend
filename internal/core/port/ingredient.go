@@ -10,6 +10,7 @@ type IngredientRepository interface {
 	GetIngredientDetail(c *fiber.Ctx, ingredientID string) (*db.IngredientsModel, error)
 	GetAllIngredients(c *fiber.Ctx, userID string) ([]db.IngredientsModel, error)
 	GetIngredientStockDetail(c *fiber.Ctx, ingredientStockID string) (*db.IngredientDetailModel, error)
+	GetAddEditIngredientStockDetail(c *fiber.Ctx, ingredientID string) (*db.IngredientsModel, error)
 	DeleteIngredientBatchNote(c *fiber.Ctx, ingredientNoteID string) error
 	DeleteIngredient(c *fiber.Ctx, ingredientID string) error
 	DeleteIngredientStock(c *fiber.Ctx, ingredientStockID string) error
@@ -23,6 +24,7 @@ type IngredientService interface {
 	GetIngredientDetail(c *fiber.Ctx, ingredientID string) (*domain.IngredientDetail, error)
 	GetAllIngredients(c *fiber.Ctx, userID string) (*domain.IngredientList, error)
 	GetIngredientStockDetail(c *fiber.Ctx, ingredientStockID string) (*domain.IngredientStockDetail, error)
+	GetAddEditIngredientStockDetail(c *fiber.Ctx, ingredientID string) (*domain.AddEditIngredientStockDetail, error)
 	DeleteIngredientBatchNote(c *fiber.Ctx, ingredientNoteID string) error
 	DeleteIngredient(c *fiber.Ctx, ingredientID string) error
 	DeleteIngredientStock(c *fiber.Ctx, ingredientStockID string) error
