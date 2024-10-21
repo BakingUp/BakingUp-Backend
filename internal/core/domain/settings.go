@@ -24,7 +24,6 @@ type FixCostSetting struct {
 
 type ChangeFixCostSetting struct {
 	FixCostID     string  `json:"fix_cost_id"`
-	UserID        string  `json:"user_id"`
 	Rent          float64 `json:"rent"`
 	Salaries      float64 `json:"salaries"`
 	Insurance     float64 `json:"insurance"`

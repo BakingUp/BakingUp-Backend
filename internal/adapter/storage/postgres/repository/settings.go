@@ -62,17 +62,18 @@ func (sr *SettingsRepository) ChangeLanguage(c *fiber.Ctx, userLanguage *domain.
 	return nil
 }
 
-func (sr *SettingsRepository) GetFixCost(c *fiber.Ctx, userID string, created_at time.Time) (*db.FixCostModel, error) {
-	user, err := sr.db.FixCost.FindFirst(
+func (sr *SettingsRepository) GetFixCost(c *fiber.Ctx, userID string, startDateTime time.Time, endDateTime time.Time) ([]db.FixCostModel, error) {
+	fixCosts, err := sr.db.FixCost.FindMany(
 		db.FixCost.UserID.Equals(userID),
-		db.FixCost.CreatedAt.Equals(created_at),
+		db.FixCost.CreatedAt.AfterEquals(startDateTime),
+		db.FixCost.CreatedAt.BeforeEquals(endDateTime),
 	).Exec(c.Context())
 
 	if err != nil {
 		return nil, err
 	}
 
-	return user, nil
+	return fixCosts, nil
 }
 
 func (sr *SettingsRepository) ChangeFixCost(c *fiber.Ctx, userFixCost *domain.ChangeFixCostSetting) error {

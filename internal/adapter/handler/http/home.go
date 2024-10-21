@@ -66,9 +66,11 @@ func (hh *HomeHandler) GetTopProducts(c *fiber.Ctx) error {
 
 	var filterResponse *domain.FilterProductResponse
 	var err error
-	created_at := time.Now()
+	// today := time.Now()
+	startDateTime := time.Date(filterRequest.StartDateTime.Year(), filterRequest.StartDateTime.Month(), 1, 0, 0, 0, 0, filterRequest.StartDateTime.Location())
+	endDateTime := time.Date(filterRequest.EndDateTime.Year(), filterRequest.EndDateTime.Month(), 1, 0, 0, 0, 0, filterRequest.EndDateTime.Location())
 	if filterRequest.FilterType != "Wasted Ingredients" && filterRequest.FilterType != "Wasted Bakery Stock" {
-		filterResponse, err = hh.homeService.GetTopProducts(c, filterRequest.UserID, filterRequest.FilterType, filterRequest.SalesChannel, filterRequest.OrderTypes, created_at)
+		filterResponse, err = hh.homeService.GetTopProducts(c, filterRequest.UserID, filterRequest.FilterType, filterRequest.SalesChannel, filterRequest.OrderTypes, startDateTime, endDateTime)
 		if err != nil {
 			handleError(c, 400, "Cannot get the filter response.", err.Error())
 			return nil
@@ -92,14 +94,20 @@ func (hh *HomeHandler) GetTopProducts(c *fiber.Ctx) error {
 // @Accept       json
 // @Produce      json
 // @Param        user_id  query string  true  "User ID"
+// @Param        start_date_time query    string  false "Start Date Time"
+// @Param        end_date_time   query    string  false "End Date Time"
 // @Success      200  {object}  domain.DashboardChartDataResponse  "Success"
 // @Failure      400  {object}  response     "Cannot get data for all charts."
 // @Router       /home/getDashboardChartData [get]
 func (hh *HomeHandler) GetDashboardChartData(c *fiber.Ctx) error {
 	userID := c.Query("user_id")
+	startDateTimeStr := c.Query("start_date_time")
+	endDateTimeStr := c.Query("end_date_time")
 
-	created_at := time.Now()
-	response, err := hh.homeService.GetDashboardChartData(c, userID, created_at)
+	startDateTime, _ := time.Parse(time.RFC3339, startDateTimeStr)
+	endDateTime, _ := time.Parse(time.RFC3339, endDateTimeStr)
+
+	response, err := hh.homeService.GetDashboardChartData(c, userID, startDateTime, endDateTime)
 	if err != nil {
 		handleError(c, 400, "Cannot get data for all charts.", err.Error())
 		return nil

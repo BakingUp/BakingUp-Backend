@@ -104,6 +104,7 @@ func (sh *SettingsHandler) ChangeLanguage(c *fiber.Ctx) error {
 // @Accept       json
 // @Produce      json
 // @Param        user_id  query  string  true  "User ID"
+// @Param        created_at  query  string  true  "Created At"
 // @Success      200  {object}  domain.FixCostSetting  "Success"
 // @Failure      400  {object}  response     "Cannot get the fix cost"
 // @Router       /settings/getFixCost [get]
@@ -141,11 +142,6 @@ func (sh *SettingsHandler) ChangeFixCost(c *fiber.Ctx) error {
 
 	if err := c.BodyParser(&userFixCost); err != nil {
 		handleError(c, 400, "Failed to parse request body", err.Error())
-		return nil
-	}
-
-	if userFixCost.UserID == "" {
-		handleError(c, 400, "UserID is required", "")
 		return nil
 	}
 

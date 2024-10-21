@@ -2,6 +2,7 @@ package repository
 
 import (
 	"strconv"
+	"time"
 
 	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
 	"github.com/BakingUp/BakingUp-Backend/prisma/db"
@@ -48,7 +49,7 @@ func (hr *HomeRepository) GetTopProducts(c *fiber.Ctx, userID string, saleChanne
 		db.Orders.OrderPlatform.In(saleChannelValues),
 	).With(
 		db.Orders.OrderProducts.Fetch().With(db.OrderProducts.Recipe.Fetch().With(db.Recipes.Stocks.Fetch().With(db.Stocks.StockDetail.Fetch()), db.Recipes.RecipeImages.Fetch())),
-		db.Orders.User.Fetch(),
+		db.Orders.User.Fetch().With(db.Users.FixCosts.Fetch()),
 	).Exec(c.Context())
 
 	if err != nil {
@@ -74,16 +75,17 @@ func (hr *HomeRepository) GetTopWastedStock(c *fiber.Ctx, userID string) ([]db.R
 	return recipes, nil
 }
 
-func (hr *HomeRepository) GetDashboardChartData(c *fiber.Ctx, userID string) ([]db.RecipesModel, error) {
-	recipes, err := hr.db.Recipes.FindMany(
-		db.Recipes.UserID.Equals(userID),
+func (hr *HomeRepository) GetDashboardChartData(c *fiber.Ctx, userID string, startDateTime time.Time, endDateTime time.Time) ([]db.OrdersModel, error) {
+	orders, err := hr.db.Orders.FindMany(
+		db.Orders.UserID.Equals(userID),
+		db.Orders.OrderDate.AfterEquals(startDateTime),
+		db.Orders.OrderDate.BeforeEquals(endDateTime),
 	).With(
-		db.Recipes.OrderProducts.Fetch().With(db.OrderProducts.Order.Fetch()),
-		db.Recipes.Stocks.Fetch(),
+		db.Orders.OrderProducts.Fetch().With(db.OrderProducts.Recipe.Fetch().With(db.Recipes.Stocks.Fetch())),
 	).Exec(c.Context())
 	if err != nil {
 		return nil, err
 	}
 
-	return recipes, nil
+	return orders, nil
 }

@@ -1,16 +1,20 @@
 package domain
 
+import "time"
+
 type UnreadNotification struct {
 	UnreadNotiAmount int `json:"unread_noti_amount"`
 }
 
 type FilterSellingRequest struct {
-	UserID       string   `json:"user_id"`
-	FilterType   string   `json:"filter_type"`
-	SalesChannel []string `json:"sales_channel,omitempty"`
-	OrderTypes   []string `json:"order_types,omitempty"`
-	UnitType     string   `json:"unit_type,omitempty"`
-	SortType     string   `json:"sort_type,omitempty"`
+	UserID        string    `json:"user_id"`
+	FilterType    string    `json:"filter_type"`
+	StartDateTime time.Time `json:"start_date_time,omitempty"`
+	EndDateTime   time.Time `json:"end_date_time,omitempty"`
+	SalesChannel  []string  `json:"sales_channel,omitempty"`
+	OrderTypes    []string  `json:"order_types,omitempty"`
+	UnitType      string    `json:"unit_type,omitempty"`
+	SortType      string    `json:"sort_type,omitempty"`
 }
 
 type FilterWastedRequest struct {
@@ -35,7 +39,6 @@ type ProductPricing struct {
 
 type DashboardChartDataResponse struct {
 	CostRevenue     []CostRevenueChartItem     `json:"cost_revenue"`
-	NetProfit       []NetProfitChartItem       `json:"net_profit"`
 	ProfitThreshold []ProfitThresholdChartItem `json:"profit_threshold"`
 }
 
