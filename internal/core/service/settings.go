@@ -56,21 +56,21 @@ func (s *SettingsService) ChangeLanguage(c *fiber.Ctx, userLanguage *domain.Chan
 }
 
 func (s *SettingsService) GetFixCost(c *fiber.Ctx, userID string, created_at time.Time) (*domain.FixCostSetting, error) {
-	user, err := s.settingsRepo.GetFixCost(c, userID, created_at)
+	user, err := s.settingsRepo.GetFixCost(c, userID, created_at, created_at)
 	if err != nil {
 		return nil, err
 	}
 
-	rent, _ := user.Rent()
-	salaries, _ := user.Salaries()
-	insurance, _ := user.Insurance()
-	subscriptions, _ := user.Subscriptions()
-	advertising, _ := user.Advertising()
-	electricity, _ := user.Electricity()
-	water, _ := user.Water()
-	gas, _ := user.Gas()
-	other, _ := user.Other()
-	note, _ := user.Note()
+	rent, _ := user[0].Rent()
+	salaries, _ := user[0].Salaries()
+	insurance, _ := user[0].Insurance()
+	subscriptions, _ := user[0].Subscriptions()
+	advertising, _ := user[0].Advertising()
+	electricity, _ := user[0].Electricity()
+	water, _ := user[0].Water()
+	gas, _ := user[0].Gas()
+	other, _ := user[0].Other()
+	note, _ := user[0].Note()
 
 	userFixCost := &domain.FixCostSetting{
 		Rent:          rent,

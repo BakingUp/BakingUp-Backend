@@ -35,6 +35,18 @@ const docTemplate = `{
                         "name": "user_id",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Start Date Time",
+                        "name": "start_date_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "End Date Time",
+                        "name": "end_date_time",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -923,6 +935,13 @@ const docTemplate = `{
                         "name": "user_id",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Created At",
+                        "name": "created_at",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1260,6 +1279,9 @@ const docTemplate = `{
                 "electricity": {
                     "type": "number"
                 },
+                "fix_cost_id": {
+                    "type": "string"
+                },
                 "gas": {
                     "type": "number"
                 },
@@ -1280,9 +1302,6 @@ const docTemplate = `{
                 },
                 "subscriptions": {
                     "type": "number"
-                },
-                "user_id": {
-                    "type": "string"
                 },
                 "water": {
                     "type": "number"
@@ -1355,12 +1374,6 @@ const docTemplate = `{
                         "$ref": "#/definitions/domain.CostRevenueChartItem"
                     }
                 },
-                "net_profit": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/domain.NetProfitChartItem"
-                    }
-                },
                 "profit_threshold": {
                     "type": "array",
                     "items": {
@@ -1411,6 +1424,9 @@ const docTemplate = `{
         "domain.FilterSellingRequest": {
             "type": "object",
             "properties": {
+                "end_date_time": {
+                    "type": "string"
+                },
                 "filter_type": {
                     "type": "string"
                 },
@@ -1427,6 +1443,9 @@ const docTemplate = `{
                     }
                 },
                 "sort_type": {
+                    "type": "string"
+                },
+                "start_date_time": {
                     "type": "string"
                 },
                 "unit_type": {
@@ -1601,17 +1620,6 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "type": "string"
-                }
-            }
-        },
-        "domain.NetProfitChartItem": {
-            "type": "object",
-            "properties": {
-                "month": {
-                    "type": "string"
-                },
-                "profit": {
-                    "type": "number"
                 }
             }
         },

@@ -57,6 +57,8 @@ definitions:
         type: number
       electricity:
         type: number
+      fix_cost_id:
+        type: string
       gas:
         type: number
       insurance:
@@ -71,8 +73,6 @@ definitions:
         type: number
       subscriptions:
         type: number
-      user_id:
-        type: string
       water:
         type: number
     type: object
@@ -119,10 +119,6 @@ definitions:
         items:
           $ref: '#/definitions/domain.CostRevenueChartItem'
         type: array
-      net_profit:
-        items:
-          $ref: '#/definitions/domain.NetProfitChartItem'
-        type: array
       profit_threshold:
         items:
           $ref: '#/definitions/domain.ProfitThresholdChartItem'
@@ -155,6 +151,8 @@ definitions:
     type: object
   domain.FilterSellingRequest:
     properties:
+      end_date_time:
+        type: string
       filter_type:
         type: string
       order_types:
@@ -166,6 +164,8 @@ definitions:
           type: string
         type: array
       sort_type:
+        type: string
+      start_date_time:
         type: string
       unit_type:
         type: string
@@ -280,13 +280,6 @@ definitions:
         type: string
       user_id:
         type: string
-    type: object
-  domain.NetProfitChartItem:
-    properties:
-      month:
-        type: string
-      profit:
-        type: number
     type: object
   domain.NotificationItem:
     properties:
@@ -465,6 +458,14 @@ paths:
         in: query
         name: user_id
         required: true
+        type: string
+      - description: Start Date Time
+        in: query
+        name: start_date_time
+        type: string
+      - description: End Date Time
+        in: query
+        name: end_date_time
         type: string
       produces:
       - application/json
@@ -1047,6 +1048,11 @@ paths:
       - description: User ID
         in: query
         name: user_id
+        required: true
+        type: string
+      - description: Created At
+        in: query
+        name: created_at
         required: true
         type: string
       produces:
