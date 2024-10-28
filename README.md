@@ -56,7 +56,7 @@ Welcome to the BakingUp Backend Repository!
     ```env
     http://localhost:8000/swagger/index.html
     ```
-- Note: Ensure that the backend server is running on port 8000 for the documentation to load properly.
+- **Note:** Ensure that the backend server is running on port 8000 for the documentation to load properly.
 
 ## More Information
 For more information, please refer to the "Wiki" section at 
