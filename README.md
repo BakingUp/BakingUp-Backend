@@ -50,6 +50,14 @@ Welcome to the BakingUp Backend Repository!
    go run cmd/http/main.go
    ```
 
+### 5. Access API Documentation (Swagger)
+- Open your browser and go to the following URL to access the Swagger documentation for API endpoints:
+
+    ```env
+    http://localhost:8000/swagger/index.html
+    ```
+- Note: Ensure that the backend server is running on port 8000 for the documentation to load properly.
+
 ## More Information
 For more information, please refer to the "Wiki" section at 
 - For viewers in GitHub: https://github.com/BakingUp/BakingUp-Backend/wiki.
