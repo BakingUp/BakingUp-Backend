@@ -191,6 +191,22 @@ func (s *IngredientService) GetIngredientStockDetail(c *fiber.Ctx, ingredientSto
 	return stockDetail, nil
 }
 
+func (s *IngredientService) GetAddEditIngredientStockDetail(c *fiber.Ctx, ingredientID string) (*domain.AddEditIngredientStockDetail, error) {
+	ingredient, err := s.ingredientRepo.GetAddEditIngredientStockDetail(c, ingredientID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	detail := &domain.AddEditIngredientStockDetail{
+		IngredientEngName:  ingredient.IngredientEngName,
+		IngredientThaiName: ingredient.IngredientThaiName,
+		Unit:               string(ingredient.Unit),
+	}
+
+	return detail, nil
+}
+
 func (s *IngredientService) DeleteIngredientBatchNote(c *fiber.Ctx, ingredientNoteID string) error {
 	err := s.ingredientRepo.DeleteIngredientBatchNote(c, ingredientNoteID)
 	if err != nil {
@@ -236,7 +252,7 @@ func (s *IngredientService) AddIngredient(c *fiber.Ctx, ingredients *domain.AddI
 	err := s.ingredientRepo.AddIngredient(c, addIngredientPayload)
 	imgIndex := 1
 	for _, img := range ingredients.Img {
-		imgUrl, err := util.UploadIngredientImage(userID, ingredientID, img)
+		imgUrl, err := util.UploadIngredientImage(userID, ingredientID, img, strconv.Itoa(imgIndex))
 		if err != nil {
 			return err
 		}
