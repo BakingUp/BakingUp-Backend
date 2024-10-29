@@ -79,7 +79,7 @@ func (or *OrderRepository) AddInStoreOrder(c *fiber.Ctx, inStoreOrder *domain.Ad
 	createdAt, _ := time.Parse(timeFormat, inStoreOrder.OrderDate)
 	noteCreateAt := time.Now()
 
-	if inStoreOrder.NoteText != "" || inStoreOrder.NoteText != "-" {
+	if inStoreOrder.NoteText != "" {
 		noteCreateAt, _ = time.Parse(timeFormat, inStoreOrder.NoteCreateAt)
 	}
 
@@ -157,7 +157,7 @@ func (or *OrderRepository) AddPreOrderOrder(c *fiber.Ctx, preOrderOrder *domain.
 	customerName := "-"
 	phoneNumber := "-"
 
-	if preOrderOrder.NoteText != "" || preOrderOrder.NoteText != "-" {
+	if preOrderOrder.NoteText != "" {
 		noteCreateAt, _ = time.Parse(timeFormat, preOrderOrder.NoteCreateAt)
 	}
 	if preOrderOrder.CustomerName != "" {
