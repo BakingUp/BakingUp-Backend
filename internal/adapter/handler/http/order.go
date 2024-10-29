@@ -76,3 +76,25 @@ func (oh *OrderHandler) AddInStoreOrder(c *fiber.Ctx) error {
 	handleSuccessMessage(c, "Successfully add a new in-store order.")
 	return nil
 }
+
+func (oh *OrderHandler) AddPreOrderOrder(c *fiber.Ctx) error {
+	var preOrderOrder domain.AddPreOrderOrderRequest
+
+	if err := c.BodyParser(&preOrderOrder); err != nil {
+		handleError(c, 400, "Failed to parse request body", err.Error())
+		return nil
+	}
+	if preOrderOrder.UserID == "" {
+		handleError(c, 400, "UserID is required", "")
+		return nil
+	}
+
+	err := oh.svc.AddPreOrderOrder(c, &preOrderOrder)
+	if err != nil {
+		handleError(c, 400, "Cannot add a new pre-order order.", err.Error())
+		return nil
+	}
+
+	handleSuccessMessage(c, "Successfully add a new pre-order order.")
+	return nil
+}

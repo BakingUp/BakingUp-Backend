@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
@@ -78,6 +77,11 @@ func (or *OrderRepository) AddInStoreOrder(c *fiber.Ctx, inStoreOrder *domain.Ad
 
 	timeFormat := "2006-01-02T15:04:05Z07:00"
 	createdAt, _ := time.Parse(timeFormat, inStoreOrder.OrderDate)
+	noteCreateAt := time.Now()
+
+	if inStoreOrder.NoteText != "" || inStoreOrder.NoteText != "-" {
+		noteCreateAt, _ = time.Parse(timeFormat, inStoreOrder.NoteCreateAt)
+	}
 
 	order, err := or.db.Orders.CreateOne(
 		db.Orders.User.Link(db.Users.UserID.Equals(inStoreOrder.UserID)),
@@ -88,7 +92,7 @@ func (or *OrderRepository) AddInStoreOrder(c *fiber.Ctx, inStoreOrder *domain.Ad
 		db.Orders.OrderStatus.Set(db.OrderStatus(inStoreOrder.OrderStatus)),
 		db.Orders.OrderIndex.Set(nextOrderIndex),
 		db.Orders.OrderNoteText.Set(inStoreOrder.NoteText),
-		db.Orders.OrderNoteCreateAt.Set(time.Now()),
+		db.Orders.OrderNoteCreateAt.Set(noteCreateAt),
 		db.Orders.OrderTakenBy.Set(inStoreOrder.OrderTakenBy),
 	).Exec(ctx)
 	if err != nil {
@@ -105,22 +109,100 @@ func (or *OrderRepository) AddInStoreOrder(c *fiber.Ctx, inStoreOrder *domain.Ad
 			return err
 		}
 
-		earliestStockDetail, err := or.db.StockDetail.FindFirst(
+		earliestStockDetail, err := or.db.StockDetail.FindMany(
 			db.StockDetail.RecipeID.Equals(product.RecipeID),
+			db.StockDetail.SellByDate.Gte(time.Now()),
 		).OrderBy(db.StockDetail.CreatedAt.Order(db.ASC)).Exec(ctx)
 		if err != nil {
 			return err
 		}
-
-		if earliestStockDetail == nil {
-			return fmt.Errorf("no stock details found for recipe ID: %s", product.RecipeID)
+		quantity := product.ProductQuantity
+		if quantity > 0 {
+			for _, stockDetail := range earliestStockDetail {
+				if stockDetail.Quantity >= quantity {
+					_, err = or.db.StockDetail.FindUnique(
+						db.StockDetail.StockDetailID.Equals(stockDetail.StockDetailID),
+					).Update(db.StockDetail.Quantity.Set(stockDetail.Quantity - quantity)).Exec(ctx)
+					if err != nil {
+						return err
+					}
+					break
+				}
+				quantity -= stockDetail.Quantity
+				_, err = or.db.StockDetail.FindUnique(
+					db.StockDetail.StockDetailID.Equals(stockDetail.StockDetailID),
+				).Update(db.StockDetail.Quantity.Set(0)).Exec(ctx)
+				if err != nil {
+					return err
+				}
+			}
 		}
-		newQuantity := earliestStockDetail.Quantity - product.ProductQuantity
+	}
 
-		_, err = or.db.StockDetail.FindUnique(
-			db.StockDetail.StockDetailID.Equals(earliestStockDetail.StockDetailID),
-		).Update(db.StockDetail.Quantity.Set(newQuantity)).Exec(ctx)
+	return nil
+}
 
+func (or *OrderRepository) AddPreOrderOrder(c *fiber.Ctx, preOrderOrder *domain.AddPreOrderOrderRequest) error {
+	ctx := context.Background()
+
+	nextOrderIndex, err := or.GetNextOrderIndex(c.Context(), preOrderOrder.UserID)
+	if err != nil {
+		return err
+	}
+
+	timeFormat := "2006-01-02T15:04:05Z07:00"
+	createdAt, _ := time.Parse(timeFormat, preOrderOrder.OrderDate)
+	pickUpDateTime, _ := time.Parse(timeFormat, preOrderOrder.PickUpDate)
+	noteCreateAt := time.Now()
+	customerName := "-"
+	phoneNumber := "-"
+
+	if preOrderOrder.NoteText != "" || preOrderOrder.NoteText != "-" {
+		noteCreateAt, _ = time.Parse(timeFormat, preOrderOrder.NoteCreateAt)
+	}
+	if preOrderOrder.CustomerName != "" {
+		customerName = preOrderOrder.CustomerName
+	}
+	if preOrderOrder.PhoneNumber != "" {
+		phoneNumber = preOrderOrder.PhoneNumber
+	}
+
+	order, err := or.db.Orders.CreateOne(
+		db.Orders.User.Link(db.Users.UserID.Equals(preOrderOrder.UserID)),
+		db.Orders.OrderPlatform.Set(db.OrderPlatform(preOrderOrder.OrderPlatform)),
+		db.Orders.OrderDate.Set(createdAt),
+		db.Orders.OrderType.Set(db.OrderType(preOrderOrder.OrderType)),
+		db.Orders.IsPreOrder.Set(preOrderOrder.IsPreOrder),
+		db.Orders.OrderStatus.Set(db.OrderStatus(preOrderOrder.OrderStatus)),
+		db.Orders.OrderIndex.Set(nextOrderIndex),
+		db.Orders.OrderNoteText.Set(preOrderOrder.NoteText),
+		db.Orders.OrderNoteCreateAt.Set(noteCreateAt),
+		db.Orders.OrderTakenBy.Set(preOrderOrder.OrderTakenBy),
+		db.Orders.PickUpDateTime.Set(pickUpDateTime),
+		db.Orders.PickUpMethod.Set(db.PickUpMethod(preOrderOrder.PickUpMethod)),
+		db.Orders.CustomerName.Set(customerName),
+		db.Orders.CustomerPhoneNum.Set(phoneNumber),
+	).Exec(ctx)
+	if err != nil {
+		return err
+	}
+
+	for _, product := range preOrderOrder.OrderProducts {
+		_, err = or.db.OrderProducts.CreateOne(
+			db.OrderProducts.ProductQuantity.Set(product.ProductQuantity),
+			db.OrderProducts.Order.Link(db.Orders.OrderID.Equals(order.OrderID)),
+			db.OrderProducts.Recipe.Link(db.Recipes.RecipeID.Equals(product.RecipeID)),
+		).Exec(ctx)
+		if err != nil {
+			return err
+		}
+
+		_, err := or.db.ProductionQueue.CreateOne(
+			db.ProductionQueue.User.Link(db.Users.UserID.Equals(preOrderOrder.UserID)),
+			db.ProductionQueue.Recipe.Link(db.Recipes.RecipeID.Equals(product.RecipeID)),
+			db.ProductionQueue.Order.Link(db.Orders.OrderID.Equals(order.OrderID)),
+			db.ProductionQueue.ProductionQuantity.Set(product.ProductQuantity),
+		).Exec(ctx)
 		if err != nil {
 			return err
 		}

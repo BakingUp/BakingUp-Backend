@@ -190,3 +190,11 @@ func (s *OrderService) AddInStoreOrder(c *fiber.Ctx, inStoreOrder *domain.AddInS
 	}
 	return nil
 }
+
+func (s *OrderService) AddPreOrderOrder(c *fiber.Ctx, preOrderOrder *domain.AddPreOrderOrderRequest) error {
+	err := s.orderRepo.AddPreOrderOrder(c, preOrderOrder)
+	if err != nil {
+		return err
+	}
+	return nil
+}

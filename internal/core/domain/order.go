@@ -76,4 +76,22 @@ type AddInStoreOrderRequest struct {
 	OrderProducts []OrderProduct `json:"order_stocks"`
 	IsPreOrder    bool           `json:"is_pre_order"`
 	NoteText      string         `json:"note_text,omitempty"`
+	NoteCreateAt  string         `json:"note_create_at,omitempty"`
+}
+
+type AddPreOrderOrderRequest struct {
+	UserID        string         `json:"user_id"`
+	OrderStatus   string         `json:"order_status"`
+	OrderPlatform string         `json:"order_platform"`
+	OrderDate     string         `json:"order_date"`
+	OrderType     string         `json:"order_type"`
+	OrderTakenBy  string         `json:"order_taken_by"`
+	CustomerName  string         `json:"customer_name,omitempty"`
+	PhoneNumber   string         `json:"phone_number,omitempty"`
+	PickUpDate    string         `json:"pick_up_date"`
+	PickUpMethod  string         `json:"pick_up_method"`
+	OrderProducts []OrderProduct `json:"order_stocks"`
+	IsPreOrder    bool           `json:"is_pre_order"`
+	NoteText      string         `json:"note_text,omitempty"`
+	NoteCreateAt  string         `json:"note_create_at,omitempty"`
 }
