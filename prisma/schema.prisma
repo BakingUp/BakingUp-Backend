@@ -86,6 +86,7 @@ model Orders {
   order_note_text    String?     @default("-")
   order_note_create_at DateTime? @default(now())
   production_queue   Production_queue[]
+  cutting_stock      Cutting_stock[]
 }
 
 
@@ -284,4 +285,15 @@ model Stock_detail {
   quantity                 Int
   note                     String?
   cooking_time             DateTime
+  cutting_stock            Cutting_stock[]
+}
+
+model Cutting_stock {
+  stock_detail_id          String
+  stock_detail             Stock_detail @relation(fields: [stock_detail_id], references: [stock_detail_id], onDelete: Cascade)
+  order_id                 String
+  order                    Orders      @relation(fields: [order_id], references: [order_id], onDelete: Cascade)
+  quantity                 Int
+
+  @@id([stock_detail_id, order_id])
 }
