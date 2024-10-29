@@ -294,6 +294,7 @@ model Cutting_stock {
   order_id                 String
   order                    Orders      @relation(fields: [order_id], references: [order_id], onDelete: Cascade)
   quantity                 Int
+  cutting_time             DateTime
 
   @@id([stock_detail_id, order_id])
 }
