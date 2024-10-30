@@ -70,6 +70,7 @@ func NewRouter(a *fiber.App, ingredientHandler IngredientHandler, recipeHandler 
 			order.Get("/getOrderDetail", orderHandler.GetOrderDeatil)
 			order.Delete("/deleteOrder", orderHandler.DeleteOrder)
 			order.Post("/addInStoreOrder", orderHandler.AddInStoreOrder)
+			order.Post("/addPreOrderOrder", orderHandler.AddPreOrderOrder)
 		}
 		setting := api.Group("/settings")
 		{
