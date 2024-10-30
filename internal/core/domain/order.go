@@ -95,3 +95,8 @@ type AddPreOrderOrderRequest struct {
 	NoteText      string         `json:"note_text,omitempty"`
 	NoteCreateAt  string         `json:"note_create_at,omitempty"`
 }
+
+type EditOrderStatusRequest struct {
+	OrderID     string `json:"order_id"`
+	OrderStatus string `json:"order_status"`
+}

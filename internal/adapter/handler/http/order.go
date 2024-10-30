@@ -98,3 +98,25 @@ func (oh *OrderHandler) AddPreOrderOrder(c *fiber.Ctx) error {
 	handleSuccessMessage(c, "Successfully add a new pre-order order.")
 	return nil
 }
+
+func (oh *OrderHandler) EditOrderStatus(c *fiber.Ctx) error {
+	var orderStatue domain.EditOrderStatusRequest
+
+	if err := c.BodyParser(&orderStatue); err != nil {
+		handleError(c, 400, "Failed to parse request body", err.Error())
+		return nil
+	}
+	if orderStatue.OrderID == "" {
+		handleError(c, 400, "OrderID is required", "")
+		return nil
+	}
+
+	err := oh.svc.EditOrderStatus(c, &orderStatue)
+	if err != nil {
+		handleError(c, 400, "Cannot edit an order status.", err.Error())
+		return nil
+	}
+
+	handleSuccessMessage(c, "Successfully edit an order status.")
+	return nil
+}

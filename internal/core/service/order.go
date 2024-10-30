@@ -198,3 +198,11 @@ func (s *OrderService) AddPreOrderOrder(c *fiber.Ctx, preOrderOrder *domain.AddP
 	}
 	return nil
 }
+
+func (s *OrderService) EditOrderStatus(c *fiber.Ctx, orderStatue *domain.EditOrderStatusRequest) error {
+	err := s.orderRepo.EditOrderStatus(c, orderStatue)
+	if err != nil {
+		return err
+	}
+	return nil
+}
