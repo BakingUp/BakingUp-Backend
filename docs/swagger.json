@@ -1552,6 +1552,9 @@
                 "gas": {
                     "type": "number"
                 },
+                "id": {
+                    "type": "string"
+                },
                 "insurance": {
                     "type": "number"
                 },

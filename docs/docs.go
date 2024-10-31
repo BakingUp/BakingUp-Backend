@@ -1558,6 +1558,9 @@ const docTemplate = `{
                 "gas": {
                     "type": "number"
                 },
+                "id": {
+                    "type": "string"
+                },
                 "insurance": {
                     "type": "number"
                 },
