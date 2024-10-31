@@ -61,6 +61,7 @@ func (s *SettingsService) GetFixCost(c *fiber.Ctx, userID string, created_at tim
 		return nil, err
 	}
 
+	id := user[0].FixCostID
 	rent, _ := user[0].Rent()
 	salaries, _ := user[0].Salaries()
 	insurance, _ := user[0].Insurance()
@@ -73,6 +74,7 @@ func (s *SettingsService) GetFixCost(c *fiber.Ctx, userID string, created_at tim
 	note, _ := user[0].Note()
 
 	userFixCost := &domain.FixCostSetting{
+		Id:            id,
 		Rent:          rent,
 		Salaries:      salaries,
 		Insurance:     insurance,
