@@ -2,6 +2,7 @@ package service
 
 import (
 	"sort"
+	"strconv"
 	"time"
 
 	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
@@ -234,4 +235,25 @@ func (s *StockService) GetStockBatch(c *fiber.Ctx, stockDetailID string) (*domai
 	}
 
 	return stockBatch, nil
+}
+
+func (s *StockService) AddStock(c *fiber.Ctx, stock *domain.AddStockRequest) error {
+	stockID := stock.StockID
+	lst, _ := strconv.Atoi(stock.LST)
+	expirationDate := util.ExpirationDate(stock.ExpirationDate)
+	stockLessThan, _ := strconv.Atoi(stock.StockLessThan)
+
+	stockDetail := &domain.AddStockPayload{
+		StockID:        stockID,
+		LST:            lst,
+		ExpirationDate: expirationDate,
+		StockLessThan:  stockLessThan,
+	}
+
+	err := s.stockRepo.AddStock(c, stockDetail)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

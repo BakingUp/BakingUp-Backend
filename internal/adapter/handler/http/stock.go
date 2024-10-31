@@ -1,6 +1,7 @@
 package http
 
 import (
+	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
 	"github.com/BakingUp/BakingUp-Backend/internal/core/port"
 	"github.com/gofiber/fiber/v2"
 )
@@ -140,5 +141,33 @@ func (sh *StockHandler) GetStockBatch(c *fiber.Ctx) error {
 	}
 
 	handleSuccess(c, batch)
+	return nil
+}
+
+// AddStock godoc
+// @Summary      Add a stock
+// @Description  Add a stock by stock ID, LST, and expiration date
+// @Tags         stock
+// @Accept       json
+// @Produce      json
+// @Param        stock_id  body  domain.AddStockRequest  true  "Stock ID"
+// @Success      200  {object}  response  "Success"
+// @Failure      400  {object}  response     "Cannot add a stock"
+// @Router       /stock/addStock [post]
+func (sh *StockHandler) AddStock(c *fiber.Ctx) error {
+	var addStockRequest domain.AddStockRequest
+
+	if err := c.BodyParser(&addStockRequest); err != nil {
+		handleError(c, 400, "Cannot add a stock.", err.Error())
+		return nil
+	}
+
+	err := sh.svc.AddStock(c, &addStockRequest)
+	if err != nil {
+		handleError(c, 400, "Cannot add a stock.", err.Error())
+		return nil
+	}
+
+	handleSuccess(c, nil)
 	return nil
 }
