@@ -50,6 +50,9 @@ func (nr *NotificationRepository) CreateNotification(c *fiber.Ctx, notificationI
 		db.Notifications.CreatedAt.Set(createdAt),
 		db.Notifications.IsRead.Set(notificationItem.IsRead),
 		db.Notifications.NotiType.Set(db.NotificationType(notificationItem.NotiType)),
+		db.Notifications.ItemID.Set(notificationItem.ItemID),
+		db.Notifications.ItemName.Set(notificationItem.ItemName),
+		db.Notifications.NotiItemType.Set(db.NotificationInfoType(notificationItem.NotiItemType)),
 	).Exec(ctx)
 	if err != nil {
 		return err

@@ -1441,6 +1441,15 @@ const docTemplate = `{
                 "is_read": {
                     "type": "boolean"
                 },
+                "item_id": {
+                    "type": "string"
+                },
+                "item_name": {
+                    "type": "string"
+                },
+                "noti_item_type": {
+                    "type": "string"
+                },
                 "noti_type": {
                     "type": "string"
                 },
@@ -1725,7 +1734,19 @@ const docTemplate = `{
                 "is_read": {
                     "type": "boolean"
                 },
+                "item_id": {
+                    "type": "string"
+                },
+                "item_name": {
+                    "type": "string"
+                },
                 "message": {
+                    "type": "string"
+                },
+                "noti_id": {
+                    "type": "string"
+                },
+                "noti_item_type": {
                     "type": "string"
                 },
                 "noti_type": {

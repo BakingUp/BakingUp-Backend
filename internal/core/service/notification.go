@@ -36,11 +36,15 @@ func (ns *NotificationService) GetAllNotifications(c *fiber.Ctx, userID string) 
 	for _, item := range notifications {
 
 		notificationItem := &domain.NotificationItem{
-			Title:     util.GetNotificationTitle(&item, language),
-			Message:   util.GetNotificationMessage(&item, language),
-			CreatedAt: item.CreatedAt.Format(time.RFC3339),
-			IsRead:    item.IsRead,
-			NotiType:  string(item.NotiType),
+			NotiID:       item.NotiID,
+			Title:        util.GetNotificationTitle(&item, language),
+			Message:      util.GetNotificationMessage(&item, language),
+			CreatedAt:    item.CreatedAt.Format(time.RFC3339),
+			IsRead:       item.IsRead,
+			NotiType:     string(item.NotiType),
+			ItemID:       item.ItemID,
+			ItemName:     item.ItemName,
+			NotiItemType: string(item.NotiItemType),
 		}
 		notificationItems = append(notificationItems, *notificationItem)
 	}
