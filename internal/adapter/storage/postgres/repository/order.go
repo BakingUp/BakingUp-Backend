@@ -89,7 +89,7 @@ func (or *OrderRepository) AddInStoreOrder(c *fiber.Ctx, inStoreOrder *domain.Ad
 		db.Orders.OrderDate.Set(createdAt),
 		db.Orders.OrderType.Set(db.OrderType(inStoreOrder.OrderType)),
 		db.Orders.IsPreOrder.Set(inStoreOrder.IsPreOrder),
-		db.Orders.OrderStatus.Set(db.OrderStatus(inStoreOrder.OrderStatus)),
+		db.Orders.OrderStatus.Set(db.OrderStatusDone),
 		db.Orders.OrderIndex.Set(nextOrderIndex),
 		db.Orders.OrderNoteText.Set(inStoreOrder.NoteText),
 		db.Orders.OrderNoteCreateAt.Set(noteCreateAt),
@@ -112,28 +112,44 @@ func (or *OrderRepository) AddInStoreOrder(c *fiber.Ctx, inStoreOrder *domain.Ad
 		earliestStockDetail, err := or.db.StockDetail.FindMany(
 			db.StockDetail.RecipeID.Equals(product.RecipeID),
 			db.StockDetail.SellByDate.Gte(time.Now()),
-		).OrderBy(db.StockDetail.CreatedAt.Order(db.ASC)).Exec(ctx)
+		).OrderBy(db.StockDetail.SellByDate.Order(db.ASC)).Exec(ctx)
 		if err != nil {
 			return err
 		}
 		quantity := product.ProductQuantity
 		if quantity > 0 {
 			for _, stockDetail := range earliestStockDetail {
-				if stockDetail.Quantity >= quantity {
+				if stockDetail.Quantity > 0 {
+					if stockDetail.Quantity >= quantity {
+						_, err = or.db.StockDetail.FindUnique(
+							db.StockDetail.StockDetailID.Equals(stockDetail.StockDetailID),
+						).Update(db.StockDetail.Quantity.Set(stockDetail.Quantity - quantity)).Exec(ctx)
+						if err != nil {
+							return err
+						}
+
+						_, err = or.db.CuttingStock.CreateOne(
+							db.CuttingStock.StockDetail.Link(db.StockDetail.StockDetailID.Equals(stockDetail.StockDetailID)),
+							db.CuttingStock.Order.Link(db.Orders.OrderID.Equals(order.OrderID)),
+							db.CuttingStock.Quantity.Set(quantity),
+							db.CuttingStock.CuttingTime.Set(time.Now()),
+						).Exec(ctx)
+						break
+					}
+					quantity -= stockDetail.Quantity
 					_, err = or.db.StockDetail.FindUnique(
 						db.StockDetail.StockDetailID.Equals(stockDetail.StockDetailID),
-					).Update(db.StockDetail.Quantity.Set(stockDetail.Quantity - quantity)).Exec(ctx)
+					).Update(db.StockDetail.Quantity.Set(0)).Exec(ctx)
 					if err != nil {
 						return err
 					}
-					break
-				}
-				quantity -= stockDetail.Quantity
-				_, err = or.db.StockDetail.FindUnique(
-					db.StockDetail.StockDetailID.Equals(stockDetail.StockDetailID),
-				).Update(db.StockDetail.Quantity.Set(0)).Exec(ctx)
-				if err != nil {
-					return err
+
+					_, err = or.db.CuttingStock.CreateOne(
+						db.CuttingStock.StockDetail.Link(db.StockDetail.StockDetailID.Equals(stockDetail.StockDetailID)),
+						db.CuttingStock.Order.Link(db.Orders.OrderID.Equals(order.OrderID)),
+						db.CuttingStock.Quantity.Set(stockDetail.Quantity),
+						db.CuttingStock.CuttingTime.Set(time.Now()),
+					).Exec(ctx)
 				}
 			}
 		}
@@ -197,15 +213,392 @@ func (or *OrderRepository) AddPreOrderOrder(c *fiber.Ctx, preOrderOrder *domain.
 			return err
 		}
 
-		_, err := or.db.ProductionQueue.CreateOne(
-			db.ProductionQueue.User.Link(db.Users.UserID.Equals(preOrderOrder.UserID)),
-			db.ProductionQueue.Recipe.Link(db.Recipes.RecipeID.Equals(product.RecipeID)),
-			db.ProductionQueue.Order.Link(db.Orders.OrderID.Equals(order.OrderID)),
-			db.ProductionQueue.ProductionQuantity.Set(product.ProductQuantity),
-		).Exec(ctx)
-		if err != nil {
-			return err
+		switch preOrderOrder.OrderStatus {
+		case "DONE":
+			//add cutting stock
+			earliestStockDetail, err := or.db.StockDetail.FindMany(
+				db.StockDetail.RecipeID.Equals(product.RecipeID),
+				db.StockDetail.SellByDate.Gte(time.Now()),
+			).OrderBy(db.StockDetail.SellByDate.Order(db.ASC)).Exec(ctx)
+			if err != nil {
+				return err
+			}
+			quantity := product.ProductQuantity
+			if quantity > 0 {
+				for _, stockDetail := range earliestStockDetail {
+					if stockDetail.Quantity > 0 {
+						if stockDetail.Quantity >= quantity {
+							_, err = or.db.StockDetail.FindUnique(
+								db.StockDetail.StockDetailID.Equals(stockDetail.StockDetailID),
+							).Update(db.StockDetail.Quantity.Set(stockDetail.Quantity - quantity)).Exec(ctx)
+							if err != nil {
+								return err
+							}
+							_, err = or.db.CuttingStock.CreateOne(
+								db.CuttingStock.StockDetail.Link(db.StockDetail.StockDetailID.Equals(stockDetail.StockDetailID)),
+								db.CuttingStock.Order.Link(db.Orders.OrderID.Equals(order.OrderID)),
+								db.CuttingStock.Quantity.Set(quantity),
+								db.CuttingStock.CuttingTime.Set(time.Now()),
+							).Exec(ctx)
+
+							break
+						}
+						quantity -= stockDetail.Quantity
+						_, err = or.db.StockDetail.FindUnique(
+							db.StockDetail.StockDetailID.Equals(stockDetail.StockDetailID),
+						).Update(db.StockDetail.Quantity.Set(0)).Exec(ctx)
+						if err != nil {
+							return err
+						}
+
+						_, err = or.db.CuttingStock.CreateOne(
+							db.CuttingStock.StockDetail.Link(db.StockDetail.StockDetailID.Equals(stockDetail.StockDetailID)),
+							db.CuttingStock.Order.Link(db.Orders.OrderID.Equals(order.OrderID)),
+							db.CuttingStock.Quantity.Set(stockDetail.Quantity),
+							db.CuttingStock.CuttingTime.Set(time.Now()),
+						).Exec(ctx)
+					}
+				}
+			}
+
+		case "IN_PROCESS":
+			//add production queue
+			_, err := or.db.ProductionQueue.CreateOne(
+				db.ProductionQueue.User.Link(db.Users.UserID.Equals(preOrderOrder.UserID)),
+				db.ProductionQueue.Recipe.Link(db.Recipes.RecipeID.Equals(product.RecipeID)),
+				db.ProductionQueue.Order.Link(db.Orders.OrderID.Equals(order.OrderID)),
+				db.ProductionQueue.ProductionQuantity.Set(product.ProductQuantity),
+			).Exec(ctx)
+			if err != nil {
+				return err
+			}
 		}
+
+	}
+
+	return nil
+}
+
+func (or *OrderRepository) EditOrderStatus(c *fiber.Ctx, orderStatue *domain.EditOrderStatusRequest) error {
+	ctx := context.Background()
+
+	order, err := or.db.Orders.FindUnique(
+		db.Orders.OrderID.Equals(orderStatue.OrderID),
+	).With(db.Orders.OrderProducts.Fetch()).Exec(ctx)
+	if err != nil {
+		return err
+	}
+
+	//Pre-order
+	if order.IsPreOrder {
+		switch order.OrderStatus {
+		case db.OrderStatusInProcess:
+			if orderStatue.OrderStatus == "DONE" {
+				//case 1 : In-process -> Done
+				productionList, err := or.db.ProductionQueue.FindMany(
+					db.ProductionQueue.OrderID.Equals(order.OrderID),
+				).Exec(ctx)
+				if err != nil {
+					return err
+				}
+
+				// add cutting stock
+				for _, production := range productionList {
+					earliestStockDetail, err := or.db.StockDetail.FindMany(
+						db.StockDetail.RecipeID.Equals(production.RecipeID),
+						db.StockDetail.SellByDate.Gte(time.Now()),
+					).OrderBy(db.StockDetail.SellByDate.Order(db.ASC)).Exec(ctx)
+					if err != nil {
+						return err
+					}
+					quantity := production.ProductionQuantity
+					if quantity > 0 {
+						for _, stockDetail := range earliestStockDetail {
+							if stockDetail.Quantity > 0 {
+								if stockDetail.Quantity >= quantity {
+									_, err = or.db.StockDetail.FindUnique(
+										db.StockDetail.StockDetailID.Equals(stockDetail.StockDetailID),
+									).Update(db.StockDetail.Quantity.Set(stockDetail.Quantity - quantity)).Exec(ctx)
+									if err != nil {
+										return err
+									}
+									_, err = or.db.CuttingStock.CreateOne(
+										db.CuttingStock.StockDetail.Link(db.StockDetail.StockDetailID.Equals(stockDetail.StockDetailID)),
+										db.CuttingStock.Order.Link(db.Orders.OrderID.Equals(order.OrderID)),
+										db.CuttingStock.Quantity.Set(quantity),
+										db.CuttingStock.CuttingTime.Set(time.Now()),
+									).Exec(ctx)
+
+									break
+								}
+								quantity -= stockDetail.Quantity
+								_, err = or.db.StockDetail.FindUnique(
+									db.StockDetail.StockDetailID.Equals(stockDetail.StockDetailID),
+								).Update(db.StockDetail.Quantity.Set(0)).Exec(ctx)
+								if err != nil {
+									return err
+								}
+
+								_, err = or.db.CuttingStock.CreateOne(
+									db.CuttingStock.StockDetail.Link(db.StockDetail.StockDetailID.Equals(stockDetail.StockDetailID)),
+									db.CuttingStock.Order.Link(db.Orders.OrderID.Equals(order.OrderID)),
+									db.CuttingStock.Quantity.Set(stockDetail.Quantity),
+									db.CuttingStock.CuttingTime.Set(time.Now()),
+								).Exec(ctx)
+							}
+						}
+					}
+				}
+				// delete production queue
+				_, err = or.db.ProductionQueue.FindMany(
+					db.ProductionQueue.OrderID.Equals(order.OrderID),
+				).Delete().Exec(ctx)
+				if err != nil {
+					return err
+				}
+
+			} else if orderStatue.OrderStatus == "CANCEL" {
+				//case 2 : In-process -> Cancel
+				// delete production queue
+				_, err = or.db.ProductionQueue.FindMany(
+					db.ProductionQueue.OrderID.Equals(order.OrderID),
+				).Delete().Exec(ctx)
+				if err != nil {
+					return err
+				}
+			}
+		case db.OrderStatusDone:
+			if orderStatue.OrderStatus == "CANCEL" {
+				//case 3 : Done -> Cancel
+				// undo cutting stock
+				cuttingStockList, err := or.db.CuttingStock.FindMany(
+					db.CuttingStock.OrderID.Equals(order.OrderID),
+				).Exec(ctx)
+				if err != nil {
+					return err
+				}
+				for _, cuttingStock := range cuttingStockList {
+					stock, err := or.db.StockDetail.FindUnique(
+						db.StockDetail.StockDetailID.Equals(cuttingStock.StockDetailID),
+					).Exec(ctx)
+					if err != nil {
+						return err
+					}
+					newQuantity := stock.Quantity + cuttingStock.Quantity
+					_, err = or.db.StockDetail.FindUnique(
+						db.StockDetail.StockDetailID.Equals(cuttingStock.StockDetailID),
+					).Update(db.StockDetail.Quantity.Set(newQuantity)).Exec(ctx)
+				}
+				// delete cutting stock data
+				_, err = or.db.CuttingStock.FindMany(
+					db.CuttingStock.OrderID.Equals(order.OrderID),
+				).Delete().Exec(ctx)
+				if err != nil {
+					return err
+				}
+			} else if orderStatue.OrderStatus == "IN_PROCESS" {
+				//case 4 : Done -> In-process
+				// undo cutting stock
+				cuttingStockList, err := or.db.CuttingStock.FindMany(
+					db.CuttingStock.OrderID.Equals(order.OrderID),
+				).Exec(ctx)
+				if err != nil {
+					return err
+				}
+				for _, cuttingStock := range cuttingStockList {
+					stock, err := or.db.StockDetail.FindUnique(
+						db.StockDetail.StockDetailID.Equals(cuttingStock.StockDetailID),
+					).Exec(ctx)
+					if err != nil {
+						return err
+					}
+					newQuantity := stock.Quantity + cuttingStock.Quantity
+					_, err = or.db.StockDetail.FindUnique(
+						db.StockDetail.StockDetailID.Equals(cuttingStock.StockDetailID),
+					).Update(db.StockDetail.Quantity.Set(newQuantity)).Exec(ctx)
+				}
+				// delete cutting stock data
+				_, err = or.db.CuttingStock.FindMany(
+					db.CuttingStock.OrderID.Equals(order.OrderID),
+				).Delete().Exec(ctx)
+				if err != nil {
+					return err
+				}
+				// add production queue
+				for _, product := range order.OrderProducts() {
+					_, err = or.db.ProductionQueue.CreateOne(
+						db.ProductionQueue.User.Link(db.Users.UserID.Equals(order.UserID)),
+						db.ProductionQueue.Recipe.Link(db.Recipes.RecipeID.Equals(product.RecipeID)),
+						db.ProductionQueue.Order.Link(db.Orders.OrderID.Equals(order.OrderID)),
+						db.ProductionQueue.ProductionQuantity.Set(product.ProductQuantity),
+					).Exec(ctx)
+					if err != nil {
+						return err
+					}
+				}
+			}
+		case db.OrderStatusCancel:
+			if orderStatue.OrderStatus == "DONE" {
+				//case 5 : Cancel -> Done
+				// add cutting stock
+				for _, product := range order.OrderProducts() {
+					earliestStockDetail, err := or.db.StockDetail.FindMany(
+						db.StockDetail.RecipeID.Equals(product.RecipeID),
+						db.StockDetail.SellByDate.Gte(time.Now()),
+					).OrderBy(db.StockDetail.SellByDate.Order(db.ASC)).Exec(ctx)
+					if err != nil {
+						return err
+					}
+					quantity := product.ProductQuantity
+					if quantity > 0 {
+						for _, stockDetail := range earliestStockDetail {
+							if stockDetail.Quantity > 0 {
+								if stockDetail.Quantity >= quantity {
+									_, err = or.db.StockDetail.FindUnique(
+										db.StockDetail.StockDetailID.Equals(stockDetail.StockDetailID),
+									).Update(db.StockDetail.Quantity.Set(stockDetail.Quantity - quantity)).Exec(ctx)
+									if err != nil {
+										return err
+									}
+									_, err = or.db.CuttingStock.CreateOne(
+										db.CuttingStock.StockDetail.Link(db.StockDetail.StockDetailID.Equals(stockDetail.StockDetailID)),
+										db.CuttingStock.Order.Link(db.Orders.OrderID.Equals(order.OrderID)),
+										db.CuttingStock.Quantity.Set(quantity),
+										db.CuttingStock.CuttingTime.Set(time.Now()),
+									).Exec(ctx)
+
+									break
+								}
+								quantity -= stockDetail.Quantity
+								_, err = or.db.StockDetail.FindUnique(
+									db.StockDetail.StockDetailID.Equals(stockDetail.StockDetailID),
+								).Update(db.StockDetail.Quantity.Set(0)).Exec(ctx)
+								if err != nil {
+									return err
+								}
+
+								_, err = or.db.CuttingStock.CreateOne(
+									db.CuttingStock.StockDetail.Link(db.StockDetail.StockDetailID.Equals(stockDetail.StockDetailID)),
+									db.CuttingStock.Order.Link(db.Orders.OrderID.Equals(order.OrderID)),
+									db.CuttingStock.Quantity.Set(stockDetail.Quantity),
+									db.CuttingStock.CuttingTime.Set(time.Now()),
+								).Exec(ctx)
+							}
+						}
+					}
+				}
+
+			} else if orderStatue.OrderStatus == "IN_PROCESS" {
+				//case 6 : Cancel -> In-process
+				// add production queue
+				for _, product := range order.OrderProducts() {
+					_, err = or.db.ProductionQueue.CreateOne(
+						db.ProductionQueue.User.Link(db.Users.UserID.Equals(order.UserID)),
+						db.ProductionQueue.Recipe.Link(db.Recipes.RecipeID.Equals(product.RecipeID)),
+						db.ProductionQueue.Order.Link(db.Orders.OrderID.Equals(order.OrderID)),
+						db.ProductionQueue.ProductionQuantity.Set(product.ProductQuantity),
+					).Exec(ctx)
+					if err != nil {
+						return err
+					}
+				}
+			}
+		}
+
+	} else {
+		//in-store
+		switch order.OrderStatus {
+		case db.OrderStatusDone:
+			if orderStatue.OrderStatus == "CANCEL" {
+				// case 1 : Done -> Cancel
+				// undo cutting stock
+				cuttingStockList, err := or.db.CuttingStock.FindMany(
+					db.CuttingStock.OrderID.Equals(order.OrderID),
+				).Exec(ctx)
+				if err != nil {
+					return err
+				}
+				for _, cuttingStock := range cuttingStockList {
+					stock, err := or.db.StockDetail.FindUnique(
+						db.StockDetail.StockDetailID.Equals(cuttingStock.StockDetailID),
+					).Exec(ctx)
+					if err != nil {
+						return err
+					}
+					newQuantity := stock.Quantity + cuttingStock.Quantity
+					_, err = or.db.StockDetail.FindUnique(
+						db.StockDetail.StockDetailID.Equals(cuttingStock.StockDetailID),
+					).Update(db.StockDetail.Quantity.Set(newQuantity)).Exec(ctx)
+				}
+				// delete cutting stock data
+				_, err = or.db.CuttingStock.FindMany(
+					db.CuttingStock.OrderID.Equals(order.OrderID),
+				).Delete().Exec(ctx)
+				if err != nil {
+					return err
+				}
+			}
+		case db.OrderStatusCancel:
+			if orderStatue.OrderStatus == "DONE" {
+				// case 2 : Cancel -> Done
+				// add cutting stock
+				for _, product := range order.OrderProducts() {
+					earliestStockDetail, err := or.db.StockDetail.FindMany(
+						db.StockDetail.RecipeID.Equals(product.RecipeID),
+						db.StockDetail.SellByDate.Gte(time.Now()),
+					).OrderBy(db.StockDetail.SellByDate.Order(db.ASC)).Exec(ctx)
+					if err != nil {
+						return err
+					}
+					quantity := product.ProductQuantity
+					if quantity > 0 {
+						for _, stockDetail := range earliestStockDetail {
+							if stockDetail.Quantity > 0 {
+								if stockDetail.Quantity >= quantity {
+									_, err = or.db.StockDetail.FindUnique(
+										db.StockDetail.StockDetailID.Equals(stockDetail.StockDetailID),
+									).Update(db.StockDetail.Quantity.Set(stockDetail.Quantity - quantity)).Exec(ctx)
+									if err != nil {
+										return err
+									}
+									_, err = or.db.CuttingStock.CreateOne(
+										db.CuttingStock.StockDetail.Link(db.StockDetail.StockDetailID.Equals(stockDetail.StockDetailID)),
+										db.CuttingStock.Order.Link(db.Orders.OrderID.Equals(order.OrderID)),
+										db.CuttingStock.Quantity.Set(quantity),
+										db.CuttingStock.CuttingTime.Set(time.Now()),
+									).Exec(ctx)
+
+									break
+								}
+								quantity -= stockDetail.Quantity
+								_, err = or.db.StockDetail.FindUnique(
+									db.StockDetail.StockDetailID.Equals(stockDetail.StockDetailID),
+								).Update(db.StockDetail.Quantity.Set(0)).Exec(ctx)
+								if err != nil {
+									return err
+								}
+
+								_, err = or.db.CuttingStock.CreateOne(
+									db.CuttingStock.StockDetail.Link(db.StockDetail.StockDetailID.Equals(stockDetail.StockDetailID)),
+									db.CuttingStock.Order.Link(db.Orders.OrderID.Equals(order.OrderID)),
+									db.CuttingStock.Quantity.Set(stockDetail.Quantity),
+									db.CuttingStock.CuttingTime.Set(time.Now()),
+								).Exec(ctx)
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	_, err = or.db.Orders.FindUnique(
+		db.Orders.OrderID.Equals(orderStatue.OrderID),
+	).Update(
+		db.Orders.OrderStatus.Set(db.OrderStatus(orderStatue.OrderStatus)),
+	).Exec(ctx)
+	if err != nil {
+		return err
 	}
 
 	return nil
