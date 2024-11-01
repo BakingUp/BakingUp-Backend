@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
 	"github.com/BakingUp/BakingUp-Backend/prisma/db"
 	"github.com/gofiber/fiber/v2"
 )
@@ -107,4 +108,25 @@ func (sr *StockRepository) GetStockBatch(c *fiber.Ctx, stockDetailID string) (*d
 	}
 
 	return stockDetail, nil
+}
+
+func (sr *StockRepository) AddStock(c *fiber.Ctx, stock *domain.AddStockPayload) error {
+	_, err := sr.db.Stocks.CreateOne(
+		db.Stocks.Recipe.Link(
+			db.Recipes.RecipeID.Equals(stock.StockID),
+		),
+		db.Stocks.Lst.Set(stock.LST),
+		// TODO: Remove
+		db.Stocks.SellingPrice.Set(0),
+		// TODO: Remove
+		db.Stocks.Cost.Set(0),
+		db.Stocks.StockLessThan.Set(stock.StockLessThan),
+		db.Stocks.DayBeforeExpired.Set(stock.ExpirationDate),
+	).Exec(c.Context())
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -49,6 +49,17 @@ definitions:
       user_id:
         type: string
     type: object
+  domain.AddStockRequest:
+    properties:
+      expiration_date:
+        type: string
+      lst:
+        type: string
+      stock_id:
+        type: string
+      stock_less_than:
+        type: string
+    type: object
   domain.ChangeExpirationDateSetting:
     properties:
       black_expiration_date:
@@ -1144,6 +1155,32 @@ paths:
       summary: Get the application language
       tags:
       - settings
+  /stock/addStock:
+    post:
+      consumes:
+      - application/json
+      description: Add a stock by stock ID, LST, and expiration date
+      parameters:
+      - description: Stock ID
+        in: body
+        name: stock_id
+        required: true
+        schema:
+          $ref: '#/definitions/domain.AddStockRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot add a stock
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Add a stock
+      tags:
+      - stock
   /stock/deleteStock:
     delete:
       consumes:

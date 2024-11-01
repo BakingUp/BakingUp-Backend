@@ -1036,6 +1036,46 @@ const docTemplate = `{
                 }
             }
         },
+        "/stock/addStock": {
+            "post": {
+                "description": "Add a stock by stock ID, LST, and expiration date",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stock"
+                ],
+                "summary": "Add a stock",
+                "parameters": [
+                    {
+                        "description": "Stock ID",
+                        "name": "stock_id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.AddStockRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot add a stock",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/stock/deleteStock": {
             "delete": {
                 "description": "Delete a stock by recipe id",
@@ -1339,6 +1379,23 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.AddStockRequest": {
+            "type": "object",
+            "properties": {
+                "expiration_date": {
+                    "type": "string"
+                },
+                "lst": {
+                    "type": "string"
+                },
+                "stock_id": {
+                    "type": "string"
+                },
+                "stock_less_than": {
                     "type": "string"
                 }
             }

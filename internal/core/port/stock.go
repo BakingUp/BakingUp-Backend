@@ -12,6 +12,7 @@ type StockRepository interface {
 	DeleteStock(c *fiber.Ctx, recipeID string) error
 	DeleteStockBatch(c *fiber.Ctx, stockDetailID string) error
 	GetStockBatch(c *fiber.Ctx, stockDetailID string) (*db.StockDetailModel, error)
+	AddStock(c *fiber.Ctx, stock *domain.AddStockPayload) error
 }
 
 type StockService interface {
@@ -21,4 +22,5 @@ type StockService interface {
 	DeleteStockBatch(c *fiber.Ctx, stockDetailID string) error
 	GetStockBatch(c *fiber.Ctx, stockDetailID string) (*domain.StockBatch, error)
 	GetAllStocksForOrder(c *fiber.Ctx, userID string) (*domain.OrderStockList, error)
+	AddStock(c *fiber.Ctx, stock *domain.AddStockRequest) error
 }

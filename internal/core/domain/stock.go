@@ -54,6 +54,20 @@ type StockOrderPage struct {
 	Profit       float64 `json:"profit"`
 }
 
+type AddStockRequest struct {
+	StockID             string   `json:"stock_id"`
+	LST				 	string   `json:"lst"`
+	ExpirationDate	  	string   `json:"expiration_date"`
+	StockLessThan	   	string   `json:"stock_less_than"`
+}
+
+type AddStockPayload struct {
+	StockID             string   	`json:"stock_id"`
+	LST				 	int   		`json:"lst"`
+	ExpirationDate	  	time.Time   `json:"expiration_date"`
+	StockLessThan	   	int			`json:"stock_less_than"`
+}
+
 type OrderStockList struct {
 	OrderStocks []StockOrderPage `json:"order_stocks"`
 }
