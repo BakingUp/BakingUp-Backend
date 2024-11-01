@@ -116,8 +116,7 @@ func (sr *StockRepository) AddStock(c *fiber.Ctx, stock *domain.AddStockPayload)
 			db.Recipes.RecipeID.Equals(stock.StockID),
 		),
 		db.Stocks.Lst.Set(stock.LST),
-		// TODO: Remove
-		db.Stocks.SellingPrice.Set(0),
+		db.Stocks.SellingPrice.Set(stock.SellingPrice),
 		// TODO: Remove
 		db.Stocks.Cost.Set(0),
 		db.Stocks.StockLessThan.Set(stock.StockLessThan),
