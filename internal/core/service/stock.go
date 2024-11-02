@@ -74,6 +74,9 @@ func (s *StockService) GetAllStocks(c *fiber.Ctx, userID string) (*domain.StockL
 		Stocks: stockItems,
 	}
 
+	if stockList.Stocks == nil {
+		stockList.Stocks = []domain.StockItem{}
+	}
 	return stockList, nil
 
 }
