@@ -10,6 +10,7 @@ type ChangeUserLanguage struct {
 }
 
 type FixCostSetting struct {
+	Id            string  `json:"id"`
 	Rent          float64 `json:"rent"`
 	Salaries      float64 `json:"salaries"`
 	Insurance     float64 `json:"insurance"`
@@ -23,7 +24,7 @@ type FixCostSetting struct {
 }
 
 type ChangeFixCostSetting struct {
-	UserID        string  `json:"user_id"`
+	FixCostID     string  `json:"fix_cost_id"`
 	Rent          float64 `json:"rent"`
 	Salaries      float64 `json:"salaries"`
 	Insurance     float64 `json:"insurance"`

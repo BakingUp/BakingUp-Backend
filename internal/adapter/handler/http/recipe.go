@@ -1,6 +1,7 @@
 package http
 
 import (
+	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
 	"github.com/BakingUp/BakingUp-Backend/internal/core/port"
 	"github.com/gofiber/fiber/v2"
 )
@@ -67,6 +68,33 @@ func (rh *RecipeHandler) DeleteRecipe(c *fiber.Ctx) error {
 	err := rh.svc.DeleteRecipe(c, recipeID)
 	if err != nil {
 		handleError(c, 400, "Cannot delete a recipe", err.Error())
+		return nil
+	}
+
+	handleSuccess(c, nil)
+	return nil
+}
+
+// AddRecipe godoc
+// @Summary      Add a recipe
+// @Description  Add a recipe
+// @Tags         recipe
+// @Accept       json
+// @Produce      json
+// @Param        AddRecipeRequest  body  domain.AddRecipeRequest  true  "Recipe Request"
+// @Success      200  {object}  response  "Success"
+// @Failure      400  {object}  response  "Cannot add a recipe"
+// @Router       /recipe/addRecipe [post]
+func (rh *RecipeHandler) AddRecipe(c *fiber.Ctx) error {
+	var recipe *domain.AddRecipeRequest
+	if err := c.BodyParser(&recipe); err != nil {
+		handleError(c, 400, "Cannot parse request body", err.Error())
+		return nil
+	}
+
+	err := rh.svc.AddRecipe(c, recipe)
+	if err != nil {
+		handleError(c, 400, "Cannot add a recipe", err.Error())
 		return nil
 	}
 

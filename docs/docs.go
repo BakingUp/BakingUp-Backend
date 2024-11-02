@@ -15,6 +15,214 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/home/getDashboardChartData": {
+            "get": {
+                "description": "Get data of each chart on dashboard by user ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "home"
+                ],
+                "summary": "Get data of each chart on dashboard",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Start Date Time",
+                        "name": "start_date_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "End Date Time",
+                        "name": "end_date_time",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.DashboardChartDataResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get data for all charts.",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/home/getTopProducts": {
+            "post": {
+                "description": "Get top products to display in the intelligent dashboard by user ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "home"
+                ],
+                "summary": "Get top products to display in the intelligent dashboard",
+                "parameters": [
+                    {
+                        "description": "Filter Request",
+                        "name": "filter_request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.FilterSellingRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.FilterProductResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get the filter response.",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/home/getUnreadNotification": {
+            "get": {
+                "description": "Get unread notification amount of user by user ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "home"
+                ],
+                "summary": "Get unread notification amount of user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.UnreadNotification"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get unread notification amount.",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/ingredient/addIngredientStock": {
+            "post": {
+                "description": "Add ingredient stock by using ingredient stock request",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ingredient"
+                ],
+                "summary": "Add ingredient stock",
+                "parameters": [
+                    {
+                        "description": "Ingredient Stock Request",
+                        "name": "AddIngredientStockRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.AddIngredientStockRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot add ingredient stock\"'",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/ingredient/addIngredients": {
+            "post": {
+                "description": "Add ingredient by using ingredient request",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ingredient"
+                ],
+                "summary": "Add ingredient",
+                "parameters": [
+                    {
+                        "description": "Ingredient Request",
+                        "name": "AddIngredientRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.AddIngredientRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot add ingredients",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/ingredient/deleteIngredient": {
             "delete": {
                 "description": "Delete an ingredient by using ingredient id",
@@ -84,6 +292,82 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Cannot delete ingredient batch note",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/ingredient/deleteIngredientStock": {
+            "delete": {
+                "description": "Delete an ingredient stock by using ingredient stock id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ingredient"
+                ],
+                "summary": "Delete an ingredient stock",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Ingredient Stock ID",
+                        "name": "ingredient_stock_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot delete an ingredient stock",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/ingredient/getAddEditIngredientStockDetail": {
+            "get": {
+                "description": "Get add edit ingredient stock details by ingredient ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ingredient"
+                ],
+                "summary": "Get add edit ingredient stock details",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Ingredient ID",
+                        "name": "ingredient_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.AddEditIngredientStockDetail"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get add edit ingredient stock detail",
                         "schema": {
                             "$ref": "#/definitions/http.response"
                         }
@@ -397,6 +681,46 @@ const docTemplate = `{
                 }
             }
         },
+        "/recipe/addRecipe": {
+            "post": {
+                "description": "Add a recipe",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "recipe"
+                ],
+                "summary": "Add a recipe",
+                "parameters": [
+                    {
+                        "description": "Recipe Request",
+                        "name": "AddRecipeRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.AddRecipeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot add a recipe",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/recipe/deleteRecipe": {
             "delete": {
                 "description": "Delete a recipe by using recipe id",
@@ -689,6 +1013,13 @@ const docTemplate = `{
                         "name": "user_id",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Created At",
+                        "name": "created_at",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -745,6 +1076,46 @@ const docTemplate = `{
                 }
             }
         },
+        "/stock/addStock": {
+            "post": {
+                "description": "Add a stock by stock ID, LST, and expiration date",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stock"
+                ],
+                "summary": "Add a stock",
+                "parameters": [
+                    {
+                        "description": "Stock ID",
+                        "name": "stock_id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.AddStockRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot add a stock",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/stock/deleteStock": {
             "delete": {
                 "description": "Delete a stock by recipe id",
@@ -783,6 +1154,44 @@ const docTemplate = `{
                 }
             }
         },
+        "/stock/deleteStockBatch": {
+            "delete": {
+                "description": "Delete a stock batch by stock detail ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stock"
+                ],
+                "summary": "Delete a stock batch",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Stock Detail ID",
+                        "name": "stock_detail_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot delete a stock batch",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/stock/getAllStocks": {
             "get": {
                 "description": "Get all stocks by user ID",
@@ -814,6 +1223,44 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Cannot get all stocks",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/stock/getStockBatch": {
+            "get": {
+                "description": "Get stock batch by stock detail ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stock"
+                ],
+                "summary": "Get stock batch",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Stock Detail ID",
+                        "name": "stock_detail_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.StockBatch"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get stock batch",
                         "schema": {
                             "$ref": "#/definitions/http.response"
                         }
@@ -901,6 +1348,159 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "domain.AddEditIngredientStockDetail": {
+            "type": "object",
+            "properties": {
+                "ingredient_eng_name": {
+                    "type": "string"
+                },
+                "ingredient_thai_name": {
+                    "type": "string"
+                },
+                "unit": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.AddIngredientRequest": {
+            "type": "object",
+            "properties": {
+                "day_before_expire": {
+                    "type": "string"
+                },
+                "img": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "ingredient_eng_name": {
+                    "type": "string"
+                },
+                "ingredient_thai_name": {
+                    "type": "string"
+                },
+                "stock_less_than": {
+                    "type": "string"
+                },
+                "unit": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.AddIngredientStockRequest": {
+            "type": "object",
+            "properties": {
+                "expiration_date": {
+                    "type": "string"
+                },
+                "img": {
+                    "type": "string"
+                },
+                "ingredient_brand": {
+                    "type": "string"
+                },
+                "ingredient_id": {
+                    "type": "string"
+                },
+                "note": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "string"
+                },
+                "supplier": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.AddRecipeIngredientRequest": {
+            "type": "object",
+            "properties": {
+                "ingredient_id": {
+                    "type": "string"
+                },
+                "ingredient_quantity": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.AddRecipeRequest": {
+            "type": "object",
+            "properties": {
+                "eng_instruction": {
+                    "type": "string"
+                },
+                "ingredients": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.AddRecipeIngredientRequest"
+                    }
+                },
+                "instruction_img": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "recipe_eng_name": {
+                    "type": "string"
+                },
+                "recipe_img": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "recipe_thai_name": {
+                    "type": "string"
+                },
+                "servings": {
+                    "type": "string"
+                },
+                "thai_instruction": {
+                    "type": "string"
+                },
+                "total_hours": {
+                    "type": "string"
+                },
+                "total_mins": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.AddStockRequest": {
+            "type": "object",
+            "properties": {
+                "expiration_date": {
+                    "type": "string"
+                },
+                "lst": {
+                    "type": "string"
+                },
+                "selling_price": {
+                    "type": "string"
+                },
+                "stock_id": {
+                    "type": "string"
+                },
+                "stock_less_than": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.ChangeExpirationDateSetting": {
             "type": "object",
             "properties": {
@@ -927,6 +1527,9 @@ const docTemplate = `{
                 "electricity": {
                     "type": "number"
                 },
+                "fix_cost_id": {
+                    "type": "string"
+                },
                 "gas": {
                     "type": "number"
                 },
@@ -948,9 +1551,6 @@ const docTemplate = `{
                 "subscriptions": {
                     "type": "number"
                 },
-                "user_id": {
-                    "type": "string"
-                },
                 "water": {
                     "type": "number"
                 }
@@ -964,6 +1564,23 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "type": "string"
+                }
+            }
+        },
+        "domain.CostRevenueChartItem": {
+            "type": "object",
+            "properties": {
+                "cost": {
+                    "type": "number"
+                },
+                "month": {
+                    "type": "string"
+                },
+                "net_profit": {
+                    "type": "number"
+                },
+                "revenue": {
+                    "type": "number"
                 }
             }
         },
@@ -982,6 +1599,15 @@ const docTemplate = `{
                 "is_read": {
                     "type": "boolean"
                 },
+                "item_id": {
+                    "type": "string"
+                },
+                "item_name": {
+                    "type": "string"
+                },
+                "noti_item_type": {
+                    "type": "string"
+                },
                 "noti_type": {
                     "type": "string"
                 },
@@ -993,6 +1619,23 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "type": "string"
+                }
+            }
+        },
+        "domain.DashboardChartDataResponse": {
+            "type": "object",
+            "properties": {
+                "cost_revenue": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.CostRevenueChartItem"
+                    }
+                },
+                "profit_threshold": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.ProfitThresholdChartItem"
+                    }
                 }
             }
         },
@@ -1010,6 +1653,66 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.FilterItemResponse": {
+            "type": "object",
+            "properties": {
+                "detail": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.FilterProductResponse": {
+            "type": "object",
+            "properties": {
+                "products": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.FilterItemResponse"
+                    }
+                }
+            }
+        },
+        "domain.FilterSellingRequest": {
+            "type": "object",
+            "properties": {
+                "end_date_time": {
+                    "type": "string"
+                },
+                "filter_type": {
+                    "type": "string"
+                },
+                "order_types": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "sales_channel": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "sort_type": {
+                    "type": "string"
+                },
+                "start_date_time": {
+                    "type": "string"
+                },
+                "unit_type": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.FixCostSetting": {
             "type": "object",
             "properties": {
@@ -1021,6 +1724,9 @@ const docTemplate = `{
                 },
                 "gas": {
                     "type": "number"
+                },
+                "id": {
+                    "type": "string"
                 },
                 "insurance": {
                     "type": "number"
@@ -1186,7 +1892,19 @@ const docTemplate = `{
                 "is_read": {
                     "type": "boolean"
                 },
+                "item_id": {
+                    "type": "string"
+                },
+                "item_name": {
+                    "type": "string"
+                },
                 "message": {
+                    "type": "string"
+                },
+                "noti_id": {
+                    "type": "string"
+                },
+                "noti_item_type": {
                     "type": "string"
                 },
                 "noti_type": {
@@ -1208,14 +1926,22 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.ProfitThresholdChartItem": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "threshold": {
+                    "type": "number"
+                }
+            }
+        },
         "domain.RecipeDetail": {
             "type": "object",
             "properties": {
                 "instruction_steps": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                    "type": "string"
                 },
                 "instruction_url": {
                     "type": "array",
@@ -1295,6 +2021,32 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.StockBatch": {
+            "type": "object",
+            "properties": {
+                "note": {
+                    "type": "string"
+                },
+                "note_created_at": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "integer"
+                },
+                "recipe_name": {
+                    "type": "string"
+                },
+                "recipe_url": {
+                    "type": "string"
+                },
+                "sell_by_date": {
+                    "type": "string"
+                },
+                "stock_detail_id": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.StockDetail": {
             "type": "object",
             "properties": {
@@ -1308,6 +2060,9 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "sell_by_date": {
+                    "type": "string"
+                },
+                "stock_detail_id": {
                     "type": "string"
                 }
             }
@@ -1346,6 +2101,14 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/domain.StockItem"
                     }
+                }
+            }
+        },
+        "domain.UnreadNotification": {
+            "type": "object",
+            "properties": {
+                "unread_noti_amount": {
+                    "type": "integer"
                 }
             }
         },

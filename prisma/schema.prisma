@@ -17,21 +17,30 @@ model Users{
   red_expiration_date    DateTime
   yellow_expiration_date DateTime
   language               Language
-  rent                   Float?
-  salaries               Float?
-  insurance              Float?
-  subscriptions          Float?
-  advertising            Float?
-  electricity            Float?
-  water                  Float?
-  gas                    Float?
-  other                  Float?
-  note                   String?
   notifications          Notifications[]
   orders                 Orders[]
   ingredients            Ingredients[]
   devices                Devices[]
   recipes                Recipes[]
+  fixCosts               FixCost[]
+  production_queue   Production_queue[]
+}
+
+model FixCost {
+  fix_cost_id     String   @id @unique @default(uuid())
+  user            Users    @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  user_id         String
+  created_at      DateTime
+  rent            Float?
+  salaries        Float?
+  insurance       Float?
+  subscriptions   Float?
+  advertising     Float?
+  electricity     Float?
+  water           Float?
+  gas             Float?
+  other           Float?
+  note            String?
 }
 
 model Notifications {
@@ -45,6 +54,9 @@ model Notifications {
   created_at   DateTime
   is_read      Boolean
   noti_type    NotificationType
+  item_id      String
+  item_name    String
+  noti_item_type NotificationInfoType
 }
 
 enum Language {
@@ -58,26 +70,34 @@ enum NotificationType {
   ALERT
 }
 
-model Orders {
-  order_id String @id @unique
-  user   Users    @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
-  user_id String 
-  order_taken_by String
-  customer_name String? @default("-")
-  customer_phone_num String? @default("-")
-  order_platform OrderPlatform
-  order_date DateTime
-  order_type OrderType
-  is_pre_order Boolean
-  order_status OrderStatus
-  pick_up_date_time DateTime @default(now())
-  pick_up_method PickUpMethod?
-  order_index Int @unique
-  order_products Order_products[]
-  order_note_text String? @default("-")
-  order_note_create_at DateTime?
-
+enum NotificationInfoType {
+  INGREDIENT
+  STOCK
+  ORDER
 }
+
+model Orders {
+  order_id            String       @id @unique @default(uuid())
+  user                Users        @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  user_id            String
+  order_taken_by     String       @default("-")
+  customer_name      String?      @default("-")
+  customer_phone_num  String?     @default("-")
+  order_platform     OrderPlatform
+  order_date         DateTime
+  order_type         OrderType
+  is_pre_order       Boolean
+  order_status       OrderStatus
+  pick_up_date_time  DateTime     @default(now())
+  pick_up_method     PickUpMethod?
+  order_index        Int
+  order_products     Order_products[]
+  order_note_text    String?     @default("-")
+  order_note_create_at DateTime? @default(now())
+  production_queue   Production_queue[]
+  cutting_stock      Cutting_stock[]
+}
+
 
 enum OrderPlatform {
   STORE
@@ -116,6 +136,17 @@ model Order_products {
   recipe            Recipes   @relation(fields: [recipe_id], references: [recipe_id], onDelete: Cascade)
 
   @@id([order_id, recipe_id])
+}
+
+model Production_queue{
+  production_id       String   @id @unique @default(uuid())
+  user                Users    @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  user_id             String
+  recipe_id           String
+  recipe              Recipes  @relation(fields: [recipe_id], references: [recipe_id], onDelete: Cascade)
+  order_id            String
+  order               Orders   @relation(fields: [order_id], references: [order_id], onDelete: Cascade)
+  production_quantity Int
 }
 
 model Ingredients {
@@ -183,17 +214,18 @@ model Recipes {
   recipe_thai_name              String
   total_time                    DateTime
   serving                       Int
-  scale_servings                Int
-  hidden_cost                   Float
-  labor_cost                    Float
-  profit_margin                 Float
+  eng_instruction               String
+  thai_instruction              String
+  scale_servings                Int @default(-1)
+  hidden_cost                   Float   @default(10)
+  labor_cost                    Float  @default(150)
+  profit_margin                 Float @default(30)
   recipe_images                 Recipe_images[]
   recipe_ingredients            Recipe_ingredients[]
-  recipe_eng_instruction_steps  Recipe_eng_instruction_steps[]
-  recipe_thai_instruction_steps Recipe_thai_instruction_steps[]
   recipe_instruction_images     Recipe_instruction_images[]
   stocks                        Stocks?
   order_products                Order_products[]
+  production_queue   Production_queue[]
 }
 
 model Recipe_images {
@@ -213,24 +245,6 @@ model Recipe_ingredients {
   recipe_ingredient_quantity Float
 
   @@id([recipe_id, ingredient_id])
-}
-
-model Recipe_eng_instruction_steps {
-  recipe                   Recipes     @relation(fields: [recipe_id], references: [recipe_id], onDelete: Cascade)
-  recipe_id                String
-  instruction_order        Int
-  instruction_step         String
-
-  @@id([recipe_id, instruction_order])
-}
-
-model Recipe_thai_instruction_steps {
-  recipe                   Recipes     @relation(fields: [recipe_id], references: [recipe_id], onDelete: Cascade)
-  recipe_id                String
-  instruction_order        Int
-  instruction_step         String
-
-  @@id([recipe_id, instruction_order])
 }
 
 model Recipe_instruction_images {
@@ -254,6 +268,7 @@ model Stocks {
 }
 
 model Stock_detail {
+  stock_detail_id          String     @id @unique
   stock                    Stocks     @relation(fields: [recipe_id], references: [recipe_id], onDelete: Cascade)
   recipe_id                String
   created_at               DateTime
@@ -261,6 +276,16 @@ model Stock_detail {
   quantity                 Int
   note                     String?
   cooking_time             DateTime
+  cutting_stock            Cutting_stock[]
+}
 
-  @@id([recipe_id, created_at])
+model Cutting_stock {
+  stock_detail_id          String
+  stock_detail             Stock_detail @relation(fields: [stock_detail_id], references: [stock_detail_id], onDelete: Cascade)
+  order_id                 String
+  order                    Orders      @relation(fields: [order_id], references: [order_id], onDelete: Cascade)
+  quantity                 Int
+  cutting_time             DateTime
+
+  @@id([stock_detail_id, order_id])
 }

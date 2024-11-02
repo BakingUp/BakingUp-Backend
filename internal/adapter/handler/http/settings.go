@@ -1,6 +1,8 @@
 package http
 
 import (
+	"time"
+
 	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
 	"github.com/BakingUp/BakingUp-Backend/internal/core/port"
 	"github.com/gofiber/fiber/v2"
@@ -102,13 +104,21 @@ func (sh *SettingsHandler) ChangeLanguage(c *fiber.Ctx) error {
 // @Accept       json
 // @Produce      json
 // @Param        user_id  query  string  true  "User ID"
+// @Param        created_at  query  string  true  "Created At"
 // @Success      200  {object}  domain.FixCostSetting  "Success"
 // @Failure      400  {object}  response     "Cannot get the fix cost"
 // @Router       /settings/getFixCost [get]
 func (sh *SettingsHandler) GetFixCost(c *fiber.Ctx) error {
 	userID := c.Query("user_id")
+	createdAtStr := c.Query("created_at")
 
-	userFixCost, err := sh.svc.GetFixCost(c, userID)
+	createdAt, err := time.Parse(time.RFC3339, createdAtStr)
+	if err != nil {
+		handleError(c, 400, "Invalid date format for created_at", err.Error())
+		return nil
+	}
+
+	userFixCost, err := sh.svc.GetFixCost(c, userID, createdAt)
 	if err != nil {
 		handleError(c, 400, "Cannot get the fix cost", err.Error())
 	}
@@ -132,11 +142,6 @@ func (sh *SettingsHandler) ChangeFixCost(c *fiber.Ctx) error {
 
 	if err := c.BodyParser(&userFixCost); err != nil {
 		handleError(c, 400, "Failed to parse request body", err.Error())
-		return nil
-	}
-
-	if userFixCost.UserID == "" {
-		handleError(c, 400, "UserID is required", "")
 		return nil
 	}
 

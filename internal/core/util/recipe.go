@@ -1,9 +1,11 @@
 package util
 
 import (
+	"encoding/base64"
 	"fmt"
 	"math"
-	"sort"
+	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/BakingUp/BakingUp-Backend/prisma/db"
@@ -17,32 +19,12 @@ func GetRecipeName(recipe *db.RecipesModel, language *db.Language) string {
 	return recipe.RecipeEngName
 }
 
-func GetInstructionSteps(recipe *db.RecipesModel, language *db.Language) []string {
-	var urls []string
+func GetInstructionSteps(recipe *db.RecipesModel, language *db.Language) string {
+    if *language == db.LanguageTh {
+        return recipe.ThaiInstruction
+    }
 
-	if *language == db.LanguageTh {
-		steps := recipe.RecipeThaiInstructionSteps()
-
-		sort.Slice(steps, func(i, j int) bool {
-			return steps[i].InstructionOrder < steps[j].InstructionOrder
-		})
-
-		for _, step := range steps {
-			urls = append(urls, step.InstructionStep)
-		}
-	} else {
-		steps := recipe.RecipeEngInstructionSteps()
-
-		sort.Slice(steps, func(i, j int) bool {
-			return steps[i].InstructionOrder < steps[j].InstructionOrder
-		})
-
-		for _, step := range steps {
-			urls = append(urls, step.InstructionStep)
-		}
-	}
-
-	return urls
+    return recipe.EngInstruction
 }
 
 func CalculateIngredientPrice(value []db.IngredientDetailModel) float64 {
@@ -61,24 +43,113 @@ func CalculateIngredientPrice(value []db.IngredientDetailModel) float64 {
 	}
 
 	finalPrice := price / totalQuantity
-	return math.Round(finalPrice * 100) / 100
+	return math.Round(finalPrice*100) / 100
 }
 
 func FormatTotalTime(totalTimeHours, totalTimeMinutes int) string {
-    return fmt.Sprintf("%d %s %d %s",
-        totalTimeHours, 
-        func() string {
-            if totalTimeHours == 1 {
-                return "hr"
-            }
-            return "hrs"
-        }(),
-        totalTimeMinutes, 
-        func() string {
-            if totalTimeMinutes == 1 {
-                return "min"
-            }
-            return "mins"
-        }(),
-    )
+	var result string
+
+	if totalTimeHours > 0 {
+		result += fmt.Sprintf("%d %s", totalTimeHours, func() string {
+			if totalTimeHours == 1 {
+				return "hr"
+			}
+			return "hrs"
+		}())
+	}
+
+	if totalTimeMinutes > 0 {
+		if result != "" {
+			result += " "
+		}
+		result += fmt.Sprintf("%d %s", totalTimeMinutes, func() string {
+			if totalTimeMinutes == 1 {
+				return "min"
+			}
+			return "mins"
+		}())
+	}
+
+	return result
+}
+
+func UploadRecipeImage(userId string, recipeId string, imgBase64 string, index string) (string, error) {
+	// Decode the base64 string to a byte slice
+	imgBytes, err := base64.StdEncoding.DecodeString(imgBase64)
+	if err != nil {
+		return "", err
+	}
+	// Create the path based on userId, and ingredientId
+	filePath := filepath.Join(fmt.Sprintf("images/%s/recipes/%s/recipeImgs/%s.jpg", userId, recipeId, index))
+
+	// Create the directory if it doesn't exist
+	if err := os.MkdirAll(filepath.Dir(filePath), os.ModePerm); err != nil {
+		return "", err
+	}
+
+	// Create the file
+	file, err := os.Create(filePath)
+	if err != nil {
+		return "", err
+	}
+	defer file.Close()
+
+	// Write the byte slice to the file
+	if _, err := file.Write(imgBytes); err != nil {
+		return "", err
+	}
+
+	// Return the file path as the image URL
+	return filePath, nil
+}
+
+func UploadInstructionImage(userId string, recipeId string, imgBase64 string, index string) (string, error) {
+	// Decode the base64 string to a byte slice
+	imgBytes, err := base64.StdEncoding.DecodeString(imgBase64)
+	if err != nil {
+		return "", err
+	}
+	// Create the path based on userId, and ingredientId
+	filePath := filepath.Join(fmt.Sprintf("images/%s/recipes/%s/instructionImgs/%s.jpg", userId, recipeId, index))
+
+	// Create the directory if it doesn't exist
+	if err := os.MkdirAll(filepath.Dir(filePath), os.ModePerm); err != nil {
+		return "", err
+	}
+
+	// Create the file
+	file, err := os.Create(filePath)
+	if err != nil {
+		return "", err
+	}
+	defer file.Close()
+
+	// Write the byte slice to the file
+	if _, err := file.Write(imgBytes); err != nil {
+		return "", err
+	}
+
+	// Return the file path as the image URL
+	return filePath, nil
+}
+
+func ConvertToTime(hours, mins string) (time.Time, error) {
+    const layout = "2 Jan 2006 15:04:05"
+    baseTime, err := time.Parse(layout, "1 Jan 2000 00:00:00")
+    if err != nil {
+        return time.Time{}, err
+    }
+
+    hoursDuration, err := time.ParseDuration(hours + "h")
+    if err != nil {
+        return time.Time{}, err
+    }
+
+    minsDuration, err := time.ParseDuration(mins + "m")
+    if err != nil {
+        return time.Time{}, err
+    }
+
+    totalTime := baseTime.Add(hoursDuration).Add(minsDuration)
+    return totalTime, nil
 }

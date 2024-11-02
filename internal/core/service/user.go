@@ -38,12 +38,20 @@ func (s *UserService) GetUserInfo(c *fiber.Ctx, userID string) (*domain.UserInfo
 	for _, order := range orders {
 		for _, orderProduct := range order.OrderProducts() {
 			recipe := orderProduct.Recipe()
+			var recipeImg string
 			if recipe != nil {
+				for _, recipeImageItem := range recipe.RecipeImages() {
+					if recipeImageItem.RecipeID == recipe.RecipeID {
+						recipeImg = recipeImageItem.RecipeURL
+					}
+				}
+
 				queue = append(queue, domain.ProductionQueueItem{
 					OrderIndex: order.OrderIndex,
 					Name:       util.GetRecipeName(recipe, language),
 					Quantity:   orderProduct.ProductQuantity,
 					PickUpDate: order.PickUpDateTime.Format("02/01/2006"),
+					ImgURL:     recipeImg,
 				})
 			}
 		}

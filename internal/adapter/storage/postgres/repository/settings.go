@@ -62,32 +62,34 @@ func (sr *SettingsRepository) ChangeLanguage(c *fiber.Ctx, userLanguage *domain.
 	return nil
 }
 
-func (sr *SettingsRepository) GetFixCost(c *fiber.Ctx, userID string) (*db.UsersModel, error) {
-	user, err := sr.db.Users.FindFirst(
-		db.Users.UserID.Equals(userID),
+func (sr *SettingsRepository) GetFixCost(c *fiber.Ctx, userID string, startDateTime time.Time, endDateTime time.Time) ([]db.FixCostModel, error) {
+	fixCosts, err := sr.db.FixCost.FindMany(
+		db.FixCost.UserID.Equals(userID),
+		db.FixCost.CreatedAt.AfterEquals(startDateTime),
+		db.FixCost.CreatedAt.BeforeEquals(endDateTime),
 	).Exec(c.Context())
 
 	if err != nil {
 		return nil, err
 	}
 
-	return user, nil
+	return fixCosts, nil
 }
 
 func (sr *SettingsRepository) ChangeFixCost(c *fiber.Ctx, userFixCost *domain.ChangeFixCostSetting) error {
-	_, err := sr.db.Users.FindUnique(
-		db.Users.UserID.Equals(userFixCost.UserID),
+	_, err := sr.db.FixCost.FindUnique(
+		db.FixCost.FixCostID.Equals(userFixCost.FixCostID),
 	).Update(
-		db.Users.Rent.Set(userFixCost.Rent),
-		db.Users.Salaries.Set(userFixCost.Salaries),
-		db.Users.Insurance.Set(userFixCost.Insurance),
-		db.Users.Subscriptions.Set(userFixCost.Subscriptions),
-		db.Users.Advertising.Set(userFixCost.Advertising),
-		db.Users.Electricity.Set(userFixCost.Electricity),
-		db.Users.Water.Set(userFixCost.Water),
-		db.Users.Gas.Set(userFixCost.Gas),
-		db.Users.Other.Set(userFixCost.Other),
-		db.Users.Note.Set(userFixCost.Note),
+		db.FixCost.Rent.Set(userFixCost.Rent),
+		db.FixCost.Salaries.Set(userFixCost.Salaries),
+		db.FixCost.Insurance.Set(userFixCost.Insurance),
+		db.FixCost.Subscriptions.Set(userFixCost.Subscriptions),
+		db.FixCost.Advertising.Set(userFixCost.Advertising),
+		db.FixCost.Electricity.Set(userFixCost.Electricity),
+		db.FixCost.Water.Set(userFixCost.Water),
+		db.FixCost.Gas.Set(userFixCost.Gas),
+		db.FixCost.Other.Set(userFixCost.Other),
+		db.FixCost.Note.Set(userFixCost.Note),
 	).Exec(c.Context())
 
 	if err != nil {

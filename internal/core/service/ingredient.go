@@ -11,6 +11,7 @@ import (
 	"github.com/BakingUp/BakingUp-Backend/internal/core/port"
 	"github.com/BakingUp/BakingUp-Backend/internal/core/util"
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 )
 
 type IngredientService struct {
@@ -109,10 +110,11 @@ func (s *IngredientService) GetIngredientDetail(c *fiber.Ctx, ingredientID strin
 
 	totalQuantity := 0.0
 	var stocks []domain.Stock
+	var stockDetails []domain.Stock
 	for _, detail := range ingredient.IngredientDetail() {
 		ingredientStockURL, _ := detail.IngredientStockURL()
 		totalQuantity += detail.IngredientQuantity
-		stocks = append(stocks, domain.Stock{
+		stockDetails = append(stockDetails, domain.Stock{
 			StockID:          detail.IngredientStockID,
 			StockURL:         ingredientStockURL,
 			Price:            util.CombinePrice(detail.Price, ingredient.Unit),
@@ -120,8 +122,15 @@ func (s *IngredientService) GetIngredientDetail(c *fiber.Ctx, ingredientID strin
 			ExpirationDate:   detail.ExpirationDate.Format("02/01/2006"),
 			ExpirationStatus: util.CalculateExpirationStatus(detail.ExpirationDate, expirationDate.BlackExpirationDate, expirationDate.RedExpirationDate, expirationDate.YellowExpirationDate),
 		})
-
 	}
+
+	sort.Slice(stockDetails, func(i, j int) bool {
+		dateI, _ := time.Parse("02/01/2006", stockDetails[i].ExpirationDate)
+		dateJ, _ := time.Parse("02/01/2006", stockDetails[j].ExpirationDate)
+		return dateI.After(dateJ)
+	})
+
+	stocks = append(stocks, stockDetails...)
 
 	var ingredientURLs []string
 	ingredientImages := ingredient.IngredientImages()
@@ -182,6 +191,22 @@ func (s *IngredientService) GetIngredientStockDetail(c *fiber.Ctx, ingredientSto
 	return stockDetail, nil
 }
 
+func (s *IngredientService) GetAddEditIngredientStockDetail(c *fiber.Ctx, ingredientID string) (*domain.AddEditIngredientStockDetail, error) {
+	ingredient, err := s.ingredientRepo.GetAddEditIngredientStockDetail(c, ingredientID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	detail := &domain.AddEditIngredientStockDetail{
+		IngredientEngName:  ingredient.IngredientEngName,
+		IngredientThaiName: ingredient.IngredientThaiName,
+		Unit:               string(ingredient.Unit),
+	}
+
+	return detail, nil
+}
+
 func (s *IngredientService) DeleteIngredientBatchNote(c *fiber.Ctx, ingredientNoteID string) error {
 	err := s.ingredientRepo.DeleteIngredientBatchNote(c, ingredientNoteID)
 	if err != nil {
@@ -195,6 +220,109 @@ func (s *IngredientService) DeleteIngredient(c *fiber.Ctx, ingredientID string) 
 	err := s.ingredientRepo.DeleteIngredient(c, ingredientID)
 	if err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (s *IngredientService) DeleteIngredientStock(c *fiber.Ctx, ingredientStockID string) error {
+	err := s.ingredientRepo.DeleteIngredientStock(c, ingredientStockID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *IngredientService) AddIngredient(c *fiber.Ctx, ingredients *domain.AddIngredientRequest) error {
+	userID := ingredients.UserID
+	ingredientID := uuid.NewString()
+	dayBeforeExpire := util.ExpirationDate(ingredients.DayBeforeExpire)
+	stockLessThan, _ := strconv.Atoi(ingredients.StockLessThan)
+
+	addIngredientPayload := &domain.AddIngredientPayload{
+		UserID:             userID,
+		IngredientID:       ingredientID,
+		IngredientEngName:  ingredients.IngredientEngName,
+		IngredientThaiName: ingredients.IngredientThaiName,
+		StockLessThan:      stockLessThan,
+		Unit:               ingredients.Unit,
+		DayBeforeExpire:    dayBeforeExpire,
+	}
+	err := s.ingredientRepo.AddIngredient(c, addIngredientPayload)
+	imgIndex := 1
+	for _, img := range ingredients.Img {
+		imgUrl, err := util.UploadIngredientImage(userID, ingredientID, img, strconv.Itoa(imgIndex))
+		if err != nil {
+			return err
+		}
+		addIngredientImagePayload := &domain.AddIngredientImagePayload{
+			IngredientID: ingredientID,
+			ImgUrl:       imgUrl,
+			ImageIndex:   strconv.Itoa(imgIndex),
+		}
+		err = s.ingredientRepo.AddIngredientImage(c, addIngredientImagePayload)
+		if err != nil {
+			return err
+		}
+		imgIndex++
+	}
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *IngredientService) AddIngredientStock(c *fiber.Ctx, ingredientStock *domain.AddIngredientStockRequest) error {
+	ingredientID := ingredientStock.IngredientID
+	ingredientStockID := uuid.NewString()
+	ingredientNoteID := uuid.NewString()
+	price, _ := strconv.ParseFloat(ingredientStock.Price, 64)
+	quantity, _ := strconv.ParseFloat(ingredientStock.Quantity, 64)
+	expirationDate, _ := time.Parse("02/01/2006", ingredientStock.ExpirationDate)
+	noteCreatedAt := time.Now()
+	userID := ingredientStock.UserID
+	ingredientStockImg := ingredientStock.Img
+
+	commonPayload := domain.AddIngredientStockPayload{
+		IngredientStockID:  ingredientStockID,
+		IngredientID:       ingredientID,
+		IngredientQuantity: quantity,
+		Price:              price,
+		ExpirationDate:     expirationDate,
+		IngredientSupplier: ingredientStock.Supplier,
+		IngredientBrand:    ingredientStock.IngredientBrand,
+		Note:               ingredientStock.Note,
+	}
+
+	if ingredientStockImg != "" {
+		ingredientStockURL, err := util.UploadIngredientStockImage(userID, ingredientID, ingredientStockID, ingredientStockImg)
+		if err != nil {
+			return err
+		}
+		commonPayload.IngredientStockURL = ingredientStockURL
+	}
+
+	ingredientStockPayload := &commonPayload
+
+	err := s.ingredientRepo.AddIngredientStock(c, ingredientStockPayload)
+	if err != nil {
+		return err
+	}
+
+	if ingredientStock.Note != "" {
+		ingredientNote := &domain.AddIngredientNotePayload{
+			IngredientNoteID:  ingredientNoteID,
+			IngredientStockID: ingredientStockID,
+			Note:              ingredientStock.Note,
+			NoteCreatedAt:     noteCreatedAt,
+		}
+
+		err = s.ingredientRepo.AddIngredientNote(c, ingredientNote)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

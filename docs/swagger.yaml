@@ -1,5 +1,105 @@
 basePath: /api
 definitions:
+  domain.AddEditIngredientStockDetail:
+    properties:
+      ingredient_eng_name:
+        type: string
+      ingredient_thai_name:
+        type: string
+      unit:
+        type: string
+    type: object
+  domain.AddIngredientRequest:
+    properties:
+      day_before_expire:
+        type: string
+      img:
+        items:
+          type: string
+        type: array
+      ingredient_eng_name:
+        type: string
+      ingredient_thai_name:
+        type: string
+      stock_less_than:
+        type: string
+      unit:
+        type: string
+      user_id:
+        type: string
+    type: object
+  domain.AddIngredientStockRequest:
+    properties:
+      expiration_date:
+        type: string
+      img:
+        type: string
+      ingredient_brand:
+        type: string
+      ingredient_id:
+        type: string
+      note:
+        type: string
+      price:
+        type: string
+      quantity:
+        type: string
+      supplier:
+        type: string
+      user_id:
+        type: string
+    type: object
+  domain.AddRecipeIngredientRequest:
+    properties:
+      ingredient_id:
+        type: string
+      ingredient_quantity:
+        type: string
+    type: object
+  domain.AddRecipeRequest:
+    properties:
+      eng_instruction:
+        type: string
+      ingredients:
+        items:
+          $ref: '#/definitions/domain.AddRecipeIngredientRequest'
+        type: array
+      instruction_img:
+        items:
+          type: string
+        type: array
+      recipe_eng_name:
+        type: string
+      recipe_img:
+        items:
+          type: string
+        type: array
+      recipe_thai_name:
+        type: string
+      servings:
+        type: string
+      thai_instruction:
+        type: string
+      total_hours:
+        type: string
+      total_mins:
+        type: string
+      user_id:
+        type: string
+    type: object
+  domain.AddStockRequest:
+    properties:
+      expiration_date:
+        type: string
+      lst:
+        type: string
+      selling_price:
+        type: string
+      stock_id:
+        type: string
+      stock_less_than:
+        type: string
+    type: object
   domain.ChangeExpirationDateSetting:
     properties:
       black_expiration_date:
@@ -17,6 +117,8 @@ definitions:
         type: number
       electricity:
         type: number
+      fix_cost_id:
+        type: string
       gas:
         type: number
       insurance:
@@ -31,8 +133,6 @@ definitions:
         type: number
       subscriptions:
         type: number
-      user_id:
-        type: string
       water:
         type: number
     type: object
@@ -42,6 +142,17 @@ definitions:
         type: string
       user_id:
         type: string
+    type: object
+  domain.CostRevenueChartItem:
+    properties:
+      cost:
+        type: number
+      month:
+        type: string
+      net_profit:
+        type: number
+      revenue:
+        type: number
     type: object
   domain.CreateNotificationItem:
     properties:
@@ -53,6 +164,12 @@ definitions:
         type: string
       is_read:
         type: boolean
+      item_id:
+        type: string
+      item_name:
+        type: string
+      noti_item_type:
+        type: string
       noti_type:
         type: string
       thai_message:
@@ -61,6 +178,17 @@ definitions:
         type: string
       user_id:
         type: string
+    type: object
+  domain.DashboardChartDataResponse:
+    properties:
+      cost_revenue:
+        items:
+          $ref: '#/definitions/domain.CostRevenueChartItem'
+        type: array
+      profit_threshold:
+        items:
+          $ref: '#/definitions/domain.ProfitThresholdChartItem'
+        type: array
     type: object
   domain.ExpirationDateSetting:
     properties:
@@ -71,6 +199,45 @@ definitions:
       yellow_expiration_date:
         type: integer
     type: object
+  domain.FilterItemResponse:
+    properties:
+      detail:
+        type: string
+      name:
+        type: string
+      url:
+        type: string
+    type: object
+  domain.FilterProductResponse:
+    properties:
+      products:
+        items:
+          $ref: '#/definitions/domain.FilterItemResponse'
+        type: array
+    type: object
+  domain.FilterSellingRequest:
+    properties:
+      end_date_time:
+        type: string
+      filter_type:
+        type: string
+      order_types:
+        items:
+          type: string
+        type: array
+      sales_channel:
+        items:
+          type: string
+        type: array
+      sort_type:
+        type: string
+      start_date_time:
+        type: string
+      unit_type:
+        type: string
+      user_id:
+        type: string
+    type: object
   domain.FixCostSetting:
     properties:
       advertising:
@@ -79,6 +246,8 @@ definitions:
         type: number
       gas:
         type: number
+      id:
+        type: string
       insurance:
         type: number
       note:
@@ -186,7 +355,15 @@ definitions:
         type: string
       is_read:
         type: boolean
+      item_id:
+        type: string
+      item_name:
+        type: string
       message:
+        type: string
+      noti_id:
+        type: string
+      noti_item_type:
         type: string
       noti_type:
         type: string
@@ -200,12 +377,17 @@ definitions:
           $ref: '#/definitions/domain.NotificationItem'
         type: array
     type: object
+  domain.ProfitThresholdChartItem:
+    properties:
+      name:
+        type: string
+      threshold:
+        type: number
+    type: object
   domain.RecipeDetail:
     properties:
       instruction_steps:
-        items:
-          type: string
-        type: array
+        type: string
       instruction_url:
         items:
           type: string
@@ -257,6 +439,23 @@ definitions:
       stock_url:
         type: string
     type: object
+  domain.StockBatch:
+    properties:
+      note:
+        type: string
+      note_created_at:
+        type: string
+      quantity:
+        type: integer
+      recipe_name:
+        type: string
+      recipe_url:
+        type: string
+      sell_by_date:
+        type: string
+      stock_detail_id:
+        type: string
+    type: object
   domain.StockDetail:
     properties:
       created_at:
@@ -266,6 +465,8 @@ definitions:
       quantity:
         type: integer
       sell_by_date:
+        type: string
+      stock_detail_id:
         type: string
     type: object
   domain.StockItem:
@@ -292,6 +493,11 @@ definitions:
           $ref: '#/definitions/domain.StockItem'
         type: array
     type: object
+  domain.UnreadNotification:
+    properties:
+      unread_noti_amount:
+        type: integer
+    type: object
   domain.UserLanguage:
     properties:
       language:
@@ -316,6 +522,143 @@ info:
   title: BakingUp Backend API
   version: "1.0"
 paths:
+  /home/getDashboardChartData:
+    get:
+      consumes:
+      - application/json
+      description: Get data of each chart on dashboard by user ID
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: string
+      - description: Start Date Time
+        in: query
+        name: start_date_time
+        type: string
+      - description: End Date Time
+        in: query
+        name: end_date_time
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/domain.DashboardChartDataResponse'
+        "400":
+          description: Cannot get data for all charts.
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get data of each chart on dashboard
+      tags:
+      - home
+  /home/getTopProducts:
+    post:
+      consumes:
+      - application/json
+      description: Get top products to display in the intelligent dashboard by user
+        ID
+      parameters:
+      - description: Filter Request
+        in: body
+        name: filter_request
+        required: true
+        schema:
+          $ref: '#/definitions/domain.FilterSellingRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/domain.FilterProductResponse'
+        "400":
+          description: Cannot get the filter response.
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get top products to display in the intelligent dashboard
+      tags:
+      - home
+  /home/getUnreadNotification:
+    get:
+      consumes:
+      - application/json
+      description: Get unread notification amount of user by user ID
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/domain.UnreadNotification'
+        "400":
+          description: Cannot get unread notification amount.
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get unread notification amount of user
+      tags:
+      - home
+  /ingredient/addIngredientStock:
+    post:
+      consumes:
+      - application/json
+      description: Add ingredient stock by using ingredient stock request
+      parameters:
+      - description: Ingredient Stock Request
+        in: body
+        name: AddIngredientStockRequest
+        required: true
+        schema:
+          $ref: '#/definitions/domain.AddIngredientStockRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot add ingredient stock"'
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Add ingredient stock
+      tags:
+      - ingredient
+  /ingredient/addIngredients:
+    post:
+      consumes:
+      - application/json
+      description: Add ingredient by using ingredient request
+      parameters:
+      - description: Ingredient Request
+        in: body
+        name: AddIngredientRequest
+        required: true
+        schema:
+          $ref: '#/definitions/domain.AddIngredientRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot add ingredients
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Add ingredient
+      tags:
+      - ingredient
   /ingredient/deleteIngredient:
     delete:
       consumes:
@@ -364,6 +707,56 @@ paths:
           schema:
             $ref: '#/definitions/http.response'
       summary: Delete ingredient batch note
+      tags:
+      - ingredient
+  /ingredient/deleteIngredientStock:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an ingredient stock by using ingredient stock id
+      parameters:
+      - description: Ingredient Stock ID
+        in: query
+        name: ingredient_stock_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot delete an ingredient stock
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Delete an ingredient stock
+      tags:
+      - ingredient
+  /ingredient/getAddEditIngredientStockDetail:
+    get:
+      consumes:
+      - application/json
+      description: Get add edit ingredient stock details by ingredient ID
+      parameters:
+      - description: Ingredient ID
+        in: query
+        name: ingredient_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/domain.AddEditIngredientStockDetail'
+        "400":
+          description: Cannot get add edit ingredient stock detail
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get add edit ingredient stock details
       tags:
       - ingredient
   /ingredient/getAllIngredients:
@@ -567,6 +960,32 @@ paths:
       summary: Read a notification message
       tags:
       - notification
+  /recipe/addRecipe:
+    post:
+      consumes:
+      - application/json
+      description: Add a recipe
+      parameters:
+      - description: Recipe Request
+        in: body
+        name: AddRecipeRequest
+        required: true
+        schema:
+          $ref: '#/definitions/domain.AddRecipeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot add a recipe
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Add a recipe
+      tags:
+      - recipe
   /recipe/deleteRecipe:
     delete:
       consumes:
@@ -756,6 +1175,11 @@ paths:
         name: user_id
         required: true
         type: string
+      - description: Created At
+        in: query
+        name: created_at
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -795,6 +1219,32 @@ paths:
       summary: Get the application language
       tags:
       - settings
+  /stock/addStock:
+    post:
+      consumes:
+      - application/json
+      description: Add a stock by stock ID, LST, and expiration date
+      parameters:
+      - description: Stock ID
+        in: body
+        name: stock_id
+        required: true
+        schema:
+          $ref: '#/definitions/domain.AddStockRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot add a stock
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Add a stock
+      tags:
+      - stock
   /stock/deleteStock:
     delete:
       consumes:
@@ -820,6 +1270,31 @@ paths:
       summary: Delete a stock
       tags:
       - stock
+  /stock/deleteStockBatch:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a stock batch by stock detail ID
+      parameters:
+      - description: Stock Detail ID
+        in: query
+        name: stock_detail_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot delete a stock batch
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Delete a stock batch
+      tags:
+      - stock
   /stock/getAllStocks:
     get:
       consumes:
@@ -843,6 +1318,31 @@ paths:
           schema:
             $ref: '#/definitions/http.response'
       summary: Get all stocks
+      tags:
+      - stock
+  /stock/getStockBatch:
+    get:
+      consumes:
+      - application/json
+      description: Get stock batch by stock detail ID
+      parameters:
+      - description: Stock Detail ID
+        in: query
+        name: stock_detail_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/domain.StockBatch'
+        "400":
+          description: Cannot get stock batch
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get stock batch
       tags:
       - stock
   /stock/getStockDetail:

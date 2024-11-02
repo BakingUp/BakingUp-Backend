@@ -9,11 +9,11 @@ import (
 )
 
 type OrderService struct {
-	orderRepo   port.OrderRespository
+	orderRepo   port.OrderRepository
 	userService port.UserService
 }
 
-func NewOrderService(orderRepo port.OrderRespository, userService port.UserService) *OrderService {
+func NewOrderService(orderRepo port.OrderRepository, userService port.UserService) *OrderService {
 	return &OrderService{
 		orderRepo:   orderRepo,
 		userService: userService,
@@ -91,6 +91,15 @@ func (s *OrderService) GetOrderDetail(c *fiber.Ctx, orderID string) (interface{}
 	cost := 0.0
 
 	for _, product := range order.OrderProducts() {
+		recipe := product.Recipe()
+		var recipeImg string
+		if recipe != nil {
+			for _, recipeImageItem := range recipe.RecipeImages() {
+				if recipeImageItem.RecipeID == recipe.RecipeID {
+					recipeImg = recipeImageItem.RecipeURL
+				}
+			}
+		}
 		stock, err := product.Recipe().Stocks()
 		if err == true {
 			totalPrice = totalPrice + (stock.SellingPrice * float64(product.ProductQuantity))
@@ -99,6 +108,7 @@ func (s *OrderService) GetOrderDetail(c *fiber.Ctx, orderID string) (interface{}
 				Name:       util.GetRecipeName(product.Recipe(), language),
 				Quantity:   product.ProductQuantity,
 				StockPrice: stock.SellingPrice,
+				ImgURL:     recipeImg,
 			})
 		}
 	}
@@ -163,4 +173,36 @@ func (s *OrderService) GetOrderDetail(c *fiber.Ctx, orderID string) (interface{}
 
 		return detail, nil
 	}
+}
+
+func (s *OrderService) DeleteOrder(c *fiber.Ctx, orderID string) error {
+	err := s.orderRepo.DeleteOrder(c, orderID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *OrderService) AddInStoreOrder(c *fiber.Ctx, inStoreOrder *domain.AddInStoreOrderRequest) error {
+	err := s.orderRepo.AddInStoreOrder(c, inStoreOrder)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *OrderService) AddPreOrderOrder(c *fiber.Ctx, preOrderOrder *domain.AddPreOrderOrderRequest) error {
+	err := s.orderRepo.AddPreOrderOrder(c, preOrderOrder)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *OrderService) EditOrderStatus(c *fiber.Ctx, orderStatue *domain.EditOrderStatusRequest) error {
+	err := s.orderRepo.EditOrderStatus(c, orderStatue)
+	if err != nil {
+		return err
+	}
+	return nil
 }
