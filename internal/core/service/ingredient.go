@@ -86,6 +86,10 @@ func (s *IngredientService) GetAllIngredients(c *fiber.Ctx, userID string) (*dom
 		Ingredients: ingredientItems,
 	}
 
+	if ingredientList.Ingredients == nil {
+		ingredientList.Ingredients = []domain.Ingredient{}
+	}
+
 	return ingredientList, nil
 
 }
