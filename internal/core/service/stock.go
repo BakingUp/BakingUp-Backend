@@ -244,12 +244,14 @@ func (s *StockService) AddStock(c *fiber.Ctx, stock *domain.AddStockRequest) err
 	stockID := stock.StockID
 	lst, _ := strconv.Atoi(stock.LST)
 	expirationDate := util.ExpirationDate(stock.ExpirationDate)
+	sellingPrice, _ := strconv.ParseFloat(stock.SellingPrice, 64)
 	stockLessThan, _ := strconv.Atoi(stock.StockLessThan)
 
 	stockDetail := &domain.AddStockPayload{
 		StockID:        stockID,
 		LST:            lst,
 		ExpirationDate: expirationDate,
+		SellingPrice:   sellingPrice,
 		StockLessThan:  stockLessThan,
 	}
 
