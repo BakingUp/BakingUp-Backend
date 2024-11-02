@@ -49,6 +49,10 @@ func (ns *NotificationService) GetAllNotifications(c *fiber.Ctx, userID string) 
 		Notis: notificationItems,
 	}
 
+	if notificationList.Notis == nil {
+		notificationList.Notis = []domain.NotificationItem{}
+	}
+
 	return notificationList, err
 }
 
