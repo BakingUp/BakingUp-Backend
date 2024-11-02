@@ -22,6 +22,7 @@ import (
 func main() {
 
 	app := fiber.New()
+	app.Static("/images", "./images")
 	config, err := config.New()
 
 	if err != nil {
@@ -52,10 +53,22 @@ func main() {
 	stockHandler := http.NewStockHandler(stockService)
 
 	orderRepo := repository.NewOrderRespository(client)
-	orderService := service.NewOrderService(orderRepo)
+	orderService := service.NewOrderService(orderRepo, userService)
 	orderHandler := http.NewOrderHandler(orderService)
 
-	_, err = http.NewRouter(app, *ingredientHandler, *recipeHandler, *authHandler, *stockHandler, *userHandler, *orderHandler)
+	settingsRepo := repository.NewSettingsRepository(client)
+	settingsService := service.NewSettingsService(settingsRepo, userService)
+	settingsHandler := http.NewSetingsHandler(settingsService)
+
+	notificationRepo := repository.NewNotificationRepository(client)
+	notificationService := service.NewNotificationService(notificationRepo, userService)
+	notificationHandler := http.NewNotificationHandler(notificationService)
+
+	homeRepo := repository.NewHomeRepository(client)
+	homeService := service.NewHomeService(homeRepo, userService, settingsService, settingsRepo, recipeRepo, ingredientRepo)
+	homeHandler := http.NewHomeHandler(homeService)
+
+	_, err = http.NewRouter(app, *ingredientHandler, *recipeHandler, *authHandler, *stockHandler, *userHandler, *orderHandler, *settingsHandler, *notificationHandler, *homeHandler)
 
 	port := config.HTTP.Port
 	if port == "" {

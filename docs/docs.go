@@ -15,6 +15,214 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/home/getDashboardChartData": {
+            "get": {
+                "description": "Get data of each chart on dashboard by user ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "home"
+                ],
+                "summary": "Get data of each chart on dashboard",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Start Date Time",
+                        "name": "start_date_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "End Date Time",
+                        "name": "end_date_time",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.DashboardChartDataResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get data for all charts.",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/home/getTopProducts": {
+            "post": {
+                "description": "Get top products to display in the intelligent dashboard by user ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "home"
+                ],
+                "summary": "Get top products to display in the intelligent dashboard",
+                "parameters": [
+                    {
+                        "description": "Filter Request",
+                        "name": "filter_request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.FilterSellingRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.FilterProductResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get the filter response.",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/home/getUnreadNotification": {
+            "get": {
+                "description": "Get unread notification amount of user by user ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "home"
+                ],
+                "summary": "Get unread notification amount of user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.UnreadNotification"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get unread notification amount.",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/ingredient/addIngredientStock": {
+            "post": {
+                "description": "Add ingredient stock by using ingredient stock request",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ingredient"
+                ],
+                "summary": "Add ingredient stock",
+                "parameters": [
+                    {
+                        "description": "Ingredient Stock Request",
+                        "name": "AddIngredientStockRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.AddIngredientStockRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot add ingredient stock\"'",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/ingredient/addIngredients": {
+            "post": {
+                "description": "Add ingredient by using ingredient request",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ingredient"
+                ],
+                "summary": "Add ingredient",
+                "parameters": [
+                    {
+                        "description": "Ingredient Request",
+                        "name": "AddIngredientRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.AddIngredientRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot add ingredients",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/ingredient/deleteIngredient": {
             "delete": {
                 "description": "Delete an ingredient by using ingredient id",
@@ -91,6 +299,120 @@ const docTemplate = `{
                 }
             }
         },
+        "/ingredient/deleteIngredientStock": {
+            "delete": {
+                "description": "Delete an ingredient stock by using ingredient stock id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ingredient"
+                ],
+                "summary": "Delete an ingredient stock",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Ingredient Stock ID",
+                        "name": "ingredient_stock_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot delete an ingredient stock",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/ingredient/getAddEditIngredientStockDetail": {
+            "get": {
+                "description": "Get add edit ingredient stock details by ingredient ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ingredient"
+                ],
+                "summary": "Get add edit ingredient stock details",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Ingredient ID",
+                        "name": "ingredient_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.AddEditIngredientStockDetail"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get add edit ingredient stock detail",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/ingredient/getAllIngredients": {
+            "get": {
+                "description": "Get all ingredients by user ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ingredient"
+                ],
+                "summary": "Get all ingredients",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.IngredientList"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get all ingredients",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/ingredient/getIngredientDetail": {
             "get": {
                 "description": "Get ingredient details by ingredient ID",
@@ -160,6 +482,198 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Cannot get ingredient stock detail",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/noti/createNotification": {
+            "post": {
+                "description": "Create a new notification by user id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notification"
+                ],
+                "summary": "Create a new notification",
+                "parameters": [
+                    {
+                        "description": "Notification Item",
+                        "name": "notification_item",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.CreateNotificationItem"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully add a new notification.",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot add a new notification.",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/noti/deleteNotification": {
+            "delete": {
+                "description": "Delete a notification by notification id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notification"
+                ],
+                "summary": "Delete a notification",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Noti ID",
+                        "name": "noti_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully delete a notification.",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot delete a notification.",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/noti/getAllNotifications": {
+            "get": {
+                "description": "Get all notifications by user ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notification"
+                ],
+                "summary": "Get all notifications",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.NotificationList"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get all notifications of the user.",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/noti/readAllNotifications": {
+            "put": {
+                "description": "Read all notification messages by user id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notification"
+                ],
+                "summary": "Read all notification messages",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully update the read status of all the notifications.",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot update the read status of all the notifications.",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/noti/readNotification": {
+            "put": {
+                "description": "Read a notification message by notification id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notification"
+                ],
+                "summary": "Read a notification message",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Noti ID",
+                        "name": "noti_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully update the read status of the notification.",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot update the read status of the notification.",
                         "schema": {
                             "$ref": "#/definitions/http.response"
                         }
@@ -281,6 +795,325 @@ const docTemplate = `{
                 }
             }
         },
+        "/settings/changeColorExpired": {
+            "put": {
+                "description": "Change the color of expired icon by user id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Change the color of expired icon",
+                "parameters": [
+                    {
+                        "description": "Change Color Expired Icon",
+                        "name": "change_color_expired_icon",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.ChangeExpirationDateSetting"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully change the color of expiration icon",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot change the color of expiration icon",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/settings/changeFixCost": {
+            "put": {
+                "description": "Change the fix cost by user id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Change the fix cost",
+                "parameters": [
+                    {
+                        "description": "Change Fix Cost",
+                        "name": "change_fix_cost",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.ChangeFixCostSetting"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully change the fix cost",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot change the fix cost",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/settings/changeLanguage": {
+            "put": {
+                "description": "Change the application language by user id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Change the application language",
+                "parameters": [
+                    {
+                        "description": "Change Language",
+                        "name": "change_language",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.ChangeUserLanguage"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully change the language.",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot change the language",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/settings/deleteAccount": {
+            "delete": {
+                "description": "Delete an account by user id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Delete an account",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully delete an account",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot delete an account",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/settings/getColorExpired": {
+            "get": {
+                "description": "Get the color of expired icon by user id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Get the color of expired icon",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.ExpirationDateSetting"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get the color of expiration icon",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/settings/getFixCost": {
+            "get": {
+                "description": "Get the fix cost by user id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Get the fix cost",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Created At",
+                        "name": "created_at",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.FixCostSetting"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get the fix cost",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/settings/getLanguage": {
+            "get": {
+                "description": "Get the application language by user id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Get the application language",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.UserLanguage"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get the language",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/stock/addStock": {
+            "post": {
+                "description": "Add a stock by stock ID, LST, and expiration date",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stock"
+                ],
+                "summary": "Add a stock",
+                "parameters": [
+                    {
+                        "description": "Stock ID",
+                        "name": "stock_id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.AddStockRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot add a stock",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/stock/deleteStock": {
             "delete": {
                 "description": "Delete a stock by recipe id",
@@ -312,6 +1145,120 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Cannot delete a stock",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/stock/deleteStockBatch": {
+            "delete": {
+                "description": "Delete a stock batch by stock detail ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stock"
+                ],
+                "summary": "Delete a stock batch",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Stock Detail ID",
+                        "name": "stock_detail_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot delete a stock batch",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/stock/getAllStocks": {
+            "get": {
+                "description": "Get all stocks by user ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stock"
+                ],
+                "summary": "Get all stocks",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.StockList"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get all stocks",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/stock/getStockBatch": {
+            "get": {
+                "description": "Get stock batch by stock detail ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stock"
+                ],
+                "summary": "Get stock batch",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Stock Detail ID",
+                        "name": "stock_detail_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.StockBatch"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get stock batch",
                         "schema": {
                             "$ref": "#/definitions/http.response"
                         }
@@ -356,9 +1303,414 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/user/editUserInfo": {
+            "put": {
+                "description": "Edit user information by using user information request",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Edit user information",
+                "parameters": [
+                    {
+                        "description": "Edit User Info",
+                        "name": "edit_user_info",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.ManageUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully edit the user information.",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot edit the user information",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "domain.AddEditIngredientStockDetail": {
+            "type": "object",
+            "properties": {
+                "ingredient_eng_name": {
+                    "type": "string"
+                },
+                "ingredient_thai_name": {
+                    "type": "string"
+                },
+                "unit": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.AddIngredientRequest": {
+            "type": "object",
+            "properties": {
+                "day_before_expire": {
+                    "type": "string"
+                },
+                "img": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "ingredient_eng_name": {
+                    "type": "string"
+                },
+                "ingredient_thai_name": {
+                    "type": "string"
+                },
+                "stock_less_than": {
+                    "type": "string"
+                },
+                "unit": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.AddIngredientStockRequest": {
+            "type": "object",
+            "properties": {
+                "expiration_date": {
+                    "type": "string"
+                },
+                "img": {
+                    "type": "string"
+                },
+                "ingredient_brand": {
+                    "type": "string"
+                },
+                "ingredient_id": {
+                    "type": "string"
+                },
+                "note": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "string"
+                },
+                "supplier": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.AddStockRequest": {
+            "type": "object",
+            "properties": {
+                "expiration_date": {
+                    "type": "string"
+                },
+                "lst": {
+                    "type": "string"
+                },
+                "stock_id": {
+                    "type": "string"
+                },
+                "stock_less_than": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.ChangeExpirationDateSetting": {
+            "type": "object",
+            "properties": {
+                "black_expiration_date": {
+                    "type": "integer"
+                },
+                "red_expiration_date": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "string"
+                },
+                "yellow_expiration_date": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domain.ChangeFixCostSetting": {
+            "type": "object",
+            "properties": {
+                "advertising": {
+                    "type": "number"
+                },
+                "electricity": {
+                    "type": "number"
+                },
+                "fix_cost_id": {
+                    "type": "string"
+                },
+                "gas": {
+                    "type": "number"
+                },
+                "insurance": {
+                    "type": "number"
+                },
+                "note": {
+                    "type": "string"
+                },
+                "other": {
+                    "type": "number"
+                },
+                "rent": {
+                    "type": "number"
+                },
+                "salaries": {
+                    "type": "number"
+                },
+                "subscriptions": {
+                    "type": "number"
+                },
+                "water": {
+                    "type": "number"
+                }
+            }
+        },
+        "domain.ChangeUserLanguage": {
+            "type": "object",
+            "properties": {
+                "language": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.CostRevenueChartItem": {
+            "type": "object",
+            "properties": {
+                "cost": {
+                    "type": "number"
+                },
+                "month": {
+                    "type": "string"
+                },
+                "net_profit": {
+                    "type": "number"
+                },
+                "revenue": {
+                    "type": "number"
+                }
+            }
+        },
+        "domain.CreateNotificationItem": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "eng_message": {
+                    "type": "string"
+                },
+                "eng_title": {
+                    "type": "string"
+                },
+                "is_read": {
+                    "type": "boolean"
+                },
+                "item_id": {
+                    "type": "string"
+                },
+                "item_name": {
+                    "type": "string"
+                },
+                "noti_item_type": {
+                    "type": "string"
+                },
+                "noti_type": {
+                    "type": "string"
+                },
+                "thai_message": {
+                    "type": "string"
+                },
+                "thai_title": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.DashboardChartDataResponse": {
+            "type": "object",
+            "properties": {
+                "cost_revenue": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.CostRevenueChartItem"
+                    }
+                },
+                "profit_threshold": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.ProfitThresholdChartItem"
+                    }
+                }
+            }
+        },
+        "domain.ExpirationDateSetting": {
+            "type": "object",
+            "properties": {
+                "black_expiration_date": {
+                    "type": "integer"
+                },
+                "red_expiration_date": {
+                    "type": "integer"
+                },
+                "yellow_expiration_date": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domain.FilterItemResponse": {
+            "type": "object",
+            "properties": {
+                "detail": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.FilterProductResponse": {
+            "type": "object",
+            "properties": {
+                "products": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.FilterItemResponse"
+                    }
+                }
+            }
+        },
+        "domain.FilterSellingRequest": {
+            "type": "object",
+            "properties": {
+                "end_date_time": {
+                    "type": "string"
+                },
+                "filter_type": {
+                    "type": "string"
+                },
+                "order_types": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "sales_channel": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "sort_type": {
+                    "type": "string"
+                },
+                "start_date_time": {
+                    "type": "string"
+                },
+                "unit_type": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.FixCostSetting": {
+            "type": "object",
+            "properties": {
+                "advertising": {
+                    "type": "number"
+                },
+                "electricity": {
+                    "type": "number"
+                },
+                "gas": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "insurance": {
+                    "type": "number"
+                },
+                "note": {
+                    "type": "string"
+                },
+                "other": {
+                    "type": "number"
+                },
+                "rent": {
+                    "type": "number"
+                },
+                "salaries": {
+                    "type": "number"
+                },
+                "subscriptions": {
+                    "type": "number"
+                },
+                "water": {
+                    "type": "number"
+                }
+            }
+        },
+        "domain.Ingredient": {
+            "type": "object",
+            "properties": {
+                "expiration_status": {
+                    "type": "string"
+                },
+                "ingredient_id": {
+                    "type": "string"
+                },
+                "ingredient_name": {
+                    "type": "string"
+                },
+                "ingredient_url": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "string"
+                },
+                "stock": {
+                    "type": "integer"
+                }
+            }
+        },
         "domain.IngredientDetail": {
             "type": "object",
             "properties": {
@@ -384,6 +1736,17 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/domain.Stock"
+                    }
+                }
+            }
+        },
+        "domain.IngredientList": {
+            "type": "object",
+            "properties": {
+                "ingredients": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.Ingredient"
                     }
                 }
             }
@@ -434,6 +1797,80 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/domain.IngredientNote"
                     }
+                }
+            }
+        },
+        "domain.ManageUserRequest": {
+            "type": "object",
+            "properties": {
+                "first_name": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "store_name": {
+                    "type": "string"
+                },
+                "tel": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.NotificationItem": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "is_read": {
+                    "type": "boolean"
+                },
+                "item_id": {
+                    "type": "string"
+                },
+                "item_name": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "noti_id": {
+                    "type": "string"
+                },
+                "noti_item_type": {
+                    "type": "string"
+                },
+                "noti_type": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.NotificationList": {
+            "type": "object",
+            "properties": {
+                "notis": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.NotificationItem"
+                    }
+                }
+            }
+        },
+        "domain.ProfitThresholdChartItem": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "threshold": {
+                    "type": "number"
                 }
             }
         },
@@ -561,6 +1998,32 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.StockBatch": {
+            "type": "object",
+            "properties": {
+                "note": {
+                    "type": "string"
+                },
+                "note_created_at": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "integer"
+                },
+                "recipe_name": {
+                    "type": "string"
+                },
+                "recipe_url": {
+                    "type": "string"
+                },
+                "sell_by_date": {
+                    "type": "string"
+                },
+                "stock_detail_id": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.StockDetail": {
             "type": "object",
             "properties": {
@@ -574,6 +2037,62 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "sell_by_date": {
+                    "type": "string"
+                },
+                "stock_detail_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.StockItem": {
+            "type": "object",
+            "properties": {
+                "lst": {
+                    "type": "integer"
+                },
+                "lst_status": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "integer"
+                },
+                "selling_price": {
+                    "type": "number"
+                },
+                "stock_id": {
+                    "type": "string"
+                },
+                "stock_name": {
+                    "type": "string"
+                },
+                "stock_url": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.StockList": {
+            "type": "object",
+            "properties": {
+                "stocks": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.StockItem"
+                    }
+                }
+            }
+        },
+        "domain.UnreadNotification": {
+            "type": "object",
+            "properties": {
+                "unread_noti_amount": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domain.UserLanguage": {
+            "type": "object",
+            "properties": {
+                "language": {
                     "type": "string"
                 }
             }

@@ -31,6 +31,7 @@ func (rh *RecipeHandler) GetAllRecipes(c *fiber.Ctx) error {
 	recipes, err := rh.svc.GetAllRecipes(c, userID)
 	if err != nil {
 		handleError(c, 400, "Cannot get all recipes", err.Error())
+		return nil
 	}
 
 	handleSuccess(c, recipes)

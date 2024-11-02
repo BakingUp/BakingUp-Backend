@@ -8,7 +8,7 @@ type ExpirationDate struct {
 	BlackExpirationDate  time.Time `json:"black_expiration_date"`
 }
 
-type RegisterUserRequest struct {
+type ManageUserRequest struct {
 	UserID    string `json:"user_id"`
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
@@ -31,6 +31,7 @@ type ProductionQueueItem struct {
 	Name       string `json:"name"`
 	Quantity   int    `json:"quantity"`
 	PickUpDate string `json:"pick_up_date"`
+	ImgURL     string `json:"recipe_url"`
 }
 
 type UserInfo struct {

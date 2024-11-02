@@ -38,12 +38,20 @@ func (s *UserService) GetUserInfo(c *fiber.Ctx, userID string) (*domain.UserInfo
 	for _, order := range orders {
 		for _, orderProduct := range order.OrderProducts() {
 			recipe := orderProduct.Recipe()
+			var recipeImg string
 			if recipe != nil {
+				for _, recipeImageItem := range recipe.RecipeImages() {
+					if recipeImageItem.RecipeID == recipe.RecipeID {
+						recipeImg = recipeImageItem.RecipeURL
+					}
+				}
+
 				queue = append(queue, domain.ProductionQueueItem{
 					OrderIndex: order.OrderIndex,
 					Name:       util.GetRecipeName(recipe, language),
 					Quantity:   orderProduct.ProductQuantity,
 					PickUpDate: order.PickUpDateTime.Format("02/01/2006"),
+					ImgURL:     recipeImg,
 				})
 			}
 		}
@@ -60,7 +68,7 @@ func (s *UserService) GetUserInfo(c *fiber.Ctx, userID string) (*domain.UserInfo
 	return userInfo, nil
 }
 
-func (s *UserService) RegisterUser(user *domain.RegisterUserRequest) (*domain.UserResponse, error) {
+func (s *UserService) RegisterUser(user *domain.ManageUserRequest) (*domain.UserResponse, error) {
 	err := s.userRepo.CreateUser(user)
 	if err != nil {
 		return &domain.UserResponse{
@@ -144,4 +152,13 @@ func (s *UserService) GetUserExpirationDate(c *fiber.Ctx, userID string) (*domai
 	}
 
 	return expirationDate, nil
+}
+
+func (s *UserService) EditUserInfo(c *fiber.Ctx, editUserRequest *domain.ManageUserRequest) error {
+	err := s.userRepo.EditUserInfo(c, editUserRequest)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

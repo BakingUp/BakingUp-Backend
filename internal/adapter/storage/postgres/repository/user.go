@@ -2,10 +2,11 @@ package repository
 
 import (
 	"context"
+	"time"
+
 	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
 	"github.com/BakingUp/BakingUp-Backend/prisma/db"
 	"github.com/gofiber/fiber/v2"
-	"time"
 )
 
 type UserRepository struct {
@@ -18,7 +19,7 @@ func NewUserRepository(db *db.PrismaClient) *UserRepository {
 	}
 }
 
-func (ur *UserRepository) CreateUser(user *domain.RegisterUserRequest) error {
+func (ur *UserRepository) CreateUser(user *domain.ManageUserRequest) error {
 	ctx := context.Background()
 
 	blackExpirationDate := time.Date(2000, time.January, 1, 0, 0, 0, 0, time.UTC)
@@ -113,7 +114,7 @@ func (ur *UserRepository) GetUserProductionQueue(c *fiber.Ctx, userID string) ([
 	orders, err := ur.db.Orders.FindMany(
 		db.Orders.UserID.Equals(userID), db.Orders.PickUpDateTime.Gt(now), db.Orders.IsPreOrder.Equals(true),
 	).With(
-		db.Orders.OrderProducts.Fetch().With(db.OrderProducts.Recipe.Fetch()),
+		db.Orders.OrderProducts.Fetch().With(db.OrderProducts.Recipe.Fetch().With(db.Recipes.RecipeImages.Fetch())),
 	).Exec(c.Context())
 
 	if err != nil {
@@ -121,4 +122,20 @@ func (ur *UserRepository) GetUserProductionQueue(c *fiber.Ctx, userID string) ([
 	}
 
 	return orders, nil
+}
+
+func (ur *UserRepository) EditUserInfo(c *fiber.Ctx, editUserRequest *domain.ManageUserRequest) error {
+	_, err := ur.db.Users.FindUnique(
+		db.Users.UserID.Equals(editUserRequest.UserID),
+	).Update(
+		db.Users.FirstName.Set(editUserRequest.FirstName),
+		db.Users.LastName.Set(editUserRequest.LastName),
+		db.Users.Telephone.Set(editUserRequest.Tel),
+		db.Users.StoreName.Set(editUserRequest.StoreName),
+	).Exec(c.Context())
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
