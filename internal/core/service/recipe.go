@@ -2,11 +2,13 @@ package service
 
 import (
 	"sort"
+	"strconv"
 
 	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
 	"github.com/BakingUp/BakingUp-Backend/internal/core/port"
 	"github.com/BakingUp/BakingUp-Backend/internal/core/util"
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 )
 
 type RecipeService struct {
@@ -148,6 +150,86 @@ func (s *RecipeService) DeleteRecipe(c *fiber.Ctx, recipeID string) error {
 	err := s.recipeRepo.DeleteRecipe(c, recipeID)
 	if err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (s *RecipeService) AddRecipe(c *fiber.Ctx, payload *domain.AddRecipeRequest) error {
+	recipeID := uuid.NewString()
+	servings, _ := strconv.Atoi(payload.Servings)
+	totalTime, _ := util.ConvertToTime(payload.TotalHours, payload.TotalMins)
+	addRecipePayload := &domain.AddRecipePayload{
+		UserID:          payload.UserID,
+		RecipeID:        recipeID,
+		RecipeEngName:   payload.RecipeEngName,
+		RecipeThaiName:  payload.RecipeThaiName,
+		TotalTime:       totalTime,
+		Servings:        servings,
+		EngInstruction:  payload.EngInstruction,
+		ThaiInstruction: payload.ThaiInstruction,
+	}
+
+	err := s.recipeRepo.AddRecipe(c, addRecipePayload)
+
+	if err != nil {
+		return err
+	}
+
+	for _, ingredient := range payload.Ingredients {
+		quantity, _ := strconv.ParseFloat(ingredient.IngredientQuantity, 64)
+		addRecipeIngredientPayload := &domain.AddRecipeIngredientPayload{
+			RecipeID:                 recipeID,
+			IngredientID:             ingredient.IngredientID,
+			RecipeIngredientQuantity: quantity,
+		}
+
+		err = s.recipeRepo.AddRecipeIngredient(c, addRecipeIngredientPayload)
+		if err != nil {
+			return err
+		}
+	}
+
+	imgIndex := 1
+
+	for _, img := range payload.RecipeImg {
+		imgUrl, err := util.UploadRecipeImage(payload.UserID, recipeID, img, strconv.Itoa(imgIndex))
+		if err != nil {
+			return err
+		}
+
+		addRecipeImagePayload := &domain.AddRecipeImagePayload{
+			RecipeID:   recipeID,
+			ImgUrl:     imgUrl,
+			ImageIndex: imgIndex,
+		}
+
+		err = s.recipeRepo.AddRecipeImage(c, addRecipeImagePayload)
+		if err != nil {
+			return err
+		}
+
+		imgIndex++
+	}
+
+	for _, img := range payload.InstructionImg {
+		imgUrl, err := util.UploadInstructionImage(payload.UserID, recipeID, img, strconv.Itoa(imgIndex))
+		if err != nil {
+			return err
+		}
+
+		addRecipeInstructionImagePayload := &domain.AddRecipeInstructionImagePayload{
+			RecipeID:   recipeID,
+			ImgUrl:     imgUrl,
+			ImageIndex: imgIndex,
+		}
+
+		err = s.recipeRepo.AddRecipeInstructionImage(c, addRecipeInstructionImagePayload)
+		if err != nil {
+			return err
+		}
+
+		imgIndex++
 	}
 
 	return nil

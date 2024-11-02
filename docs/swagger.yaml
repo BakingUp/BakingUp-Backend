@@ -49,11 +49,51 @@ definitions:
       user_id:
         type: string
     type: object
+  domain.AddRecipeIngredientRequest:
+    properties:
+      ingredient_id:
+        type: string
+      ingredient_quantity:
+        type: string
+    type: object
+  domain.AddRecipeRequest:
+    properties:
+      eng_instruction:
+        type: string
+      ingredients:
+        items:
+          $ref: '#/definitions/domain.AddRecipeIngredientRequest'
+        type: array
+      instruction_img:
+        items:
+          type: string
+        type: array
+      recipe_eng_name:
+        type: string
+      recipe_img:
+        items:
+          type: string
+        type: array
+      recipe_thai_name:
+        type: string
+      servings:
+        type: string
+      thai_instruction:
+        type: string
+      total_hours:
+        type: string
+      total_mins:
+        type: string
+      user_id:
+        type: string
+    type: object
   domain.AddStockRequest:
     properties:
       expiration_date:
         type: string
       lst:
+        type: string
+      selling_price:
         type: string
       stock_id:
         type: string
@@ -347,9 +387,7 @@ definitions:
   domain.RecipeDetail:
     properties:
       instruction_steps:
-        items:
-          type: string
-        type: array
+        type: string
       instruction_url:
         items:
           type: string
@@ -922,6 +960,32 @@ paths:
       summary: Read a notification message
       tags:
       - notification
+  /recipe/addRecipe:
+    post:
+      consumes:
+      - application/json
+      description: Add a recipe
+      parameters:
+      - description: Recipe Request
+        in: body
+        name: AddRecipeRequest
+        required: true
+        schema:
+          $ref: '#/definitions/domain.AddRecipeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot add a recipe
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Add a recipe
+      tags:
+      - recipe
   /recipe/deleteRecipe:
     delete:
       consumes:

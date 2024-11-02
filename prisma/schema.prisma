@@ -214,14 +214,14 @@ model Recipes {
   recipe_thai_name              String
   total_time                    DateTime
   serving                       Int
+  eng_instruction               String
+  thai_instruction              String
   scale_servings                Int @default(-1)
   hidden_cost                   Float   @default(10)
   labor_cost                    Float  @default(150)
   profit_margin                 Float @default(30)
   recipe_images                 Recipe_images[]
   recipe_ingredients            Recipe_ingredients[]
-  recipe_eng_instruction_steps  Recipe_eng_instruction_steps[]
-  recipe_thai_instruction_steps Recipe_thai_instruction_steps[]
   recipe_instruction_images     Recipe_instruction_images[]
   stocks                        Stocks?
   order_products                Order_products[]
@@ -245,24 +245,6 @@ model Recipe_ingredients {
   recipe_ingredient_quantity Float
 
   @@id([recipe_id, ingredient_id])
-}
-
-model Recipe_eng_instruction_steps {
-  recipe                   Recipes     @relation(fields: [recipe_id], references: [recipe_id], onDelete: Cascade)
-  recipe_id                String
-  instruction_order        Int
-  instruction_step         String
-
-  @@id([recipe_id, instruction_order])
-}
-
-model Recipe_thai_instruction_steps {
-  recipe                   Recipes     @relation(fields: [recipe_id], references: [recipe_id], onDelete: Cascade)
-  recipe_id                String
-  instruction_order        Int
-  instruction_step         String
-
-  @@id([recipe_id, instruction_order])
 }
 
 model Recipe_instruction_images {

@@ -681,6 +681,46 @@ const docTemplate = `{
                 }
             }
         },
+        "/recipe/addRecipe": {
+            "post": {
+                "description": "Add a recipe",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "recipe"
+                ],
+                "summary": "Add a recipe",
+                "parameters": [
+                    {
+                        "description": "Recipe Request",
+                        "name": "AddRecipeRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.AddRecipeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot add a recipe",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/recipe/deleteRecipe": {
             "delete": {
                 "description": "Delete a recipe by using recipe id",
@@ -1383,6 +1423,64 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.AddRecipeIngredientRequest": {
+            "type": "object",
+            "properties": {
+                "ingredient_id": {
+                    "type": "string"
+                },
+                "ingredient_quantity": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.AddRecipeRequest": {
+            "type": "object",
+            "properties": {
+                "eng_instruction": {
+                    "type": "string"
+                },
+                "ingredients": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.AddRecipeIngredientRequest"
+                    }
+                },
+                "instruction_img": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "recipe_eng_name": {
+                    "type": "string"
+                },
+                "recipe_img": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "recipe_thai_name": {
+                    "type": "string"
+                },
+                "servings": {
+                    "type": "string"
+                },
+                "thai_instruction": {
+                    "type": "string"
+                },
+                "total_hours": {
+                    "type": "string"
+                },
+                "total_mins": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.AddStockRequest": {
             "type": "object",
             "properties": {
@@ -1390,6 +1488,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "lst": {
+                    "type": "string"
+                },
+                "selling_price": {
                     "type": "string"
                 },
                 "stock_id": {
@@ -1840,10 +1941,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "instruction_steps": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                    "type": "string"
                 },
                 "instruction_url": {
                     "type": "array",
