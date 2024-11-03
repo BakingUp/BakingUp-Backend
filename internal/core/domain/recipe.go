@@ -34,6 +34,9 @@ type RecipeDetail struct {
 	RecipeIngredients []RecipeIngredient `json:"recipe_ingredients"`
 	InstructionURL    []string           `json:"instruction_url"`
 	InstructionSteps  string             `json:"instruction_steps"`
+	HiddenCost        float64            `json:"hidden_cost"`
+	LaborCost         float64            `json:"labor_cost"`
+	ProfitMargin      float64            `json:"profit_margin"`
 }
 
 type AddRecipeIngredientRequest struct {
