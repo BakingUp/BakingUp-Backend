@@ -498,6 +498,27 @@ definitions:
       unread_noti_amount:
         type: integer
     type: object
+  domain.UpdateHiddenCostRequest:
+    properties:
+      hidden_cost:
+        type: string
+      recipe_id:
+        type: string
+    type: object
+  domain.UpdateLaborCostRequest:
+    properties:
+      labor_cost:
+        type: string
+      recipe_id:
+        type: string
+    type: object
+  domain.UpdateProfitMarginRequest:
+    properties:
+      profit_margin:
+        type: string
+      recipe_id:
+        type: string
+    type: object
   domain.UserLanguage:
     properties:
       language:
@@ -1034,6 +1055,84 @@ paths:
           schema:
             $ref: '#/definitions/http.response'
       summary: Get recipe details
+      tags:
+      - recipe
+  /recipe/updateHiddenCost:
+    put:
+      consumes:
+      - application/json
+      description: Update hidden cost
+      parameters:
+      - description: Hidden Cost Request
+        in: body
+        name: UpdateHiddenCostRequest
+        required: true
+        schema:
+          $ref: '#/definitions/domain.UpdateHiddenCostRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot update hidden cost
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Update hidden cost
+      tags:
+      - recipe
+  /recipe/updateLaborCost:
+    put:
+      consumes:
+      - application/json
+      description: Update labor cost
+      parameters:
+      - description: Labor Cost Request
+        in: body
+        name: UpdateLaborCostRequest
+        required: true
+        schema:
+          $ref: '#/definitions/domain.UpdateLaborCostRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot update labor cost
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Update labor cost
+      tags:
+      - recipe
+  /recipe/updateProfitMargin:
+    put:
+      consumes:
+      - application/json
+      description: Update profit margin
+      parameters:
+      - description: Profit Margin Request
+        in: body
+        name: UpdateProfitMarginRequest
+        required: true
+        schema:
+          $ref: '#/definitions/domain.UpdateProfitMarginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot update profit margin
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Update profit margin
       tags:
       - recipe
   /settings/changeColorExpired:
