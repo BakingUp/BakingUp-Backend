@@ -75,6 +75,7 @@ type OrderStockList struct {
 }
 
 type StockRecipeIngredient struct {
+	IngredientID 	   string  `json:"ingredient_id"`
 	IngredientName     string  `json:"ingredient_name"`
 	IngredientURL      string  `json:"ingredient_url"`
 	IngredientQuantity float64 `json:"ingredient_quantity"`

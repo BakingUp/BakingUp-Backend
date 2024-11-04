@@ -297,6 +297,7 @@ func (s *StockService) GetStockRecipeDetail(c *fiber.Ctx, recipeID string) (*dom
 		}
 
 		stockRecipeIngredient := domain.StockRecipeIngredient{
+			IngredientID: 	    recipeIngredient.IngredientID,
 			IngredientName:     ingredientName,
 			IngredientURL:      ingredientURL,
 			IngredientQuantity: ingredientQuantity,

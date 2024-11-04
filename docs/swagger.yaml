@@ -514,13 +514,17 @@ definitions:
     type: object
   domain.StockRecipeIngredient:
     properties:
+      ingredient_id:
+        type: string
       ingredient_name:
         type: string
       ingredient_quantity:
-        type: string
+        type: number
       ingredient_url:
         type: string
       stock_quantity:
+        type: number
+      unit:
         type: string
     type: object
   domain.UnreadNotification:

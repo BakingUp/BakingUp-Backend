@@ -2294,16 +2294,22 @@ const docTemplate = `{
         "domain.StockRecipeIngredient": {
             "type": "object",
             "properties": {
+                "ingredient_id": {
+                    "type": "string"
+                },
                 "ingredient_name": {
                     "type": "string"
                 },
                 "ingredient_quantity": {
-                    "type": "string"
+                    "type": "number"
                 },
                 "ingredient_url": {
                     "type": "string"
                 },
                 "stock_quantity": {
+                    "type": "number"
+                },
+                "unit": {
                     "type": "string"
                 }
             }
