@@ -94,7 +94,7 @@ func (s *RecipeService) GetRecipeDetail(c *fiber.Ctx, recipeID string) (*domain.
 			IngredientName:     util.GetIngredientName(recipeIngredientItem.Ingredient(), language),
 			IngredientURL:      firstIngredientURL,
 			IngredientQuantity: util.CombineIngredientQuantity(recipeIngredientItem.RecipeIngredientQuantity, recipeIngredientItem.Ingredient().Unit),
-			IngredientPrice:    util.CalculateIngredientPrice(recipeIngredientItem.Ingredient().IngredientDetail()),
+			IngredientPrice:    util.CalculateIngredientPrice(recipeIngredientItem.Ingredient().IngredientDetail(), recipeIngredientItem.RecipeIngredientQuantity),
 		}
 
 		recipeIngredients = append(recipeIngredients, *recipeIngredient)

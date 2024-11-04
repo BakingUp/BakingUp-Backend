@@ -20,30 +20,28 @@ func GetRecipeName(recipe *db.RecipesModel, language *db.Language) string {
 }
 
 func GetInstructionSteps(recipe *db.RecipesModel, language *db.Language) string {
-    if *language == db.LanguageTh {
-        return recipe.ThaiInstruction
-    }
-
-    return recipe.EngInstruction
-}
-
-func CalculateIngredientPrice(value []db.IngredientDetailModel) float64 {
-	var price float64
-	var totalQuantity float64
-
-	for _, detail := range value {
-		if time.Now().Before(detail.ExpirationDate) {
-			price += detail.IngredientQuantity * detail.Price
-			totalQuantity += detail.IngredientQuantity
-		}
+	if *language == db.LanguageTh {
+		return recipe.ThaiInstruction
 	}
 
-	if totalQuantity == 0 || price == 0 {
+	return recipe.EngInstruction
+}
+
+func CalculateIngredientPrice(value []db.IngredientDetailModel, recipeIngredientQuantity float64) float64 {
+	var price float64
+
+	if len(value) == 0 {
 		return -1
 	}
 
-	finalPrice := price / totalQuantity
-	return math.Round(finalPrice*100) / 100
+	for _, detail := range value {
+		if time.Now().Before(detail.ExpirationDate) {
+			price += detail.Price / detail.IngredientQuantity
+		}
+	}
+
+	finalPrice := price / float64(len(value))
+	return math.Round(finalPrice*recipeIngredientQuantity*100) / 100
 }
 
 func FormatTotalTime(totalTimeHours, totalTimeMinutes int) string {
@@ -134,22 +132,22 @@ func UploadInstructionImage(userId string, recipeId string, imgBase64 string, in
 }
 
 func ConvertToTime(hours, mins string) (time.Time, error) {
-    const layout = "2 Jan 2006 15:04:05"
-    baseTime, err := time.Parse(layout, "1 Jan 2000 00:00:00")
-    if err != nil {
-        return time.Time{}, err
-    }
+	const layout = "2 Jan 2006 15:04:05"
+	baseTime, err := time.Parse(layout, "1 Jan 2000 00:00:00")
+	if err != nil {
+		return time.Time{}, err
+	}
 
-    hoursDuration, err := time.ParseDuration(hours + "h")
-    if err != nil {
-        return time.Time{}, err
-    }
+	hoursDuration, err := time.ParseDuration(hours + "h")
+	if err != nil {
+		return time.Time{}, err
+	}
 
-    minsDuration, err := time.ParseDuration(mins + "m")
-    if err != nil {
-        return time.Time{}, err
-    }
+	minsDuration, err := time.ParseDuration(mins + "m")
+	if err != nil {
+		return time.Time{}, err
+	}
 
-    totalTime := baseTime.Add(hoursDuration).Add(minsDuration)
-    return totalTime, nil
+	totalTime := baseTime.Add(hoursDuration).Add(minsDuration)
+	return totalTime, nil
 }
