@@ -55,21 +55,36 @@ type StockOrderPage struct {
 }
 
 type AddStockRequest struct {
-	StockID             string   `json:"stock_id"`
-	LST				 	string   `json:"lst"`
-	ExpirationDate	  	string   `json:"expiration_date"`
-	SellingPrice	   	string   `json:"selling_price"`
-	StockLessThan	   	string   `json:"stock_less_than"`
+	StockID        string `json:"stock_id"`
+	LST            string `json:"lst"`
+	ExpirationDate string `json:"expiration_date"`
+	SellingPrice   string `json:"selling_price"`
+	StockLessThan  string `json:"stock_less_than"`
 }
 
 type AddStockPayload struct {
-	StockID             string   	`json:"stock_id"`
-	LST				 	int   		`json:"lst"`
-	ExpirationDate	  	time.Time   `json:"expiration_date"`
-	SellingPrice	   	float64		`json:"selling_price"`
-	StockLessThan	   	int			`json:"stock_less_than"`
+	StockID        string    `json:"stock_id"`
+	LST            int       `json:"lst"`
+	ExpirationDate time.Time `json:"expiration_date"`
+	SellingPrice   float64   `json:"selling_price"`
+	StockLessThan  int       `json:"stock_less_than"`
 }
 
 type OrderStockList struct {
 	OrderStocks []StockOrderPage `json:"order_stocks"`
+}
+
+type StockRecipeIngredient struct {
+	IngredientName     string  `json:"ingredient_name"`
+	IngredientURL      string  `json:"ingredient_url"`
+	IngredientQuantity float64 `json:"ingredient_quantity"`
+	StockQuantity      float64 `json:"stock_quantity"`
+	Unit               string  `json:"unit"`
+}
+
+type StockRecipeDetail struct {
+	RecipeName  string                  `json:"recipe_name"`
+	TotalTime   string                  `json:"total_time"`
+	Servings    int                     `json:"servings"`
+	Ingredients []StockRecipeIngredient `json:"ingredients"`
 }

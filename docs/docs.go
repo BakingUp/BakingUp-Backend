@@ -1426,6 +1426,44 @@ const docTemplate = `{
                 }
             }
         },
+        "/stock/getStockRecipeDetail": {
+            "get": {
+                "description": "Get stock recipe detail by recipe ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stock"
+                ],
+                "summary": "Get stock recipe detail",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Recipe ID",
+                        "name": "recipe_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.StockRecipeDetail"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get stock recipe detail",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/user/editUserInfo": {
             "put": {
                 "description": "Edit user information by using user information request",
@@ -2060,6 +2098,9 @@ const docTemplate = `{
         "domain.RecipeDetail": {
             "type": "object",
             "properties": {
+                "hidden_cost": {
+                    "type": "number"
+                },
                 "instruction_steps": {
                     "type": "string"
                 },
@@ -2069,8 +2110,14 @@ const docTemplate = `{
                         "type": "string"
                     }
                 },
+                "labor_cost": {
+                    "type": "number"
+                },
                 "num_of_order": {
                     "type": "integer"
+                },
+                "profit_margin": {
+                    "type": "number"
                 },
                 "recipe_ingredients": {
                     "type": "array",
@@ -2221,6 +2268,43 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/domain.StockItem"
                     }
+                }
+            }
+        },
+        "domain.StockRecipeDetail": {
+            "type": "object",
+            "properties": {
+                "ingredients": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.StockRecipeIngredient"
+                    }
+                },
+                "recipe_name": {
+                    "type": "string"
+                },
+                "servings": {
+                    "type": "integer"
+                },
+                "total_time": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.StockRecipeIngredient": {
+            "type": "object",
+            "properties": {
+                "ingredient_name": {
+                    "type": "string"
+                },
+                "ingredient_quantity": {
+                    "type": "string"
+                },
+                "ingredient_url": {
+                    "type": "string"
+                },
+                "stock_quantity": {
+                    "type": "string"
                 }
             }
         },

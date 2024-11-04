@@ -49,7 +49,7 @@ func main() {
 	recipeHandler := http.NewRecipeHandler(recipeService)
 
 	stockRepo := repository.NewStockRepository(client)
-	stockService := service.NewStockService(stockRepo, userService)
+	stockService := service.NewStockService(stockRepo, userService, ingredientService, recipeRepo)
 	stockHandler := http.NewStockHandler(stockService)
 
 	orderRepo := repository.NewOrderRespository(client)
