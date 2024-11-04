@@ -141,6 +141,9 @@ func (s *RecipeService) GetRecipeDetail(c *fiber.Ctx, recipeID string) (*domain.
 		RecipeIngredients: recipeIngredients,
 		InstructionURL:    instructionURLs,
 		InstructionSteps:  util.GetInstructionSteps(recipe, language),
+		HiddenCost:        recipe.HiddenCost,
+		LaborCost:         recipe.LaborCost,
+		ProfitMargin:      recipe.ProfitMargin,
 	}
 
 	return recipeDetail, nil
