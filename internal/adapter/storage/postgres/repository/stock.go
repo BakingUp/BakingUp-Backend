@@ -94,7 +94,7 @@ func (sr *StockRepository) DeleteStockBatch(c *fiber.Ctx, stockDetailID string) 
 
 func (sr *StockRepository) GetStockBatch(c *fiber.Ctx, stockDetailID string) (*db.StockDetailModel, error) {
 	stockDetail, err := sr.db.StockDetail.FindFirst(
-		db.StockDetail.RecipeID.Equals(stockDetailID),
+		db.StockDetail.StockDetailID.Equals(stockDetailID),
 	).With(
 		db.StockDetail.Stock.Fetch().With(
 			db.Stocks.Recipe.Fetch().With(
