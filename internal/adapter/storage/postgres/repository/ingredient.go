@@ -180,3 +180,15 @@ func (ir *IngredientRepository) AddIngredientNote(c *fiber.Ctx, ingredientNote *
 
 	return nil
 }
+
+func (ir *IngredientRepository) GetUnexpiredIngredientQuantity(c *fiber.Ctx, ingredientID string) (float64, error) {
+	ingredient, err := ir.db.Ingredients.FindFirst(
+		db.Ingredients.IngredientID.Equals(ingredientID),
+	).Exec(c.Context())
+
+	if err != nil {
+		return 0, err
+	}
+
+	return ingredient.IngredientLessThan, nil
+}
