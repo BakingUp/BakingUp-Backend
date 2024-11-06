@@ -1236,6 +1236,46 @@ const docTemplate = `{
                 }
             }
         },
+        "/stock/addStockDetail": {
+            "post": {
+                "description": "Add a stock detail by stock detail ID, quantity, and sell by date",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stock"
+                ],
+                "summary": "Add a stock detail",
+                "parameters": [
+                    {
+                        "description": "Stock Detail",
+                        "name": "stock_detail",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.AddStockDetailRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot add a stock detail",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/stock/deleteStock": {
             "delete": {
                 "description": "Delete a stock by recipe id",
@@ -1635,6 +1675,40 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.AddStockDetailRequest": {
+            "type": "object",
+            "properties": {
+                "ingredients": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.AddStockIngredientDetailRequest"
+                    }
+                },
+                "note": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "string"
+                },
+                "recipe_id": {
+                    "type": "string"
+                },
+                "sell_by_date": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.AddStockIngredientDetailRequest": {
+            "type": "object",
+            "properties": {
+                "ingredient_id": {
+                    "type": "string"
+                },
+                "quantity": {
                     "type": "string"
                 }
             }

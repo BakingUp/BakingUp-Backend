@@ -87,6 +87,28 @@ definitions:
       user_id:
         type: string
     type: object
+  domain.AddStockDetailRequest:
+    properties:
+      ingredients:
+        items:
+          $ref: '#/definitions/domain.AddStockIngredientDetailRequest'
+        type: array
+      note:
+        type: string
+      quantity:
+        type: string
+      recipe_id:
+        type: string
+      sell_by_date:
+        type: string
+    type: object
+  domain.AddStockIngredientDetailRequest:
+    properties:
+      ingredient_id:
+        type: string
+      quantity:
+        type: string
+    type: object
   domain.AddStockRequest:
     properties:
       expiration_date:
@@ -1376,6 +1398,32 @@ paths:
           schema:
             $ref: '#/definitions/http.response'
       summary: Add a stock
+      tags:
+      - stock
+  /stock/addStockDetail:
+    post:
+      consumes:
+      - application/json
+      description: Add a stock detail by stock detail ID, quantity, and sell by date
+      parameters:
+      - description: Stock Detail
+        in: body
+        name: stock_detail
+        required: true
+        schema:
+          $ref: '#/definitions/domain.AddStockDetailRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot add a stock detail
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Add a stock detail
       tags:
       - stock
   /stock/deleteStock:
