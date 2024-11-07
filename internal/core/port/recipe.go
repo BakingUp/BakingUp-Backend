@@ -14,6 +14,9 @@ type RecipeRepository interface {
 	AddRecipeImage(c *fiber.Ctx, recipeImage *domain.AddRecipeImagePayload) error
 	AddRecipeInstructionImage(c *fiber.Ctx, recipeInstructionImage *domain.AddRecipeInstructionImagePayload) error
 	AddRecipeIngredient(c *fiber.Ctx, recipeIngredient *domain.AddRecipeIngredientPayload) error
+	UpdateHiddenCost(c *fiber.Ctx, hiddenCost *domain.UpdateHiddenCostPayload) error
+	UpdateLaborCost(c *fiber.Ctx, laborCost *domain.UpdateLaborCostPayload) error
+	UpdateProfitMargin(c *fiber.Ctx, profitMargin *domain.UpdateProfitMarginPayload) error
 }
 
 type RecipeService interface {
@@ -21,4 +24,7 @@ type RecipeService interface {
 	GetRecipeDetail(c *fiber.Ctx, recipeID string) (*domain.RecipeDetail, error)
 	DeleteRecipe(c *fiber.Ctx, recipeID string) error
 	AddRecipe(c *fiber.Ctx, recipe *domain.AddRecipeRequest) error
+	UpdateHiddenCost(c *fiber.Ctx, hiddenCost *domain.UpdateHiddenCostRequest) error
+	UpdateLaborCost(c *fiber.Ctx, laborCost *domain.UpdateLaborCostRequest) error
+	UpdateProfitMargin(c *fiber.Ctx, profitMargin *domain.UpdateProfitMarginRequest) error
 }

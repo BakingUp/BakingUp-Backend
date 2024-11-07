@@ -797,6 +797,126 @@ const docTemplate = `{
                 }
             }
         },
+        "/recipe/updateHiddenCost": {
+            "put": {
+                "description": "Update hidden cost",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "recipe"
+                ],
+                "summary": "Update hidden cost",
+                "parameters": [
+                    {
+                        "description": "Hidden Cost Request",
+                        "name": "UpdateHiddenCostRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.UpdateHiddenCostRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot update hidden cost",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/recipe/updateLaborCost": {
+            "put": {
+                "description": "Update labor cost",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "recipe"
+                ],
+                "summary": "Update labor cost",
+                "parameters": [
+                    {
+                        "description": "Labor Cost Request",
+                        "name": "UpdateLaborCostRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.UpdateLaborCostRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot update labor cost",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/recipe/updateProfitMargin": {
+            "put": {
+                "description": "Update profit margin",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "recipe"
+                ],
+                "summary": "Update profit margin",
+                "parameters": [
+                    {
+                        "description": "Profit Margin Request",
+                        "name": "UpdateProfitMarginRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.UpdateProfitMarginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot update profit margin",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/settings/changeColorExpired": {
             "put": {
                 "description": "Change the color of expired icon by user id",
@@ -1299,6 +1419,44 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Cannot get stock detail",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/stock/getStockRecipeDetail": {
+            "get": {
+                "description": "Get stock recipe detail by recipe ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stock"
+                ],
+                "summary": "Get stock recipe detail",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Recipe ID",
+                        "name": "recipe_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.StockRecipeDetail"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get stock recipe detail",
                         "schema": {
                             "$ref": "#/definitions/http.response"
                         }
@@ -1940,6 +2098,9 @@ const docTemplate = `{
         "domain.RecipeDetail": {
             "type": "object",
             "properties": {
+                "hidden_cost": {
+                    "type": "number"
+                },
                 "instruction_steps": {
                     "type": "string"
                 },
@@ -1949,8 +2110,14 @@ const docTemplate = `{
                         "type": "string"
                     }
                 },
+                "labor_cost": {
+                    "type": "number"
+                },
                 "num_of_order": {
                     "type": "integer"
+                },
+                "profit_margin": {
+                    "type": "number"
                 },
                 "recipe_ingredients": {
                     "type": "array",
@@ -2104,11 +2271,87 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.StockRecipeDetail": {
+            "type": "object",
+            "properties": {
+                "ingredients": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.StockRecipeIngredient"
+                    }
+                },
+                "recipe_name": {
+                    "type": "string"
+                },
+                "servings": {
+                    "type": "integer"
+                },
+                "total_time": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.StockRecipeIngredient": {
+            "type": "object",
+            "properties": {
+                "ingredient_id": {
+                    "type": "string"
+                },
+                "ingredient_name": {
+                    "type": "string"
+                },
+                "ingredient_quantity": {
+                    "type": "number"
+                },
+                "ingredient_url": {
+                    "type": "string"
+                },
+                "stock_quantity": {
+                    "type": "number"
+                },
+                "unit": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.UnreadNotification": {
             "type": "object",
             "properties": {
                 "unread_noti_amount": {
                     "type": "integer"
+                }
+            }
+        },
+        "domain.UpdateHiddenCostRequest": {
+            "type": "object",
+            "properties": {
+                "hidden_cost": {
+                    "type": "string"
+                },
+                "recipe_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.UpdateLaborCostRequest": {
+            "type": "object",
+            "properties": {
+                "labor_cost": {
+                    "type": "string"
+                },
+                "recipe_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.UpdateProfitMarginRequest": {
+            "type": "object",
+            "properties": {
+                "profit_margin": {
+                    "type": "string"
+                },
+                "recipe_id": {
+                    "type": "string"
                 }
             }
         },

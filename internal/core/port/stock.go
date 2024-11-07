@@ -23,4 +23,5 @@ type StockService interface {
 	GetStockBatch(c *fiber.Ctx, stockDetailID string) (*domain.StockBatch, error)
 	GetAllStocksForOrder(c *fiber.Ctx, userID string) (*domain.OrderStockList, error)
 	AddStock(c *fiber.Ctx, stock *domain.AddStockRequest) error
+	GetStockRecipeDetail(c *fiber.Ctx, recipeID string) (*domain.StockRecipeDetail, error)
 }

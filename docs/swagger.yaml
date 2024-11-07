@@ -386,14 +386,20 @@ definitions:
     type: object
   domain.RecipeDetail:
     properties:
+      hidden_cost:
+        type: number
       instruction_steps:
         type: string
       instruction_url:
         items:
           type: string
         type: array
+      labor_cost:
+        type: number
       num_of_order:
         type: integer
+      profit_margin:
+        type: number
       recipe_ingredients:
         items:
           $ref: '#/definitions/domain.RecipeIngredient'
@@ -493,10 +499,59 @@ definitions:
           $ref: '#/definitions/domain.StockItem'
         type: array
     type: object
+  domain.StockRecipeDetail:
+    properties:
+      ingredients:
+        items:
+          $ref: '#/definitions/domain.StockRecipeIngredient'
+        type: array
+      recipe_name:
+        type: string
+      servings:
+        type: integer
+      total_time:
+        type: string
+    type: object
+  domain.StockRecipeIngredient:
+    properties:
+      ingredient_id:
+        type: string
+      ingredient_name:
+        type: string
+      ingredient_quantity:
+        type: number
+      ingredient_url:
+        type: string
+      stock_quantity:
+        type: number
+      unit:
+        type: string
+    type: object
   domain.UnreadNotification:
     properties:
       unread_noti_amount:
         type: integer
+    type: object
+  domain.UpdateHiddenCostRequest:
+    properties:
+      hidden_cost:
+        type: string
+      recipe_id:
+        type: string
+    type: object
+  domain.UpdateLaborCostRequest:
+    properties:
+      labor_cost:
+        type: string
+      recipe_id:
+        type: string
+    type: object
+  domain.UpdateProfitMarginRequest:
+    properties:
+      profit_margin:
+        type: string
+      recipe_id:
+        type: string
     type: object
   domain.UserLanguage:
     properties:
@@ -1036,6 +1091,84 @@ paths:
       summary: Get recipe details
       tags:
       - recipe
+  /recipe/updateHiddenCost:
+    put:
+      consumes:
+      - application/json
+      description: Update hidden cost
+      parameters:
+      - description: Hidden Cost Request
+        in: body
+        name: UpdateHiddenCostRequest
+        required: true
+        schema:
+          $ref: '#/definitions/domain.UpdateHiddenCostRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot update hidden cost
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Update hidden cost
+      tags:
+      - recipe
+  /recipe/updateLaborCost:
+    put:
+      consumes:
+      - application/json
+      description: Update labor cost
+      parameters:
+      - description: Labor Cost Request
+        in: body
+        name: UpdateLaborCostRequest
+        required: true
+        schema:
+          $ref: '#/definitions/domain.UpdateLaborCostRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot update labor cost
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Update labor cost
+      tags:
+      - recipe
+  /recipe/updateProfitMargin:
+    put:
+      consumes:
+      - application/json
+      description: Update profit margin
+      parameters:
+      - description: Profit Margin Request
+        in: body
+        name: UpdateProfitMarginRequest
+        required: true
+        schema:
+          $ref: '#/definitions/domain.UpdateProfitMarginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot update profit margin
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Update profit margin
+      tags:
+      - recipe
   /settings/changeColorExpired:
     put:
       consumes:
@@ -1368,6 +1501,31 @@ paths:
           schema:
             $ref: '#/definitions/http.response'
       summary: Get stock details
+      tags:
+      - stock
+  /stock/getStockRecipeDetail:
+    get:
+      consumes:
+      - application/json
+      description: Get stock recipe detail by recipe ID
+      parameters:
+      - description: Recipe ID
+        in: query
+        name: recipe_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/domain.StockRecipeDetail'
+        "400":
+          description: Cannot get stock recipe detail
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get stock recipe detail
       tags:
       - stock
   /user/editUserInfo:

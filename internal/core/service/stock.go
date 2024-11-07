@@ -13,14 +13,18 @@ import (
 )
 
 type StockService struct {
-	stockRepo   port.StockRepository
-	userService port.UserService
+	stockRepo         port.StockRepository
+	userService       port.UserService
+	ingredientService port.IngredientService
+	recipeRepo        port.RecipeRepository
 }
 
-func NewStockService(stockRepo port.StockRepository, userService port.UserService) *StockService {
+func NewStockService(stockRepo port.StockRepository, userService port.UserService, ingredientService port.IngredientService, recipeRepo port.RecipeRepository) *StockService {
 	return &StockService{
-		stockRepo:   stockRepo,
-		userService: userService,
+		stockRepo:         stockRepo,
+		userService:       userService,
+		ingredientService: ingredientService,
+		recipeRepo:        recipeRepo,
 	}
 }
 
@@ -261,4 +265,55 @@ func (s *StockService) AddStock(c *fiber.Ctx, stock *domain.AddStockRequest) err
 	}
 
 	return nil
+}
+
+func (s *StockService) GetStockRecipeDetail(c *fiber.Ctx, recipeID string) (*domain.StockRecipeDetail, error) {
+	recipe, err := s.recipeRepo.GetRecipeDetail(c, recipeID)
+	if err != nil {
+		return nil, err
+	}
+
+	language, err := s.userService.GetUserLanguage(c, recipe.UserID)
+	if err != nil {
+		return nil, err
+	}
+
+	totalHours := recipe.TotalTime.Hour()
+	totalMins := recipe.TotalTime.Minute()
+
+	ingredients := []domain.StockRecipeIngredient{}
+	for _, recipeIngredient := range recipe.RecipeIngredients() {
+		ingredientName := util.GetIngredientName(recipeIngredient.Ingredient(), language)
+		ingredientURL := ""
+		images := recipeIngredient.Ingredient().IngredientImages()
+		if len(images) != 0 {
+			ingredientURL = images[0].IngredientURL
+		}
+		ingredientQuantity := recipeIngredient.RecipeIngredientQuantity
+		unexpiredIngredientQuantity, err := s.ingredientService.GetUnexpiredIngredientQuantity(c, recipeIngredient.IngredientID)
+
+		if err != nil {
+			return nil, err
+		}
+
+		stockRecipeIngredient := domain.StockRecipeIngredient{
+			IngredientID: 	    recipeIngredient.IngredientID,
+			IngredientName:     ingredientName,
+			IngredientURL:      ingredientURL,
+			IngredientQuantity: ingredientQuantity,
+			StockQuantity:      unexpiredIngredientQuantity,
+			Unit: 			 	string(recipeIngredient.Ingredient().Unit),
+		}
+
+		ingredients = append(ingredients, stockRecipeIngredient)
+	}
+
+	stockRecipeDetail := &domain.StockRecipeDetail{
+		RecipeName:  util.GetRecipeName(recipe, language),
+		TotalTime:   util.FormatTotalTime(totalHours, totalMins),
+		Servings:    recipe.Serving,
+		Ingredients: ingredients,
+	}
+
+	return stockRecipeDetail, nil
 }

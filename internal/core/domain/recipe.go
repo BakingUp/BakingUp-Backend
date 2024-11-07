@@ -34,6 +34,9 @@ type RecipeDetail struct {
 	RecipeIngredients []RecipeIngredient `json:"recipe_ingredients"`
 	InstructionURL    []string           `json:"instruction_url"`
 	InstructionSteps  string             `json:"instruction_steps"`
+	HiddenCost        float64            `json:"hidden_cost"`
+	LaborCost         float64            `json:"labor_cost"`
+	ProfitMargin      float64            `json:"profit_margin"`
 }
 
 type AddRecipeIngredientRequest struct {
@@ -82,4 +85,34 @@ type AddRecipeIngredientPayload struct {
 	RecipeID                 string  `json:"recipe_id"`
 	IngredientID             string  `json:"ingredient_id"`
 	RecipeIngredientQuantity float64 `json:"recipe_ingredient_quantity"`
+}
+
+type UpdateHiddenCostRequest struct {
+	RecipeID   string  `json:"recipe_id"`
+	HiddenCost string  `json:"hidden_cost"`
+}
+
+type UpdateLaborCostRequest struct {
+	RecipeID  string `json:"recipe_id"`
+	LaborCost string `json:"labor_cost"`
+}
+
+type UpdateProfitMarginRequest struct {
+	RecipeID     string `json:"recipe_id"`
+	ProfitMargin string `json:"profit_margin"`
+}
+
+type UpdateHiddenCostPayload struct {
+	RecipeID string `json:"recipe_id"`
+	HiddenCost float64 `json:"hidden_cost"`
+}
+
+type UpdateLaborCostPayload struct {
+	RecipeID string `json:"recipe_id"`
+	LaborCost float64 `json:"labor_cost"`
+}
+
+type UpdateProfitMarginPayload struct {
+	RecipeID string `json:"recipe_id"`
+	ProfitMargin float64 `json:"profit_margin"`
 }

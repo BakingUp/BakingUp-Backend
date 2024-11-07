@@ -327,3 +327,19 @@ func (s *IngredientService) AddIngredientStock(c *fiber.Ctx, ingredientStock *do
 
 	return nil
 }
+
+func (s *IngredientService) GetUnexpiredIngredientQuantity(c *fiber.Ctx, ingredientID string) (float64, error) {
+	ingredient, err := s.ingredientRepo.GetIngredientDetail(c, ingredientID)
+	if err != nil {
+		return 0, err
+	}
+
+	var totalQuantity float64
+	for _, detail := range ingredient.IngredientDetail() {
+		if detail.ExpirationDate.After(time.Now()) {
+			totalQuantity += detail.IngredientQuantity
+		}
+	}
+
+	return totalQuantity, nil
+}

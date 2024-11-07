@@ -171,3 +171,26 @@ func (sh *StockHandler) AddStock(c *fiber.Ctx) error {
 	handleSuccess(c, nil)
 	return nil
 }
+
+// GetStockRecipeDetail godoc
+// @Summary      Get stock recipe detail
+// @Description  Get stock recipe detail by recipe ID
+// @Tags         stock
+// @Accept       json
+// @Produce      json
+// @Param        recipe_id  query  string  true  "Recipe ID"
+// @Success      200  {object}  domain.StockRecipeDetail  "Success"
+// @Failure      400  {object}  response     "Cannot get stock recipe detail"
+// @Router       /stock/getStockRecipeDetail [get]
+func (sh *StockHandler) GetStockRecipeDetail(c *fiber.Ctx) error {
+	recipeID := c.Query("recipe_id")
+
+	recipe, err := sh.svc.GetStockRecipeDetail(c, recipeID)
+	if err != nil {
+		handleError(c, 400, "Cannot get stock recipe detail.", err.Error())
+		return nil
+	}
+
+	handleSuccess(c, recipe)
+	return nil
+}

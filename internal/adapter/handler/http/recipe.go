@@ -101,3 +101,84 @@ func (rh *RecipeHandler) AddRecipe(c *fiber.Ctx) error {
 	handleSuccess(c, nil)
 	return nil
 }
+
+// UpdateHiddenCost godoc
+// @Summary      Update hidden cost
+// @Description  Update hidden cost
+// @Tags         recipe
+// @Accept       json
+// @Produce      json
+// @Param        UpdateHiddenCostRequest  body  domain.UpdateHiddenCostRequest  true  "Hidden Cost Request"
+// @Success      200  {object}  response  "Success"
+// @Failure      400  {object}  response  "Cannot update hidden cost"
+// @Router       /recipe/updateHiddenCost [put]
+func (rh *RecipeHandler) UpdateHiddenCost(c *fiber.Ctx) error {
+	var request *domain.UpdateHiddenCostRequest
+	if err := c.BodyParser(&request); err != nil {
+		handleError(c, 400, "Cannot parse request body", err.Error())
+		return nil
+	}
+
+	err := rh.svc.UpdateHiddenCost(c, request)
+	if err != nil {
+		handleError(c, 400, "Cannot update hidden cost", err.Error())
+		return nil
+	}
+
+	handleSuccess(c, nil)
+	return nil
+}
+
+// UpdateLaborCost godoc
+// @Summary      Update labor cost
+// @Description  Update labor cost
+// @Tags         recipe
+// @Accept       json
+// @Produce      json
+// @Param        UpdateLaborCostRequest  body  domain.UpdateLaborCostRequest  true  "Labor Cost Request"
+// @Success      200  {object}  response  "Success"
+// @Failure      400  {object}  response  "Cannot update labor cost"
+// @Router       /recipe/updateLaborCost [put]
+func (rh *RecipeHandler) UpdateLaborCost(c *fiber.Ctx) error {
+	var request *domain.UpdateLaborCostRequest
+	if err := c.BodyParser(&request); err != nil {
+		handleError(c, 400, "Cannot parse request body", err.Error())
+		return nil
+	}
+
+	err := rh.svc.UpdateLaborCost(c, request)
+	if err != nil {
+		handleError(c, 400, "Cannot update labor cost", err.Error())
+		return nil
+	}
+
+	handleSuccess(c, nil)
+	return nil
+}
+
+// UpdateProfitMargin godoc
+// @Summary      Update profit margin
+// @Description  Update profit margin
+// @Tags         recipe
+// @Accept       json
+// @Produce      json
+// @Param        UpdateProfitMarginRequest  body  domain.UpdateProfitMarginRequest  true  "Profit Margin Request"
+// @Success      200  {object}  response  "Success"
+// @Failure      400  {object}  response  "Cannot update profit margin"
+// @Router       /recipe/updateProfitMargin [put]
+func (rh *RecipeHandler) UpdateProfitMargin(c *fiber.Ctx) error {
+	var request *domain.UpdateProfitMarginRequest
+	if err := c.BodyParser(&request); err != nil {
+		handleError(c, 400, "Cannot parse request body", err.Error())
+		return nil
+	}
+
+	err := rh.svc.UpdateProfitMargin(c, request)
+	if err != nil {
+		handleError(c, 400, "Cannot update profit margin", err.Error())
+		return nil
+	}
+
+	handleSuccess(c, nil)
+	return nil
+}

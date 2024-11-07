@@ -94,7 +94,7 @@ func (s *RecipeService) GetRecipeDetail(c *fiber.Ctx, recipeID string) (*domain.
 			IngredientName:     util.GetIngredientName(recipeIngredientItem.Ingredient(), language),
 			IngredientURL:      firstIngredientURL,
 			IngredientQuantity: util.CombineIngredientQuantity(recipeIngredientItem.RecipeIngredientQuantity, recipeIngredientItem.Ingredient().Unit),
-			IngredientPrice:    util.CalculateIngredientPrice(recipeIngredientItem.Ingredient().IngredientDetail()),
+			IngredientPrice:    util.CalculateIngredientPrice(recipeIngredientItem.Ingredient().IngredientDetail(), recipeIngredientItem.RecipeIngredientQuantity),
 		}
 
 		recipeIngredients = append(recipeIngredients, *recipeIngredient)
@@ -141,6 +141,9 @@ func (s *RecipeService) GetRecipeDetail(c *fiber.Ctx, recipeID string) (*domain.
 		RecipeIngredients: recipeIngredients,
 		InstructionURL:    instructionURLs,
 		InstructionSteps:  util.GetInstructionSteps(recipe, language),
+		HiddenCost:        recipe.HiddenCost,
+		LaborCost:         recipe.LaborCost,
+		ProfitMargin:      recipe.ProfitMargin,
 	}
 
 	return recipeDetail, nil
@@ -230,6 +233,54 @@ func (s *RecipeService) AddRecipe(c *fiber.Ctx, payload *domain.AddRecipeRequest
 		}
 
 		imgIndex++
+	}
+
+	return nil
+}
+
+func (s *RecipeService) UpdateHiddenCost(c *fiber.Ctx, request *domain.UpdateHiddenCostRequest) error {
+	hiddenCost, _ := strconv.ParseFloat(request.HiddenCost, 64)
+
+	payload := &domain.UpdateHiddenCostPayload{
+		RecipeID:   request.RecipeID,
+		HiddenCost: hiddenCost,
+	}
+
+	err := s.recipeRepo.UpdateHiddenCost(c, payload)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *RecipeService) UpdateLaborCost(c *fiber.Ctx, request *domain.UpdateLaborCostRequest) error {
+	laborCost, _ := strconv.ParseFloat(request.LaborCost, 64)
+
+	payload := &domain.UpdateLaborCostPayload{
+		RecipeID:  request.RecipeID,
+		LaborCost: laborCost,
+	}
+
+	err := s.recipeRepo.UpdateLaborCost(c, payload)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *RecipeService) UpdateProfitMargin(c *fiber.Ctx, request *domain.UpdateProfitMarginRequest) error {
+	profitMargin, _ := strconv.ParseFloat(request.ProfitMargin, 64)
+
+	payload := &domain.UpdateProfitMarginPayload{
+		RecipeID:     request.RecipeID,
+		ProfitMargin: profitMargin,
+	}
+
+	err := s.recipeRepo.UpdateProfitMargin(c, payload)
+	if err != nil {
+		return err
 	}
 
 	return nil

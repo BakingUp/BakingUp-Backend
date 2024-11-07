@@ -18,6 +18,7 @@ type IngredientRepository interface {
 	AddIngredientImage(c *fiber.Ctx, ingredientImage *domain.AddIngredientImagePayload) error
 	AddIngredientStock(c *fiber.Ctx, ingredientStock *domain.AddIngredientStockPayload) error
 	AddIngredientNote(c *fiber.Ctx, ingredientNote *domain.AddIngredientNotePayload) error
+	GetUnexpiredIngredientQuantity(c *fiber.Ctx, ingredientID string) (float64, error)
 }
 
 type IngredientService interface {
@@ -30,4 +31,5 @@ type IngredientService interface {
 	DeleteIngredientStock(c *fiber.Ctx, ingredientStockID string) error
 	AddIngredient(c *fiber.Ctx, ingredients *domain.AddIngredientRequest) error
 	AddIngredientStock(c *fiber.Ctx, ingredientStock *domain.AddIngredientStockRequest) error
+	GetUnexpiredIngredientQuantity(c *fiber.Ctx, ingredientID string) (float64, error)
 }

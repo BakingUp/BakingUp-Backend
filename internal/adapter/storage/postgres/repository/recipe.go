@@ -135,3 +135,45 @@ func (rr *RecipeRepository) AddRecipeIngredient(c *fiber.Ctx, recipeIngredient *
 
 	return nil
 }
+
+func (rr *RecipeRepository) UpdateHiddenCost(c *fiber.Ctx, hiddenCost *domain.UpdateHiddenCostPayload) error {
+	_, err := rr.db.Recipes.FindUnique(
+		db.Recipes.RecipeID.Equals(hiddenCost.RecipeID),
+	).Update(
+		db.Recipes.HiddenCost.Set(hiddenCost.HiddenCost),
+	).Exec(c.Context())
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (rr *RecipeRepository) UpdateLaborCost(c *fiber.Ctx, laborCost *domain.UpdateLaborCostPayload) error {
+	_, err := rr.db.Recipes.FindUnique(
+		db.Recipes.RecipeID.Equals(laborCost.RecipeID),
+	).Update(
+		db.Recipes.LaborCost.Set(laborCost.LaborCost),
+	).Exec(c.Context())
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (rr *RecipeRepository) UpdateProfitMargin(c *fiber.Ctx, profitMargin *domain.UpdateProfitMarginPayload) error {
+	_, err := rr.db.Recipes.FindUnique(
+		db.Recipes.RecipeID.Equals(profitMargin.RecipeID),
+	).Update(
+		db.Recipes.ProfitMargin.Set(profitMargin.ProfitMargin),
+	).Exec(c.Context())
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
