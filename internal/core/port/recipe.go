@@ -17,6 +17,9 @@ type RecipeRepository interface {
 	UpdateHiddenCost(c *fiber.Ctx, hiddenCost *domain.UpdateHiddenCostPayload) error
 	UpdateLaborCost(c *fiber.Ctx, laborCost *domain.UpdateLaborCostPayload) error
 	UpdateProfitMargin(c *fiber.Ctx, profitMargin *domain.UpdateProfitMarginPayload) error
+	EditRecipe(c *fiber.Ctx, recipe *domain.EditRecipePayload) error
+	DeleteRecipeIngredients(c *fiber.Ctx, recipeID string) error
+	GetEditRecipeDetail(c *fiber.Ctx, recipeID string) (*db.RecipesModel, error)
 }
 
 type RecipeService interface {
@@ -27,4 +30,6 @@ type RecipeService interface {
 	UpdateHiddenCost(c *fiber.Ctx, hiddenCost *domain.UpdateHiddenCostRequest) error
 	UpdateLaborCost(c *fiber.Ctx, laborCost *domain.UpdateLaborCostRequest) error
 	UpdateProfitMargin(c *fiber.Ctx, profitMargin *domain.UpdateProfitMarginRequest) error
+	EditRecipe(c *fiber.Ctx, recipe *domain.EditRecipeRequest) error
+	GetEditRecipeDetail(c *fiber.Ctx, recipeID string) (*domain.GetEditRecipeDetail, error)
 }

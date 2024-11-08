@@ -285,6 +285,38 @@ definitions:
       water:
         type: number
     type: object
+  domain.GetEditRecipeDetail:
+    properties:
+      eng_instruction:
+        type: string
+      ingredients:
+        items:
+          $ref: '#/definitions/domain.GetEditRecipeIngredientDetail'
+        type: array
+      recipe_eng_name:
+        type: string
+      recipe_thai_name:
+        type: string
+      servings:
+        type: string
+      thai_instruction:
+        type: string
+      total_hours:
+        type: string
+      total_mins:
+        type: string
+    type: object
+  domain.GetEditRecipeIngredientDetail:
+    properties:
+      ingredient_eng_name:
+        type: string
+      ingredient_id:
+        type: string
+      ingredient_quantity:
+        type: string
+      ingredient_url:
+        type: string
+    type: object
   domain.Ingredient:
     properties:
       expiration_status:
@@ -1086,6 +1118,31 @@ paths:
           schema:
             $ref: '#/definitions/http.response'
       summary: Delete a recipe
+      tags:
+      - recipe
+  /recipe/getEditRecipeDetail:
+    get:
+      consumes:
+      - application/json
+      description: Get edit recipe details by recipe ID
+      parameters:
+      - description: Recipe ID
+        in: query
+        name: recipe_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/domain.GetEditRecipeDetail'
+        "400":
+          description: Cannot get edit recipe detail
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get edit recipe details
       tags:
       - recipe
   /recipe/getRecipeDetail:

@@ -285,3 +285,90 @@ func (s *RecipeService) UpdateProfitMargin(c *fiber.Ctx, request *domain.UpdateP
 
 	return nil
 }
+
+func (s *RecipeService) EditRecipe(c *fiber.Ctx, request *domain.EditRecipeRequest) error {
+	totalTime, _ := util.ConvertToTime(request.TotalHours, request.TotalMins)
+	servings, _ := strconv.Atoi(request.Servings)
+
+	payload := &domain.EditRecipePayload{
+		RecipeID:        request.RecipeID,
+		RecipeEngName:   request.RecipeEngName,
+		RecipeThaiName:  request.RecipeThaiName,
+		TotalTime:       totalTime,
+		Servings:        servings,
+		EngInstruction:  request.EngInstruction,
+		ThaiInstruction: request.ThaiInstruction,
+	}
+
+	err := s.recipeRepo.EditRecipe(c, payload)
+	if err != nil {
+		return err
+	}
+
+	err = s.recipeRepo.DeleteRecipeIngredients(c, request.RecipeID)
+	if err != nil {
+		return err
+	}
+
+	for _, ingredient := range request.Ingredients {
+		quantity, _ := strconv.ParseFloat(ingredient.IngredientQuantity, 64)
+		addRecipeIngredientPayload := &domain.AddRecipeIngredientPayload{
+			RecipeID:                 request.RecipeID,
+			IngredientID:             ingredient.IngredientID,
+			RecipeIngredientQuantity: quantity,
+		}
+
+		err = s.recipeRepo.AddRecipeIngredient(c, addRecipeIngredientPayload)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (s *RecipeService) GetEditRecipeDetail(c *fiber.Ctx, recipeID string) (*domain.GetEditRecipeDetail, error) {
+	recipe, err := s.recipeRepo.GetEditRecipeDetail(c, recipeID)
+	if err != nil {
+		return nil, err
+	}
+
+	language, err := s.userService.GetUserLanguage(c, recipe.UserID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var recipeIngredients []domain.GetEditRecipeIngredientDetail
+	for _, recipeIngredientItem := range recipe.RecipeIngredients() {
+		images := recipeIngredientItem.Ingredient().IngredientImages()
+		firstIngredientURL := ""
+		if len(images) != 0 {
+			firstIngredientURL = images[0].IngredientURL
+		}
+		recipeIngredient := &domain.GetEditRecipeIngredientDetail{
+			IngredientID:       recipeIngredientItem.IngredientID,
+			IngredientName:     util.GetIngredientName(recipeIngredientItem.Ingredient(), language),
+			IngredientURL:      firstIngredientURL,
+			IngredientQuantity: util.CombineIngredientQuantity(recipeIngredientItem.RecipeIngredientQuantity, recipeIngredientItem.Ingredient().Unit),
+		}
+
+		recipeIngredients = append(recipeIngredients, *recipeIngredient)
+	}
+
+	totalTimeHours := recipe.TotalTime.Hour()
+	totalTimeMinutes := recipe.TotalTime.Minute()
+
+	recipeDetail := &domain.GetEditRecipeDetail{
+		RecipeEngName:   recipe.RecipeEngName,
+		RecipeThaiName:  recipe.RecipeThaiName,
+		TotalHours:      strconv.Itoa(totalTimeHours),
+		TotalMins:       strconv.Itoa(totalTimeMinutes),
+		Servings:        strconv.Itoa(recipe.Serving),
+		EngInstruction:  recipe.EngInstruction,
+		ThaiInstruction: recipe.ThaiInstruction,
+		Ingredients:     recipeIngredients,
+	}
+
+	return recipeDetail, nil
+}

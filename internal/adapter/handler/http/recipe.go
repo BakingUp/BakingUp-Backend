@@ -182,3 +182,43 @@ func (rh *RecipeHandler) UpdateProfitMargin(c *fiber.Ctx) error {
 	handleSuccess(c, nil)
 	return nil
 }
+
+func (rh *RecipeHandler) EditRecipe(c *fiber.Ctx) error {
+	var recipe *domain.EditRecipeRequest
+	if err := c.BodyParser(&recipe); err != nil {
+		handleError(c, 400, "Cannot parse request body", err.Error())
+		return nil
+	}
+
+	err := rh.svc.EditRecipe(c, recipe)
+	if err != nil {
+		handleError(c, 400, "Cannot edit a recipe", err.Error())
+		return nil
+	}
+
+	handleSuccess(c, nil)
+	return nil
+}
+
+// GetEditRecipeDetail godoc
+// @Summary      Get edit recipe details
+// @Description  Get edit recipe details by recipe ID
+// @Tags         recipe
+// @Accept       json
+// @Produce      json
+// @Param        recipe_id  query  string  true  "Recipe ID"
+// @Success      200  {object}  domain.GetEditRecipeDetail  "Success"
+// @Failure      400  {object}  response     "Cannot get edit recipe detail"
+// @Router       /recipe/getEditRecipeDetail [get]
+func (rh *RecipeHandler) GetEditRecipeDetail(c *fiber.Ctx) error {
+	recipeID := c.Query("recipe_id")
+
+	recipe, err := rh.svc.GetEditRecipeDetail(c, recipeID)
+	if err != nil {
+		handleError(c, 400, "Cannot get edit recipe detail", err.Error())
+		return nil
+	}
+
+	handleSuccess(c, recipe)
+	return nil
+}

@@ -759,6 +759,44 @@ const docTemplate = `{
                 }
             }
         },
+        "/recipe/getEditRecipeDetail": {
+            "get": {
+                "description": "Get edit recipe details by recipe ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "recipe"
+                ],
+                "summary": "Get edit recipe details",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Recipe ID",
+                        "name": "recipe_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.GetEditRecipeDetail"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get edit recipe detail",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/recipe/getRecipeDetail": {
             "get": {
                 "description": "Get recipe details by recipe ID",
@@ -1980,6 +2018,55 @@ const docTemplate = `{
                 },
                 "water": {
                     "type": "number"
+                }
+            }
+        },
+        "domain.GetEditRecipeDetail": {
+            "type": "object",
+            "properties": {
+                "eng_instruction": {
+                    "type": "string"
+                },
+                "ingredients": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.GetEditRecipeIngredientDetail"
+                    }
+                },
+                "recipe_eng_name": {
+                    "type": "string"
+                },
+                "recipe_thai_name": {
+                    "type": "string"
+                },
+                "servings": {
+                    "type": "string"
+                },
+                "thai_instruction": {
+                    "type": "string"
+                },
+                "total_hours": {
+                    "type": "string"
+                },
+                "total_mins": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.GetEditRecipeIngredientDetail": {
+            "type": "object",
+            "properties": {
+                "ingredient_eng_name": {
+                    "type": "string"
+                },
+                "ingredient_id": {
+                    "type": "string"
+                },
+                "ingredient_quantity": {
+                    "type": "string"
+                },
+                "ingredient_url": {
+                    "type": "string"
                 }
             }
         },
