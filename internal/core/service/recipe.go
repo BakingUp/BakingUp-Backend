@@ -69,6 +69,9 @@ func (s *RecipeService) GetAllRecipes(c *fiber.Ctx, userID string) (*domain.Reci
 		Recipes: recipeItems,
 	}
 
+	if recipeList.Recipes == nil {
+		recipeList.Recipes = []domain.Recipe{}
+	}
 	return recipeList, nil
 }
 

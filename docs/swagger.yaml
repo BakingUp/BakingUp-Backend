@@ -468,6 +468,23 @@ definitions:
       threshold:
         type: number
     type: object
+  domain.Recipe:
+    properties:
+      num_of_order:
+        type: integer
+      recipe_id:
+        type: string
+      recipe_img:
+        type: string
+      recipe_name:
+        type: string
+      servings:
+        type: integer
+      stars:
+        type: integer
+      total_time:
+        type: string
+    type: object
   domain.RecipeDetail:
     properties:
       hidden_cost:
@@ -513,6 +530,13 @@ definitions:
         type: string
       ingredient_url:
         type: string
+    type: object
+  domain.RecipeList:
+    properties:
+      recipes:
+        items:
+          $ref: '#/definitions/domain.Recipe'
+        type: array
     type: object
   domain.Stock:
     properties:
@@ -1250,6 +1274,31 @@ paths:
           schema:
             $ref: '#/definitions/http.response'
       summary: Delete a recipe
+      tags:
+      - recipe
+  /recipe/getAllRecipes:
+    get:
+      consumes:
+      - application/json
+      description: Get all recipes by user ID
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/domain.RecipeList'
+        "400":
+          description: Cannot get all recipes
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get all recipes
       tags:
       - recipe
   /recipe/getRecipeDetail:

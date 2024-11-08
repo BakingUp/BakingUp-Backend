@@ -915,6 +915,44 @@ const docTemplate = `{
                 }
             }
         },
+        "/recipe/getAllRecipes": {
+            "get": {
+                "description": "Get all recipes by user ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "recipe"
+                ],
+                "summary": "Get all recipes",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.RecipeList"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get all recipes",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/recipe/getRecipeDetail": {
             "get": {
                 "description": "Get recipe details by recipe ID",
@@ -2420,6 +2458,32 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.Recipe": {
+            "type": "object",
+            "properties": {
+                "num_of_order": {
+                    "type": "integer"
+                },
+                "recipe_id": {
+                    "type": "string"
+                },
+                "recipe_img": {
+                    "type": "string"
+                },
+                "recipe_name": {
+                    "type": "string"
+                },
+                "servings": {
+                    "type": "integer"
+                },
+                "stars": {
+                    "type": "integer"
+                },
+                "total_time": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.RecipeDetail": {
             "type": "object",
             "properties": {
@@ -2487,6 +2551,17 @@ const docTemplate = `{
                 },
                 "ingredient_url": {
                     "type": "string"
+                }
+            }
+        },
+        "domain.RecipeList": {
+            "type": "object",
+            "properties": {
+                "recipes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.Recipe"
+                    }
                 }
             }
         },

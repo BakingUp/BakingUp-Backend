@@ -16,6 +16,16 @@ func NewRecipeHandler(svc port.RecipeService) *RecipeHandler {
 	}
 }
 
+// GetAllRecipes godoc
+// @Summary      Get all recipes
+// @Description  Get all recipes by user ID
+// @Tags         recipe
+// @Accept       json
+// @Produce      json
+// @Param        user_id  query  string  true  "User ID"
+// @Success      200  {object}  domain.RecipeList  "Success"
+// @Failure      400  {object}  response     "Cannot get all recipes"
+// @Router       /recipe/getAllRecipes [get]
 func (rh *RecipeHandler) GetAllRecipes(c *fiber.Ctx) error {
 	userID := c.Query("user_id")
 
