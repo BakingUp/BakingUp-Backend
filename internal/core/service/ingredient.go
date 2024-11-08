@@ -117,7 +117,7 @@ func (s *IngredientService) GetIngredientDetail(c *fiber.Ctx, ingredientID strin
 		stockDetails = append(stockDetails, domain.Stock{
 			StockID:          detail.IngredientStockID,
 			StockURL:         ingredientStockURL,
-			Price:            util.CombinePrice(detail.Price, ingredient.Unit),
+			Price:            util.CombinePrice(detail.Price, ingredient.Unit, detail.IngredientQuantity),
 			Quantity:         util.CombineIngredientQuantity(detail.IngredientQuantity, ingredient.Unit),
 			ExpirationDate:   detail.ExpirationDate.Format("02/01/2006"),
 			ExpirationStatus: util.CalculateExpirationStatus(detail.ExpirationDate, expirationDate.BlackExpirationDate, expirationDate.RedExpirationDate, expirationDate.YellowExpirationDate),
