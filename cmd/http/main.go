@@ -55,11 +55,11 @@ func main() {
 	stockHandler := http.NewStockHandler(stockService)
 
 	notificationRepo := repository.NewNotificationRepository(client)
-	notificationService := service.NewNotificationService(notificationRepo, userService, userRepo, stockService, firebaseApp)
+	notificationService := service.NewNotificationService(notificationRepo, userService, userRepo, firebaseApp)
 	notificationHandler := http.NewNotificationHandler(notificationService)
 
 	orderRepo := repository.NewOrderRespository(client)
-	orderService := service.NewOrderService(orderRepo, userService, notificationService)
+	orderService := service.NewOrderService(orderRepo, userRepo, userService, notificationService, stockService, firebaseApp)
 	orderHandler := http.NewOrderHandler(orderService)
 
 	settingsRepo := repository.NewSettingsRepository(client)

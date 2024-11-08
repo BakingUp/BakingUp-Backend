@@ -61,6 +61,11 @@ type PreOrderOrderDetails struct {
 	OrderNoteCreateAt string           `json:"order_note_create_at"`
 }
 
+type PreOrderOrderDetailNotification struct {
+	UserID       string         `json:"user_id"`
+	OrderProduct []OrderProduct `json:"order_product"`
+}
+
 type OrderProduct struct {
 	RecipeID        string `json:"recipe_id"`
 	ProductQuantity int    `json:"product_quantity"`

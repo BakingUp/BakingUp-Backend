@@ -20,5 +20,4 @@ type NotificationService interface {
 	DeleteNotification(c *fiber.Ctx, notiID string) error
 	ReadNotification(c *fiber.Ctx, notiID string) error
 	ReadAllNotifications(c *fiber.Ctx, userID string) error
-	AddOrderNotification(c *fiber.Ctx, orderProducts []domain.OrderProduct, userId string) error
 }
