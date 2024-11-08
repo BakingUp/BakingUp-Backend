@@ -337,6 +337,124 @@ const docTemplate = `{
                 }
             }
         },
+        "/ingredient/editIngredient": {
+            "put": {
+                "description": "Edit ingredient by using edit ingredient request",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ingredient"
+                ],
+                "summary": "Edit ingredient",
+                "parameters": [
+                    {
+                        "description": "Edit Ingredient Request",
+                        "name": "EditIngredientRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.EditIngredientRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot edit ingredient",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/ingredient/editIngredientStock": {
+            "put": {
+                "description": "Edit ingredient stock by using edit ingredient stock request",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ingredient"
+                ],
+                "summary": "Edit ingredient stock",
+                "parameters": [
+                    {
+                        "description": "Edit Ingredient Stock Request",
+                        "name": "EditIngredientStockRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.EditIngredientStockRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot edit ingredient stock",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/ingredient/getAddEditIngredientDetail": {
+            "get": {
+                "description": "Get add edit ingredient detail by ingredient ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ingredient"
+                ],
+                "summary": "Get add edit ingredient detail",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Ingredient ID",
+                        "name": "ingredient_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.GetAddEditIngredientDetail"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get add edit ingredient detail",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/ingredient/getAddEditIngredientStockDetail": {
             "get": {
                 "description": "Get add edit ingredient stock details by ingredient ID",
@@ -406,6 +524,44 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Cannot get all ingredients",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/ingredient/getEditIngredientStockDetail": {
+            "get": {
+                "description": "Get edit ingredient stock detail by ingredient stock ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ingredient"
+                ],
+                "summary": "Get edit ingredient stock detail",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Ingredient Stock ID",
+                        "name": "ingredient_stock_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.GetEditIngredientStockDetail"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get edit ingredient stock detail",
                         "schema": {
                             "$ref": "#/definitions/http.response"
                         }
@@ -1871,6 +2027,58 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.EditIngredientRequest": {
+            "type": "object",
+            "properties": {
+                "day_before_expire": {
+                    "type": "string"
+                },
+                "ingredient_eng_name": {
+                    "type": "string"
+                },
+                "ingredient_id": {
+                    "type": "string"
+                },
+                "ingredient_thai_name": {
+                    "type": "string"
+                },
+                "stock_less_than": {
+                    "type": "string"
+                },
+                "unit": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.EditIngredientStockRequest": {
+            "type": "object",
+            "properties": {
+                "brand": {
+                    "type": "string"
+                },
+                "expiration_date": {
+                    "type": "string"
+                },
+                "ingredient_stock_id": {
+                    "type": "string"
+                },
+                "note": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "string"
+                },
+                "supplier": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.ExpirationDateSetting": {
             "type": "object",
             "properties": {
@@ -1980,6 +2188,49 @@ const docTemplate = `{
                 },
                 "water": {
                     "type": "number"
+                }
+            }
+        },
+        "domain.GetAddEditIngredientDetail": {
+            "type": "object",
+            "properties": {
+                "day_before_expire": {
+                    "type": "string"
+                },
+                "ingredient_eng_name": {
+                    "type": "string"
+                },
+                "ingredient_thai_name": {
+                    "type": "string"
+                },
+                "stock_less_than": {
+                    "type": "string"
+                },
+                "unit": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.GetEditIngredientStockDetail": {
+            "type": "object",
+            "properties": {
+                "brand": {
+                    "type": "string"
+                },
+                "expiration_date": {
+                    "type": "string"
+                },
+                "ingredient_stock_id": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "string"
+                },
+                "supplier": {
+                    "type": "string"
                 }
             }
         },
