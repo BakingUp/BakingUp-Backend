@@ -183,6 +183,16 @@ func (rh *RecipeHandler) UpdateProfitMargin(c *fiber.Ctx) error {
 	return nil
 }
 
+// EditRecipe godoc
+// @Summary      Edit a recipe
+// @Description  Edit a recipe
+// @Tags         recipe
+// @Accept       json
+// @Produce      json
+// @Param        EditRecipeRequest  body  domain.EditRecipeRequest  true  "Edit Recipe Request"
+// @Success      200  {object}  response  "Success"
+// @Failure      400  {object}  response  "Cannot edit a recipe"
+// @Router       /recipe/editRecipe [put]
 func (rh *RecipeHandler) EditRecipe(c *fiber.Ctx) error {
 	var recipe *domain.EditRecipeRequest
 	if err := c.BodyParser(&recipe); err != nil {

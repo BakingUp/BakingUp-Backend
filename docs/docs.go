@@ -759,6 +759,46 @@ const docTemplate = `{
                 }
             }
         },
+        "/recipe/editRecipe": {
+            "put": {
+                "description": "Edit a recipe",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "recipe"
+                ],
+                "summary": "Edit a recipe",
+                "parameters": [
+                    {
+                        "description": "Edit Recipe Request",
+                        "name": "EditRecipeRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.EditRecipeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot edit a recipe",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/recipe/getEditRecipeDetail": {
             "get": {
                 "description": "Get edit recipe details by recipe ID",
@@ -1909,6 +1949,41 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.EditRecipeRequest": {
+            "type": "object",
+            "properties": {
+                "eng_instruction": {
+                    "type": "string"
+                },
+                "ingredients": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.AddRecipeIngredientRequest"
+                    }
+                },
+                "recipe_eng_name": {
+                    "type": "string"
+                },
+                "recipe_id": {
+                    "type": "string"
+                },
+                "recipe_thai_name": {
+                    "type": "string"
+                },
+                "servings": {
+                    "type": "string"
+                },
+                "thai_instruction": {
+                    "type": "string"
+                },
+                "total_hours": {
+                    "type": "string"
+                },
+                "total_mins": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.ExpirationDateSetting": {
             "type": "object",
             "properties": {
@@ -2056,13 +2131,16 @@ const docTemplate = `{
         "domain.GetEditRecipeIngredientDetail": {
             "type": "object",
             "properties": {
-                "ingredient_eng_name": {
-                    "type": "string"
-                },
                 "ingredient_id": {
                     "type": "string"
                 },
+                "ingredient_name": {
+                    "type": "string"
+                },
                 "ingredient_quantity": {
+                    "type": "string"
+                },
+                "ingredient_unit": {
                     "type": "string"
                 },
                 "ingredient_url": {

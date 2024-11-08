@@ -212,6 +212,29 @@ definitions:
           $ref: '#/definitions/domain.ProfitThresholdChartItem'
         type: array
     type: object
+  domain.EditRecipeRequest:
+    properties:
+      eng_instruction:
+        type: string
+      ingredients:
+        items:
+          $ref: '#/definitions/domain.AddRecipeIngredientRequest'
+        type: array
+      recipe_eng_name:
+        type: string
+      recipe_id:
+        type: string
+      recipe_thai_name:
+        type: string
+      servings:
+        type: string
+      thai_instruction:
+        type: string
+      total_hours:
+        type: string
+      total_mins:
+        type: string
+    type: object
   domain.ExpirationDateSetting:
     properties:
       black_expiration_date:
@@ -308,11 +331,13 @@ definitions:
     type: object
   domain.GetEditRecipeIngredientDetail:
     properties:
-      ingredient_eng_name:
-        type: string
       ingredient_id:
         type: string
+      ingredient_name:
+        type: string
       ingredient_quantity:
+        type: string
+      ingredient_unit:
         type: string
       ingredient_url:
         type: string
@@ -1118,6 +1143,32 @@ paths:
           schema:
             $ref: '#/definitions/http.response'
       summary: Delete a recipe
+      tags:
+      - recipe
+  /recipe/editRecipe:
+    put:
+      consumes:
+      - application/json
+      description: Edit a recipe
+      parameters:
+      - description: Edit Recipe Request
+        in: body
+        name: EditRecipeRequest
+        required: true
+        schema:
+          $ref: '#/definitions/domain.EditRecipeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot edit a recipe
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Edit a recipe
       tags:
       - recipe
   /recipe/getEditRecipeDetail:

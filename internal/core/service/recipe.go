@@ -350,7 +350,8 @@ func (s *RecipeService) GetEditRecipeDetail(c *fiber.Ctx, recipeID string) (*dom
 			IngredientID:       recipeIngredientItem.IngredientID,
 			IngredientName:     util.GetIngredientName(recipeIngredientItem.Ingredient(), language),
 			IngredientURL:      firstIngredientURL,
-			IngredientQuantity: util.CombineIngredientQuantity(recipeIngredientItem.RecipeIngredientQuantity, recipeIngredientItem.Ingredient().Unit),
+			IngredientQuantity: strconv.FormatFloat(recipeIngredientItem.RecipeIngredientQuantity, 'f', -1, 64),
+			IngredientUnit:     string(recipeIngredientItem.Ingredient().Unit),
 		}
 
 		recipeIngredients = append(recipeIngredients, *recipeIngredient)

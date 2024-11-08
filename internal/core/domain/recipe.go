@@ -152,7 +152,8 @@ type GetEditRecipeDetail struct {
 
 type GetEditRecipeIngredientDetail struct {
 	IngredientID       string `json:"ingredient_id"`
-	IngredientName     string `json:"ingredient_eng_name"`
+	IngredientName     string `json:"ingredient_name"`
 	IngredientURL      string `json:"ingredient_url"`
 	IngredientQuantity string `json:"ingredient_quantity"`
+	IngredientUnit     string `json:"ingredient_unit"`
 }
