@@ -217,3 +217,62 @@ func (ir *IngredientRepository) UpdateUnexpiredIngredientQuantity(c *fiber.Ctx, 
 
 	return nil
 }
+
+func (ir *IngredientRepository) EditIngredient(c *fiber.Ctx, ingredient *domain.EditIngredientPayload) error {
+	_, err := ir.db.Ingredients.FindUnique(
+		db.Ingredients.IngredientID.Equals(ingredient.IngredientID),
+	).Update(
+		db.Ingredients.IngredientEngName.Set(ingredient.IngredientEngName),
+		db.Ingredients.IngredientThaiName.Set(ingredient.IngredientThaiName),
+		db.Ingredients.IngredientLessThan.Set(float64(ingredient.StockLessThan)),
+		db.Ingredients.DayBeforeExpire.Set(ingredient.DayBeforeExpire),
+	).Exec(c.Context())
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (ir *IngredientRepository) GetAddEditIngredientDetail(c *fiber.Ctx, ingredientID string) (*db.IngredientsModel, error) {
+	ingredient, err := ir.db.Ingredients.FindFirst(
+		db.Ingredients.IngredientID.Equals(ingredientID),
+	).Exec(c.Context())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return ingredient, nil
+}
+
+func (ir *IngredientRepository) EditIngredientStock(c *fiber.Ctx, ingredientStock *domain.EditIngredientStockPayload) error {
+	_, err := ir.db.IngredientDetail.FindUnique(
+		db.IngredientDetail.IngredientStockID.Equals(ingredientStock.IngredientStockID),
+	).Update(
+		db.IngredientDetail.Price.Set(ingredientStock.Price),
+		db.IngredientDetail.IngredientQuantity.Set(ingredientStock.Quantity),
+		db.IngredientDetail.ExpirationDate.Set(ingredientStock.ExpirationDate),
+		db.IngredientDetail.IngredientSupplier.Set(ingredientStock.Supplier),
+		db.IngredientDetail.IngredientBrand.Set(ingredientStock.Brand),
+	).Exec(c.Context())
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (ir *IngredientRepository) GetEditIngredientStockDetail(c *fiber.Ctx, ingredientStockID string) (*db.IngredientDetailModel, error) {
+	ingredient, err := ir.db.IngredientDetail.FindFirst(
+		db.IngredientDetail.IngredientStockID.Equals(ingredientStockID),
+	).Exec(c.Context())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return ingredient, nil
+}

@@ -378,3 +378,102 @@ func (s *IngredientService) UpdateUnexpiredIngredientQuantity(c *fiber.Ctx, ingr
 
 	return nil
 }
+
+func (s *IngredientService) EditIngredient(c *fiber.Ctx, ingredient *domain.EditIngredientRequest) error {
+	ingredientID := ingredient.IngredientID
+	stockLessThan, _ := strconv.Atoi(ingredient.StockLessThan)
+	dayBeforeExpire := util.ExpirationDate(ingredient.DayBeforeExpire)
+
+	editIngredientPayload := &domain.EditIngredientPayload{
+		IngredientID:       ingredientID,
+		IngredientEngName:  ingredient.IngredientEngName,
+		IngredientThaiName: ingredient.IngredientThaiName,
+		StockLessThan:      stockLessThan,
+		DayBeforeExpire:    dayBeforeExpire,
+	}
+
+	err := s.ingredientRepo.EditIngredient(c, editIngredientPayload)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *IngredientService) GetAddEditIngredientDetail(c *fiber.Ctx, ingredientID string) (*domain.GetAddEditIngredientDetail, error) {
+	ingredient, err := s.ingredientRepo.GetAddEditIngredientDetail(c, ingredientID)
+	if err != nil {
+		return nil, err
+	}
+
+	dayBeforeExpire := util.DaysSince2000(ingredient.DayBeforeExpire)
+	dayBeforeExpireStr := strconv.Itoa(dayBeforeExpire)
+
+	detail := &domain.GetAddEditIngredientDetail{
+		IngredientEngName:  ingredient.IngredientEngName,
+		IngredientThaiName: ingredient.IngredientThaiName,
+		Unit:               string(ingredient.Unit),
+		StockLessThan:      strconv.Itoa(int(ingredient.IngredientLessThan)),
+		DayBeforeExpire:    dayBeforeExpireStr,
+	}
+
+	return detail, nil
+}
+
+func (s *IngredientService) EditIngredientStock(c *fiber.Ctx, ingredientStock *domain.EditIngredientStockRequest) error {
+	ingredientStockID := ingredientStock.IngredientStockID
+	price, _ := strconv.ParseFloat(ingredientStock.Price, 64)
+	quantity, _ := strconv.ParseFloat(ingredientStock.Quantity, 64)
+	expirationDate, _ := time.Parse("02/01/2006", ingredientStock.ExpirationDate)
+	note := ingredientStock.Note
+
+	editIngredientStockPayload := &domain.EditIngredientStockPayload{
+		IngredientStockID: ingredientStockID,
+		Price:             price,
+		Quantity:          quantity,
+		ExpirationDate:    expirationDate,
+		Brand:             ingredientStock.Brand,
+		Supplier:          ingredientStock.Supplier,
+	}
+
+	err := s.ingredientRepo.EditIngredientStock(c, editIngredientStockPayload)
+	if err != nil {
+		return err
+	}
+
+	if note != "" {
+		ingredientNoteID := uuid.NewString()
+		noteCreatedAt := time.Now()
+		ingredientNote := &domain.AddIngredientNotePayload{
+			IngredientNoteID:  ingredientNoteID,
+			IngredientStockID: ingredientStockID,
+			Note:              note,
+			NoteCreatedAt:     noteCreatedAt,
+		}
+
+		err = s.ingredientRepo.AddIngredientNote(c, ingredientNote)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (s *IngredientService) GetEditIngredientStockDetail(c *fiber.Ctx, ingredientStockID string) (*domain.GetEditIngredientStockDetail, error) {
+	ingredientStock, err := s.ingredientRepo.GetEditIngredientStockDetail(c, ingredientStockID)
+	if err != nil {
+		return nil, err
+	}
+
+	detail := &domain.GetEditIngredientStockDetail{
+		IngredientStockID: ingredientStock.IngredientStockID,
+		Brand:             ingredientStock.IngredientBrand,
+		Quantity:          strconv.FormatFloat(ingredientStock.IngredientQuantity, 'f', -1, 64),
+		Price:             strconv.FormatFloat(ingredientStock.Price, 'f', -1, 64),
+		Supplier:          ingredientStock.IngredientSupplier,
+		ExpirationDate:    ingredientStock.ExpirationDate.Format("02/01/2006"),
+	}
+
+	return detail, nil
+}
