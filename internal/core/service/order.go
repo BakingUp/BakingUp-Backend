@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
 	"github.com/BakingUp/BakingUp-Backend/internal/core/port"
@@ -192,7 +193,7 @@ func (s *OrderService) AddInStoreOrder(c *fiber.Ctx, inStoreOrder *domain.AddInS
 		return err
 	}
 
-	err = s.notiService.InOrderNotification(c, inStoreOrder.OrderProducts, inStoreOrder.UserID)
+	err = s.notiService.AddOrderNotification(c, inStoreOrder.OrderProducts, inStoreOrder.UserID)
 	if err != nil {
 		return err
 	}
@@ -204,6 +205,14 @@ func (s *OrderService) AddPreOrderOrder(c *fiber.Ctx, preOrderOrder *domain.AddP
 	err := s.orderRepo.AddPreOrderOrder(c, preOrderOrder)
 	if err != nil {
 		return err
+	}
+
+	status := strings.ToLower(preOrderOrder.OrderStatus)
+	if status == "done" {
+		err = s.notiService.AddOrderNotification(c, preOrderOrder.OrderProducts, preOrderOrder.UserID)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }

@@ -105,7 +105,7 @@ func (ns *NotificationService) ReadAllNotifications(c *fiber.Ctx, userID string)
 	return nil
 }
 
-func (ns *NotificationService) InOrderNotification(c *fiber.Ctx, orderProducts []domain.OrderProduct, userId string) error {
+func (ns *NotificationService) AddOrderNotification(c *fiber.Ctx, orderProducts []domain.OrderProduct, userId string) error {
 	stocks, err := ns.stockService.GetAllStocks(c, userId)
 	if err != nil {
 		return err
@@ -178,6 +178,11 @@ func (ns *NotificationService) InOrderNotification(c *fiber.Ctx, orderProducts [
 
 		}
 	}
+
+	return nil
+}
+
+func (ns *NotificationService) preOrderNotification(c *fiber.Ctx, orderProducts []domain.OrderProduct, userID string) error {
 
 	return nil
 }
