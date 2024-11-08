@@ -90,3 +90,24 @@ type StockRecipeDetail struct {
 	Servings    int                     `json:"servings"`
 	Ingredients []StockRecipeIngredient `json:"ingredients"`
 }
+
+type AddStockIngredientDetailRequest struct {
+	IngredientID string `json:"ingredient_id"`
+	Quantity     string `json:"quantity"`
+}
+
+type AddStockDetailRequest struct {
+	RecipeID    string                            `json:"recipe_id"`
+	SellByDate  string                            `json:"sell_by_date"`
+	Quantity    string                            `json:"quantity"`
+	Note        string                            `json:"note"`
+	Ingredients []AddStockIngredientDetailRequest `json:"ingredients"`
+}
+
+type AddStockDetailPayload struct {
+	StockDetailID string    `json:"stock_detail_id"`
+	RecipeID      string    `json:"recipe_id"`
+	SellByDate    time.Time `json:"sell_by_date"`
+	Quantity      int       `json:"quantity"`
+	Note          string    `json:"note"`
+}

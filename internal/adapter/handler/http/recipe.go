@@ -16,6 +16,16 @@ func NewRecipeHandler(svc port.RecipeService) *RecipeHandler {
 	}
 }
 
+// GetAllRecipes godoc
+// @Summary      Get all recipes
+// @Description  Get all recipes by user ID
+// @Tags         recipe
+// @Accept       json
+// @Produce      json
+// @Param        user_id  query  string  true  "User ID"
+// @Success      200  {object}  domain.RecipeList  "Success"
+// @Failure      400  {object}  response     "Cannot get all recipes"
+// @Router       /recipe/getAllRecipes [get]
 func (rh *RecipeHandler) GetAllRecipes(c *fiber.Ctx) error {
 	userID := c.Query("user_id")
 
@@ -180,5 +190,55 @@ func (rh *RecipeHandler) UpdateProfitMargin(c *fiber.Ctx) error {
 	}
 
 	handleSuccess(c, nil)
+	return nil
+}
+
+// EditRecipe godoc
+// @Summary      Edit a recipe
+// @Description  Edit a recipe
+// @Tags         recipe
+// @Accept       json
+// @Produce      json
+// @Param        EditRecipeRequest  body  domain.EditRecipeRequest  true  "Edit Recipe Request"
+// @Success      200  {object}  response  "Success"
+// @Failure      400  {object}  response  "Cannot edit a recipe"
+// @Router       /recipe/editRecipe [put]
+func (rh *RecipeHandler) EditRecipe(c *fiber.Ctx) error {
+	var recipe *domain.EditRecipeRequest
+	if err := c.BodyParser(&recipe); err != nil {
+		handleError(c, 400, "Cannot parse request body", err.Error())
+		return nil
+	}
+
+	err := rh.svc.EditRecipe(c, recipe)
+	if err != nil {
+		handleError(c, 400, "Cannot edit a recipe", err.Error())
+		return nil
+	}
+
+	handleSuccess(c, nil)
+	return nil
+}
+
+// GetEditRecipeDetail godoc
+// @Summary      Get edit recipe details
+// @Description  Get edit recipe details by recipe ID
+// @Tags         recipe
+// @Accept       json
+// @Produce      json
+// @Param        recipe_id  query  string  true  "Recipe ID"
+// @Success      200  {object}  domain.GetEditRecipeDetail  "Success"
+// @Failure      400  {object}  response     "Cannot get edit recipe detail"
+// @Router       /recipe/getEditRecipeDetail [get]
+func (rh *RecipeHandler) GetEditRecipeDetail(c *fiber.Ctx) error {
+	recipeID := c.Query("recipe_id")
+
+	recipe, err := rh.svc.GetEditRecipeDetail(c, recipeID)
+	if err != nil {
+		handleError(c, 400, "Cannot get edit recipe detail", err.Error())
+		return nil
+	}
+
+	handleSuccess(c, recipe)
 	return nil
 }

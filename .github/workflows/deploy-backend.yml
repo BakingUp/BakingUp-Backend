@@ -25,6 +25,9 @@ jobs:
       - name: Create Env file
         run: echo '${{secrets.BACKEND_PRODUCTION_ENV}}' > .env
 
+      - name: Create ServiceAccountKey json file
+        run: echo '${{secrets.BACKEND_SERVICE_ACCOUNT_KEY}}' > serviceAccountKey.json
+
       - name: Build and push
         uses: docker/build-push-action@v3
         with:

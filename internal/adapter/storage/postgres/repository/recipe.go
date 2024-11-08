@@ -177,3 +177,54 @@ func (rr *RecipeRepository) UpdateProfitMargin(c *fiber.Ctx, profitMargin *domai
 
 	return nil
 }
+
+func (rr *RecipeRepository) EditRecipe(c *fiber.Ctx, recipe *domain.EditRecipePayload) error {
+	_, err := rr.db.Recipes.FindUnique(
+		db.Recipes.RecipeID.Equals(recipe.RecipeID),
+	).Update(
+		db.Recipes.RecipeEngName.Set(recipe.RecipeEngName),
+		db.Recipes.RecipeThaiName.Set(recipe.RecipeThaiName),
+		db.Recipes.TotalTime.Set(recipe.TotalTime),
+		db.Recipes.Serving.Set(recipe.Servings),
+		db.Recipes.EngInstruction.Set(recipe.EngInstruction),
+		db.Recipes.ThaiInstruction.Set(recipe.ThaiInstruction),
+	).Exec(c.Context())
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (rr *RecipeRepository) DeleteRecipeIngredients(c *fiber.Ctx, recipeID string) error {
+	_, err := rr.db.RecipeIngredients.FindMany(
+		db.RecipeIngredients.RecipeID.Equals(recipeID),
+	).Delete().Exec(c.Context())
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (rr *RecipeRepository) GetEditRecipeDetail(c *fiber.Ctx, recipeID string) (*db.RecipesModel, error) {
+	recipe, err := rr.db.Recipes.FindUnique(
+		db.Recipes.RecipeID.Equals(recipeID),
+	).With(
+		db.Recipes.RecipeIngredients.Fetch().With(
+			db.RecipeIngredients.Ingredient.Fetch().With(
+				db.Ingredients.IngredientImages.Fetch(),
+				db.Ingredients.IngredientDetail.Fetch(),
+			),
+		),
+		db.Recipes.RecipeInstructionImages.Fetch(),
+	).Exec(c.Context())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return recipe, nil
+}

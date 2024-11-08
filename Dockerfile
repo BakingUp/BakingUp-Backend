@@ -15,5 +15,6 @@ WORKDIR /app
 COPY --from=builder /go/src/app/app /app
 COPY ./docs/swagger.json /app/docs/swagger.json
 COPY .env /app/.env
+COPY serviceAccountKey.json /app/serviceAccountKey.json
 
 CMD ["./app"]

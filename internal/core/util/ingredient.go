@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/BakingUp/BakingUp-Backend/prisma/db"
@@ -57,21 +58,23 @@ func CombineIngredientQuantity(quantity float64, unit db.Unit) string {
 	return fmt.Sprintf("%s %s", quantityStr, unitStr)
 }
 
-func CombinePrice(price float64, unit db.Unit) string {
-	unitStr := ""
-	switch unit {
-	case db.UnitKg:
-		unitStr = "kg"
-	case db.UnitG:
-		unitStr = "g"
-	case db.UnitL:
-		unitStr = "l"
-	case db.UnitMl:
-		unitStr = "ml"
-	}
+func CombinePrice(price float64, unit db.Unit, quantity float64) string {
+    unitStr := ""
+    switch unit {
+    case db.UnitKg:
+        unitStr = "kg"
+    case db.UnitG:
+        unitStr = "g"
+    case db.UnitL:
+        unitStr = "l"
+    case db.UnitMl:
+        unitStr = "ml"
+    }
 
-	priceStr := strconv.FormatFloat(price, 'f', -1, 64)
-	return fmt.Sprintf("%s/%s", priceStr, unitStr)
+    actualPrice := price / quantity
+    priceStr := strconv.FormatFloat(actualPrice, 'f', 4, 64)
+    priceStr = strings.TrimRight(strings.TrimRight(priceStr, "0"), ".")
+    return fmt.Sprintf("%s/%s", priceStr, unitStr)
 }
 
 func DaysSince2000(date time.Time) int {
@@ -116,7 +119,6 @@ func UploadIngredientImage(userId string, ingredientId string, imgBase64 string,
 	// Return the file path as the image URL
 	return filePath, nil
 }
-
 
 func UploadIngredientStockImage(userId string, ingredientId string, ingredientStockId string, imgBase64 string) (string, error) {
 	// Decode the base64 string to a byte slice

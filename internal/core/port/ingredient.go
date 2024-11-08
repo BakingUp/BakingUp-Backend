@@ -19,6 +19,12 @@ type IngredientRepository interface {
 	AddIngredientStock(c *fiber.Ctx, ingredientStock *domain.AddIngredientStockPayload) error
 	AddIngredientNote(c *fiber.Ctx, ingredientNote *domain.AddIngredientNotePayload) error
 	GetUnexpiredIngredientQuantity(c *fiber.Ctx, ingredientID string) (float64, error)
+	DeleteUnexpiredIngredient(c *fiber.Ctx, ingredientStockID string) error
+	UpdateUnexpiredIngredientQuantity(c *fiber.Ctx, ingredientStockID string, quantity float64) error
+	EditIngredient(c *fiber.Ctx, ingredient *domain.EditIngredientPayload) error
+	GetAddEditIngredientDetail(c *fiber.Ctx, ingredientID string) (*db.IngredientsModel, error)
+	EditIngredientStock(c *fiber.Ctx, ingredientStock *domain.EditIngredientStockPayload) error
+	GetEditIngredientStockDetail(c *fiber.Ctx, ingredientStockID string) (*db.IngredientDetailModel, error)
 }
 
 type IngredientService interface {
@@ -32,4 +38,9 @@ type IngredientService interface {
 	AddIngredient(c *fiber.Ctx, ingredients *domain.AddIngredientRequest) error
 	AddIngredientStock(c *fiber.Ctx, ingredientStock *domain.AddIngredientStockRequest) error
 	GetUnexpiredIngredientQuantity(c *fiber.Ctx, ingredientID string) (float64, error)
+	UpdateUnexpiredIngredientQuantity(c *fiber.Ctx, ingredientID string, quantity float64) error
+	EditIngredient(c *fiber.Ctx, ingredient *domain.EditIngredientRequest) error
+	GetAddEditIngredientDetail(c *fiber.Ctx, ingredientID string) (*domain.GetAddEditIngredientDetail, error)
+	EditIngredientStock(c *fiber.Ctx, ingredientStock *domain.EditIngredientStockRequest) error
+	GetEditIngredientStockDetail(c *fiber.Ctx, ingredientStockID string) (*domain.GetEditIngredientStockDetail, error)
 }

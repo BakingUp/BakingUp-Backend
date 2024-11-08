@@ -87,6 +87,28 @@ definitions:
       user_id:
         type: string
     type: object
+  domain.AddStockDetailRequest:
+    properties:
+      ingredients:
+        items:
+          $ref: '#/definitions/domain.AddStockIngredientDetailRequest'
+        type: array
+      note:
+        type: string
+      quantity:
+        type: string
+      recipe_id:
+        type: string
+      sell_by_date:
+        type: string
+    type: object
+  domain.AddStockIngredientDetailRequest:
+    properties:
+      ingredient_id:
+        type: string
+      quantity:
+        type: string
+    type: object
   domain.AddStockRequest:
     properties:
       expiration_date:
@@ -190,6 +212,63 @@ definitions:
           $ref: '#/definitions/domain.ProfitThresholdChartItem'
         type: array
     type: object
+  domain.EditIngredientRequest:
+    properties:
+      day_before_expire:
+        type: string
+      ingredient_eng_name:
+        type: string
+      ingredient_id:
+        type: string
+      ingredient_thai_name:
+        type: string
+      stock_less_than:
+        type: string
+      unit:
+        type: string
+      user_id:
+        type: string
+    type: object
+  domain.EditIngredientStockRequest:
+    properties:
+      brand:
+        type: string
+      expiration_date:
+        type: string
+      ingredient_stock_id:
+        type: string
+      note:
+        type: string
+      price:
+        type: string
+      quantity:
+        type: string
+      supplier:
+        type: string
+    type: object
+  domain.EditRecipeRequest:
+    properties:
+      eng_instruction:
+        type: string
+      ingredients:
+        items:
+          $ref: '#/definitions/domain.AddRecipeIngredientRequest'
+        type: array
+      recipe_eng_name:
+        type: string
+      recipe_id:
+        type: string
+      recipe_thai_name:
+        type: string
+      servings:
+        type: string
+      thai_instruction:
+        type: string
+      total_hours:
+        type: string
+      total_mins:
+        type: string
+    type: object
   domain.ExpirationDateSetting:
     properties:
       black_expiration_date:
@@ -262,6 +341,68 @@ definitions:
         type: number
       water:
         type: number
+    type: object
+  domain.GetAddEditIngredientDetail:
+    properties:
+      day_before_expire:
+        type: string
+      ingredient_eng_name:
+        type: string
+      ingredient_thai_name:
+        type: string
+      stock_less_than:
+        type: string
+      unit:
+        type: string
+    type: object
+  domain.GetEditIngredientStockDetail:
+    properties:
+      brand:
+        type: string
+      expiration_date:
+        type: string
+      ingredient_stock_id:
+        type: string
+      price:
+        type: string
+      quantity:
+        type: string
+      supplier:
+        type: string
+    type: object
+  domain.GetEditRecipeDetail:
+    properties:
+      eng_instruction:
+        type: string
+      ingredients:
+        items:
+          $ref: '#/definitions/domain.GetEditRecipeIngredientDetail'
+        type: array
+      recipe_eng_name:
+        type: string
+      recipe_thai_name:
+        type: string
+      servings:
+        type: string
+      thai_instruction:
+        type: string
+      total_hours:
+        type: string
+      total_mins:
+        type: string
+    type: object
+  domain.GetEditRecipeIngredientDetail:
+    properties:
+      ingredient_id:
+        type: string
+      ingredient_name:
+        type: string
+      ingredient_quantity:
+        type: string
+      ingredient_unit:
+        type: string
+      ingredient_url:
+        type: string
     type: object
   domain.Ingredient:
     properties:
@@ -384,6 +525,23 @@ definitions:
       threshold:
         type: number
     type: object
+  domain.Recipe:
+    properties:
+      num_of_order:
+        type: integer
+      recipe_id:
+        type: string
+      recipe_img:
+        type: string
+      recipe_name:
+        type: string
+      servings:
+        type: integer
+      stars:
+        type: integer
+      total_time:
+        type: string
+    type: object
   domain.RecipeDetail:
     properties:
       hidden_cost:
@@ -429,6 +587,13 @@ definitions:
         type: string
       ingredient_url:
         type: string
+    type: object
+  domain.RecipeList:
+    properties:
+      recipes:
+        items:
+          $ref: '#/definitions/domain.Recipe'
+        type: array
     type: object
   domain.Stock:
     properties:
@@ -789,6 +954,83 @@ paths:
       summary: Delete an ingredient stock
       tags:
       - ingredient
+  /ingredient/editIngredient:
+    put:
+      consumes:
+      - application/json
+      description: Edit ingredient by using edit ingredient request
+      parameters:
+      - description: Edit Ingredient Request
+        in: body
+        name: EditIngredientRequest
+        required: true
+        schema:
+          $ref: '#/definitions/domain.EditIngredientRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot edit ingredient
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Edit ingredient
+      tags:
+      - ingredient
+  /ingredient/editIngredientStock:
+    put:
+      consumes:
+      - application/json
+      description: Edit ingredient stock by using edit ingredient stock request
+      parameters:
+      - description: Edit Ingredient Stock Request
+        in: body
+        name: EditIngredientStockRequest
+        required: true
+        schema:
+          $ref: '#/definitions/domain.EditIngredientStockRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot edit ingredient stock
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Edit ingredient stock
+      tags:
+      - ingredient
+  /ingredient/getAddEditIngredientDetail:
+    get:
+      consumes:
+      - application/json
+      description: Get add edit ingredient detail by ingredient ID
+      parameters:
+      - description: Ingredient ID
+        in: query
+        name: ingredient_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/domain.GetAddEditIngredientDetail'
+        "400":
+          description: Cannot get add edit ingredient detail
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get add edit ingredient detail
+      tags:
+      - ingredient
   /ingredient/getAddEditIngredientStockDetail:
     get:
       consumes:
@@ -837,6 +1079,31 @@ paths:
           schema:
             $ref: '#/definitions/http.response'
       summary: Get all ingredients
+      tags:
+      - ingredient
+  /ingredient/getEditIngredientStockDetail:
+    get:
+      consumes:
+      - application/json
+      description: Get edit ingredient stock detail by ingredient stock ID
+      parameters:
+      - description: Ingredient Stock ID
+        in: query
+        name: ingredient_stock_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/domain.GetEditIngredientStockDetail'
+        "400":
+          description: Cannot get edit ingredient stock detail
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get edit ingredient stock detail
       tags:
       - ingredient
   /ingredient/getIngredientDetail:
@@ -1064,6 +1331,82 @@ paths:
           schema:
             $ref: '#/definitions/http.response'
       summary: Delete a recipe
+      tags:
+      - recipe
+  /recipe/editRecipe:
+    put:
+      consumes:
+      - application/json
+      description: Edit a recipe
+      parameters:
+      - description: Edit Recipe Request
+        in: body
+        name: EditRecipeRequest
+        required: true
+        schema:
+          $ref: '#/definitions/domain.EditRecipeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot edit a recipe
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Edit a recipe
+      tags:
+      - recipe
+  /recipe/getAllRecipes:
+    get:
+      consumes:
+      - application/json
+      description: Get all recipes by user ID
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/domain.RecipeList'
+        "400":
+          description: Cannot get all recipes
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get all recipes
+      tags:
+      - recipe
+  /recipe/getEditRecipeDetail:
+    get:
+      consumes:
+      - application/json
+      description: Get edit recipe details by recipe ID
+      parameters:
+      - description: Recipe ID
+        in: query
+        name: recipe_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/domain.GetEditRecipeDetail'
+        "400":
+          description: Cannot get edit recipe detail
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get edit recipe details
       tags:
       - recipe
   /recipe/getRecipeDetail:
@@ -1376,6 +1719,32 @@ paths:
           schema:
             $ref: '#/definitions/http.response'
       summary: Add a stock
+      tags:
+      - stock
+  /stock/addStockDetail:
+    post:
+      consumes:
+      - application/json
+      description: Add a stock detail by stock detail ID, quantity, and sell by date
+      parameters:
+      - description: Stock Detail
+        in: body
+        name: stock_detail
+        required: true
+        schema:
+          $ref: '#/definitions/domain.AddStockDetailRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot add a stock detail
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Add a stock detail
       tags:
       - stock
   /stock/deleteStock:

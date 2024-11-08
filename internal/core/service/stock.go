@@ -10,6 +10,7 @@ import (
 	"github.com/BakingUp/BakingUp-Backend/internal/core/util"
 	"github.com/BakingUp/BakingUp-Backend/prisma/db"
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 )
 
 type StockService struct {
@@ -317,4 +318,42 @@ func (s *StockService) GetStockRecipeDetail(c *fiber.Ctx, recipeID string) (*dom
 	}
 
 	return stockRecipeDetail, nil
+}
+
+func (s *StockService) AddStockDetail(c *fiber.Ctx, stockDetail *domain.AddStockDetailRequest) error {
+	recipeID := stockDetail.RecipeID
+	timeFormat := "02/01/2006"
+	sellByDate, _ := time.Parse(timeFormat, stockDetail.SellByDate)
+	quantity, _ := strconv.Atoi(stockDetail.Quantity)
+	note := stockDetail.Note
+	stockID := uuid.New().String()
+
+	addStockDetail := &domain.AddStockDetailPayload{
+		StockDetailID: stockID,
+		RecipeID:      recipeID,
+		SellByDate:    sellByDate,
+		Quantity:      quantity,
+	}
+
+	if note != "" {
+		addStockDetail.Note = note
+	}
+
+	err := s.stockRepo.AddStockDetail(c, addStockDetail)
+	if err != nil {
+		return err
+	}
+
+	for _, ingredient := range stockDetail.Ingredients {
+		ingredientID := ingredient.IngredientID
+		quantity, _ := strconv.ParseFloat(ingredient.Quantity, 64)
+
+		err = s.ingredientService.UpdateUnexpiredIngredientQuantity(c, ingredientID, quantity)
+
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
