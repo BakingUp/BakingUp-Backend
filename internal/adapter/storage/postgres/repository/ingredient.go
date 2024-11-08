@@ -144,19 +144,18 @@ func (ir *IngredientRepository) AddIngredientImage(c *fiber.Ctx, ingredientImage
 }
 
 func (ir *IngredientRepository) AddIngredientStock(c *fiber.Ctx, ingredientStock *domain.AddIngredientStockPayload) error {
-    _, err := ir.db.IngredientDetail.CreateOne(
-        db.IngredientDetail.IngredientStockID.Set(ingredientStock.IngredientStockID),
-        db.IngredientDetail.Ingredient.Link(
-            db.Ingredients.IngredientID.Equals(ingredientStock.IngredientID),
-        ),
+	_, err := ir.db.IngredientDetail.CreateOne(
+		db.IngredientDetail.IngredientStockID.Set(ingredientStock.IngredientStockID),
+		db.IngredientDetail.Ingredient.Link(
+			db.Ingredients.IngredientID.Equals(ingredientStock.IngredientID),
+		),
 		db.IngredientDetail.Price.Set(ingredientStock.Price),
 		db.IngredientDetail.IngredientQuantity.Set(ingredientStock.IngredientQuantity),
 		db.IngredientDetail.ExpirationDate.Set(ingredientStock.ExpirationDate),
 		db.IngredientDetail.IngredientSupplier.Set(ingredientStock.IngredientSupplier),
 		db.IngredientDetail.IngredientBrand.Set(ingredientStock.IngredientBrand),
 		db.IngredientDetail.IngredientStockURL.Set(ingredientStock.IngredientStockURL),
-		
-    ).Exec(c.Context())
+	).Exec(c.Context())
 	if err != nil {
 		return err
 	}
@@ -191,4 +190,30 @@ func (ir *IngredientRepository) GetUnexpiredIngredientQuantity(c *fiber.Ctx, ing
 	}
 
 	return ingredient.IngredientLessThan, nil
+}
+
+func (ir *IngredientRepository) DeleteUnexpiredIngredient(c *fiber.Ctx, ingredientStockID string) error {
+	_, err := ir.db.IngredientDetail.FindMany(
+		db.IngredientDetail.IngredientStockID.Equals(ingredientStockID),
+	).Delete().Exec(c.Context())
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (ir *IngredientRepository) UpdateUnexpiredIngredientQuantity(c *fiber.Ctx, ingredientStockID string, quantity float64) error {
+	_, err := ir.db.IngredientDetail.FindUnique(
+		db.IngredientDetail.IngredientStockID.Equals(ingredientStockID),
+	).Update(
+		db.IngredientDetail.IngredientQuantity.Set(quantity),
+	).Exec(c.Context())
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

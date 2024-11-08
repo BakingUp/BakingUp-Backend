@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"time"
+
 	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
 	"github.com/BakingUp/BakingUp-Backend/prisma/db"
 	"github.com/gofiber/fiber/v2"
@@ -121,6 +123,25 @@ func (sr *StockRepository) AddStock(c *fiber.Ctx, stock *domain.AddStockPayload)
 		db.Stocks.Cost.Set(0),
 		db.Stocks.StockLessThan.Set(stock.StockLessThan),
 		db.Stocks.DayBeforeExpired.Set(stock.ExpirationDate),
+	).Exec(c.Context())
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (sr *StockRepository) AddStockDetail(c *fiber.Ctx, stockDetail *domain.AddStockDetailPayload) error {
+	_, err := sr.db.StockDetail.CreateOne(
+		db.StockDetail.StockDetailID.Set(stockDetail.StockDetailID),
+		db.StockDetail.Stock.Link(
+			db.Stocks.RecipeID.Equals(stockDetail.RecipeID),
+		),
+		db.StockDetail.CreatedAt.Set(time.Now()),
+		db.StockDetail.SellByDate.Set(stockDetail.SellByDate),
+		db.StockDetail.Quantity.Set(int(stockDetail.Quantity)),
+		db.StockDetail.Note.Set(stockDetail.Note),
 	).Exec(c.Context())
 
 	if err != nil {

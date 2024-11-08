@@ -275,7 +275,6 @@ model Stock_detail {
   sell_by_date             DateTime
   quantity                 Int
   note                     String?
-  cooking_time             DateTime
   cutting_stock            Cutting_stock[]
 }
 

@@ -343,3 +343,38 @@ func (s *IngredientService) GetUnexpiredIngredientQuantity(c *fiber.Ctx, ingredi
 
 	return totalQuantity, nil
 }
+
+func (s *IngredientService) UpdateUnexpiredIngredientQuantity(c *fiber.Ctx, ingredientID string, quantity float64) error {
+	ingredient, err := s.ingredientRepo.GetIngredientDetail(c, ingredientID)
+	if err != nil {
+		return err
+	}
+
+	// Sort ingredient details by expiration date in chronological order
+	sort.Slice(ingredient.IngredientDetail(), func(i, j int) bool {
+		return ingredient.IngredientDetail()[i].ExpirationDate.Before(ingredient.IngredientDetail()[j].ExpirationDate)
+	})
+
+	var ingredientStockID string
+	for _, detail := range ingredient.IngredientDetail() {
+		if detail.ExpirationDate.After(time.Now()) {
+			ingredientStockID = detail.IngredientStockID
+
+			if quantity >= detail.IngredientQuantity {
+				err = s.ingredientRepo.DeleteUnexpiredIngredient(c, ingredientStockID)
+				if err != nil {
+					return err
+				}
+				quantity -= detail.IngredientQuantity
+			} else {
+				err = s.ingredientRepo.UpdateUnexpiredIngredientQuantity(c, ingredientStockID, detail.IngredientQuantity-quantity)
+				if err != nil {
+					return err
+				}
+				break
+			}
+		}
+	}
+
+	return nil
+}

@@ -194,3 +194,31 @@ func (sh *StockHandler) GetStockRecipeDetail(c *fiber.Ctx) error {
 	handleSuccess(c, recipe)
 	return nil
 }
+
+// AddStockDetail godoc
+// @Summary      Add a stock detail
+// @Description  Add a stock detail by stock detail ID, quantity, and sell by date
+// @Tags         stock
+// @Accept       json
+// @Produce      json
+// @Param        stock_detail  body  domain.AddStockDetailRequest  true  "Stock Detail"
+// @Success      200  {object}  response  "Success"
+// @Failure      400  {object}  response     "Cannot add a stock detail"
+// @Router       /stock/addStockDetail [post]
+func (sh *StockHandler) AddStockDetail(c *fiber.Ctx) error {
+	var addStockDetailRequest domain.AddStockDetailRequest
+
+	if err := c.BodyParser(&addStockDetailRequest); err != nil {
+		handleError(c, 400, "Cannot add a stock detail.", err.Error())
+		return nil
+	}
+
+	err := sh.svc.AddStockDetail(c, &addStockDetailRequest)
+	if err != nil {
+		handleError(c, 400, "Cannot add a stock detail.", err.Error())
+		return nil
+	}
+
+	handleSuccess(c, nil)
+	return nil
+}
