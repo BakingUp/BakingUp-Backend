@@ -915,6 +915,46 @@ const docTemplate = `{
                 }
             }
         },
+        "/recipe/editRecipe": {
+            "put": {
+                "description": "Edit a recipe",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "recipe"
+                ],
+                "summary": "Edit a recipe",
+                "parameters": [
+                    {
+                        "description": "Edit Recipe Request",
+                        "name": "EditRecipeRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.EditRecipeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot edit a recipe",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/recipe/getAllRecipes": {
             "get": {
                 "description": "Get all recipes by user ID",
@@ -946,6 +986,44 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Cannot get all recipes",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/recipe/getEditRecipeDetail": {
+            "get": {
+                "description": "Get edit recipe details by recipe ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "recipe"
+                ],
+                "summary": "Get edit recipe details",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Recipe ID",
+                        "name": "recipe_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.GetEditRecipeDetail"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get edit recipe detail",
                         "schema": {
                             "$ref": "#/definitions/http.response"
                         }
@@ -2117,6 +2195,41 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.EditRecipeRequest": {
+            "type": "object",
+            "properties": {
+                "eng_instruction": {
+                    "type": "string"
+                },
+                "ingredients": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.AddRecipeIngredientRequest"
+                    }
+                },
+                "recipe_eng_name": {
+                    "type": "string"
+                },
+                "recipe_id": {
+                    "type": "string"
+                },
+                "recipe_thai_name": {
+                    "type": "string"
+                },
+                "servings": {
+                    "type": "string"
+                },
+                "thai_instruction": {
+                    "type": "string"
+                },
+                "total_hours": {
+                    "type": "string"
+                },
+                "total_mins": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.ExpirationDateSetting": {
             "type": "object",
             "properties": {
@@ -2268,6 +2381,58 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "supplier": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.GetEditRecipeDetail": {
+            "type": "object",
+            "properties": {
+                "eng_instruction": {
+                    "type": "string"
+                },
+                "ingredients": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.GetEditRecipeIngredientDetail"
+                    }
+                },
+                "recipe_eng_name": {
+                    "type": "string"
+                },
+                "recipe_thai_name": {
+                    "type": "string"
+                },
+                "servings": {
+                    "type": "string"
+                },
+                "thai_instruction": {
+                    "type": "string"
+                },
+                "total_hours": {
+                    "type": "string"
+                },
+                "total_mins": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.GetEditRecipeIngredientDetail": {
+            "type": "object",
+            "properties": {
+                "ingredient_id": {
+                    "type": "string"
+                },
+                "ingredient_name": {
+                    "type": "string"
+                },
+                "ingredient_quantity": {
+                    "type": "string"
+                },
+                "ingredient_unit": {
+                    "type": "string"
+                },
+                "ingredient_url": {
                     "type": "string"
                 }
             }
