@@ -232,3 +232,105 @@ func (ih *IngredientHandler) AddIngredientStock(c *fiber.Ctx) error {
 	handleSuccessMessage(c, "Successfully add ingredient stock")
 	return nil
 }
+
+// EditIngredient godoc
+// @Summary      Edit ingredient
+// @Description  Edit ingredient by using edit ingredient request
+// @Tags         ingredient
+// @Accept       json
+// @Produce      json
+// @Param        EditIngredientRequest  body  domain.EditIngredientRequest  true  "Edit Ingredient Request"
+// @Success      200  {object}  response  "Success"
+// @Failure      400  {object}  response  "Cannot edit ingredient"
+// @Router       /ingredient/editIngredient [put]
+func (ih *IngredientHandler) EditIngredient(c *fiber.Ctx) error {
+	var editIngredientRequest domain.EditIngredientRequest
+
+	if err := c.BodyParser(&editIngredientRequest); err != nil {
+		handleError(c, 400, "Cannot edit ingredient", err.Error())
+		return nil
+	}
+
+	err := ih.svc.EditIngredient(c, &editIngredientRequest)
+	if err != nil {
+		handleError(c, 400, "Cannot edit ingredient", err.Error())
+		return nil
+	}
+
+	handleSuccessMessage(c, "Successfully edit ingredient")
+	return nil
+}
+
+// GetAddEditIngredientDetail godoc
+// @Summary      Get add edit ingredient detail
+// @Description  Get add edit ingredient detail by ingredient ID
+// @Tags         ingredient
+// @Accept       json
+// @Produce      json
+// @Param        ingredient_id  query  string  true  "Ingredient ID"
+// @Success      200  {object}  domain.GetAddEditIngredientDetail  "Success"
+// @Failure      400  {object}  response     "Cannot get add edit ingredient detail"
+// @Router       /ingredient/getAddEditIngredientDetail [get]
+func (ih *IngredientHandler) GetAddEditIngredientDetail(c *fiber.Ctx) error {
+	ingredientID := c.Query("ingredient_id")
+
+	ingredient, err := ih.svc.GetAddEditIngredientDetail(c, ingredientID)
+	if err != nil {
+		handleError(c, 400, "Cannot get add edit ingredient detail", err.Error())
+		return nil
+	}
+
+	handleSuccess(c, ingredient)
+	return nil
+}
+
+// EditIngredientStock godoc
+// @Summary      Edit ingredient stock
+// @Description  Edit ingredient stock by using edit ingredient stock request
+// @Tags         ingredient
+// @Accept       json
+// @Produce      json
+// @Param        EditIngredientStockRequest  body  domain.EditIngredientStockRequest  true  "Edit Ingredient Stock Request"
+// @Success      200  {object}  response  "Success"
+// @Failure      400  {object}  response  "Cannot edit ingredient stock"
+// @Router       /ingredient/editIngredientStock [put]
+func (ih *IngredientHandler) EditIngredientStock(c *fiber.Ctx) error {
+	var editIngredientStockRequest domain.EditIngredientStockRequest
+
+	if err := c.BodyParser(&editIngredientStockRequest); err != nil {
+		handleError(c, 400, "Cannot edit ingredient stock", err.Error())
+		return nil
+	}
+
+	err := ih.svc.EditIngredientStock(c, &editIngredientStockRequest)
+	if err != nil {
+		handleError(c, 400, "Cannot edit ingredient stock", err.Error())
+		return nil
+	}
+
+	handleSuccessMessage(c, "Successfully edit ingredient stock")
+	return nil
+}
+
+// GetEditIngredientStockDetail godoc
+// @Summary      Get edit ingredient stock detail
+// @Description  Get edit ingredient stock detail by ingredient stock ID
+// @Tags         ingredient
+// @Accept       json
+// @Produce      json
+// @Param        ingredient_stock_id  query  string  true  "Ingredient Stock ID"
+// @Success      200  {object}  domain.GetEditIngredientStockDetail  "Success"
+// @Failure      400  {object}  response     "Cannot get edit ingredient stock detail"
+// @Router       /ingredient/getEditIngredientStockDetail [get]
+func (ih *IngredientHandler) GetEditIngredientStockDetail(c *fiber.Ctx) error {
+	ingredientStockID := c.Query("ingredient_stock_id")
+
+	ingredient, err := ih.svc.GetEditIngredientStockDetail(c, ingredientStockID)
+	if err != nil {
+		handleError(c, 400, "Cannot get edit ingredient stock detail", err.Error())
+		return nil
+	}
+
+	handleSuccess(c, ingredient)
+	return nil
+}

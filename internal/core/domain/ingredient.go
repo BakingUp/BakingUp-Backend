@@ -86,15 +86,15 @@ type AddIngredientImagePayload struct {
 }
 
 type AddIngredientStockRequest struct {
-	UserID		    string   `json:"user_id"`
-	IngredientID    string   `json:"ingredient_id"`
-	Price           string   `json:"price"`
-	Quantity        string   `json:"quantity"`
-	ExpirationDate  string   `json:"expiration_date"`
-	Supplier        string   `json:"supplier"`
-	IngredientBrand string   `json:"ingredient_brand"`
-	Img             string   `json:"img"`
-	Note            string   `json:"note"`
+	UserID          string `json:"user_id"`
+	IngredientID    string `json:"ingredient_id"`
+	Price           string `json:"price"`
+	Quantity        string `json:"quantity"`
+	ExpirationDate  string `json:"expiration_date"`
+	Supplier        string `json:"supplier"`
+	IngredientBrand string `json:"ingredient_brand"`
+	Img             string `json:"img"`
+	Note            string `json:"note"`
 }
 
 type AddIngredientStockPayload struct {
@@ -113,5 +113,59 @@ type AddIngredientNotePayload struct {
 	IngredientNoteID  string    `json:"ingredient_note_id"`
 	IngredientStockID string    `json:"ingredient_stock_id"`
 	Note              string    `json:"note"`
-	NoteCreatedAt	  time.Time `json:"note_created_at"`
+	NoteCreatedAt     time.Time `json:"note_created_at"`
+}
+
+type EditIngredientRequest struct {
+	UserID             string `json:"user_id"`
+	IngredientID       string `json:"ingredient_id"`
+	IngredientEngName  string `json:"ingredient_eng_name"`
+	IngredientThaiName string `json:"ingredient_thai_name"`
+	Unit               string `json:"unit"`
+	StockLessThan      string `json:"stock_less_than"`
+	DayBeforeExpire    string `json:"day_before_expire"`
+}
+
+type EditIngredientPayload struct {
+	IngredientID       string    `json:"ingredient_id"`
+	IngredientEngName  string    `json:"ingredient_name"`
+	IngredientThaiName string    `json:"ingredient_thai_name"`
+	StockLessThan      int       `json:"stock_less_than"`
+	DayBeforeExpire    time.Time `json:"day_before_expire"`
+}
+
+type GetAddEditIngredientDetail struct {
+	IngredientEngName  string `json:"ingredient_eng_name"`
+	IngredientThaiName string `json:"ingredient_thai_name"`
+	Unit               string `json:"unit"`
+	StockLessThan      string `json:"stock_less_than"`
+	DayBeforeExpire    string `json:"day_before_expire"`
+}
+
+type GetEditIngredientStockDetail struct {
+	IngredientStockID string `json:"ingredient_stock_id"`
+	Brand             string `json:"brand"`
+	Quantity          string `json:"quantity"`
+	Price             string `json:"price"`
+	Supplier          string `json:"supplier"`
+	ExpirationDate    string `json:"expiration_date"`
+}
+
+type EditIngredientStockRequest struct {
+	IngredientStockID string `json:"ingredient_stock_id"`
+	Brand             string `json:"brand"`
+	Quantity          string `json:"quantity"`
+	Price             string `json:"price"`
+	Supplier          string `json:"supplier"`
+	ExpirationDate    string `json:"expiration_date"`
+	Note 			  string `json:"note"`
+}
+
+type EditIngredientStockPayload struct {
+	IngredientStockID string    `json:"ingredient_stock_id"`
+	Brand             string    `json:"brand"`
+	Quantity          float64   `json:"quantity"`
+	Price             float64   `json:"price"`
+	Supplier          string    `json:"supplier"`
+	ExpirationDate    time.Time `json:"expiration_date"`
 }
