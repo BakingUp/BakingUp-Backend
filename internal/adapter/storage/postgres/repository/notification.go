@@ -23,6 +23,8 @@ func NewNotificationRepository(db *db.PrismaClient) *NotificationRepository {
 func (nr *NotificationRepository) GetAllNotifications(c *fiber.Ctx, userID string) ([]db.NotificationsModel, error) {
 	notifications, err := nr.db.Notifications.FindMany(
 		db.Notifications.UserID.Equals(userID),
+	).OrderBy(
+		db.Notifications.CreatedAt.Order(db.DESC),
 	).Exec(c.Context())
 
 	if err != nil {
