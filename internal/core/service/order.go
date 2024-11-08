@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+
 	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
 	"github.com/BakingUp/BakingUp-Backend/internal/core/port"
 	"github.com/BakingUp/BakingUp-Backend/internal/core/util"
@@ -11,12 +12,14 @@ import (
 type OrderService struct {
 	orderRepo   port.OrderRepository
 	userService port.UserService
+	notiService port.NotificationService
 }
 
-func NewOrderService(orderRepo port.OrderRepository, userService port.UserService) *OrderService {
+func NewOrderService(orderRepo port.OrderRepository, userService port.UserService, notiService port.NotificationService) *OrderService {
 	return &OrderService{
 		orderRepo:   orderRepo,
 		userService: userService,
+		notiService: notiService,
 	}
 }
 
@@ -188,6 +191,12 @@ func (s *OrderService) AddInStoreOrder(c *fiber.Ctx, inStoreOrder *domain.AddInS
 	if err != nil {
 		return err
 	}
+
+	err = s.notiService.InOrderNotification(c, inStoreOrder.OrderProducts, inStoreOrder.UserID)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

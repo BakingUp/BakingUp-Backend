@@ -22,7 +22,6 @@ type CreateNotificationItem struct {
 	EngTitle     string `json:"eng_title"`
 	ThaiMessage  string `json:"thai_message"`
 	EngMessage   string `json:"eng_message"`
-	CreatedAt    string `json:"created_at"`
 	IsRead       bool   `json:"is_read"`
 	NotiType     string `json:"noti_type"`
 	ItemID       string `json:"item_id"`

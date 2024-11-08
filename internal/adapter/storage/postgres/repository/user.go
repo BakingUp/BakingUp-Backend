@@ -57,6 +57,18 @@ func (ur *UserRepository) GetUser(c *fiber.Ctx, userID string) (*db.UsersModel, 
 	return user, nil
 }
 
+func (ur *UserRepository) GetDeviceToken(c *fiber.Ctx, userID string) (*string, error) {
+	deviceToken, err := ur.db.Devices.FindFirst(
+		db.Devices.UserID.Equals(userID),
+	).Exec(c.Context())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &deviceToken.DeviceToken, nil
+}
+
 func (ur *UserRepository) AddDeviceToken(req *domain.DeviceTokenRequest) error {
 	ctx := context.Background()
 	_, err := ur.db.Devices.CreateOne(

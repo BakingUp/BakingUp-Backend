@@ -59,6 +59,7 @@ func (s *StockService) GetAllStocks(c *fiber.Ctx, userID string) (*domain.StockL
 			}
 			stock.LST = stockItem.Lst
 			stock.SellingPrice = stockItem.SellingPrice
+			stock.StockLessThan = stockItem.StockLessThan
 		} else {
 			continue
 		}
@@ -297,12 +298,12 @@ func (s *StockService) GetStockRecipeDetail(c *fiber.Ctx, recipeID string) (*dom
 		}
 
 		stockRecipeIngredient := domain.StockRecipeIngredient{
-			IngredientID: 	    recipeIngredient.IngredientID,
+			IngredientID:       recipeIngredient.IngredientID,
 			IngredientName:     ingredientName,
 			IngredientURL:      ingredientURL,
 			IngredientQuantity: ingredientQuantity,
 			StockQuantity:      unexpiredIngredientQuantity,
-			Unit: 			 	string(recipeIngredient.Ingredient().Unit),
+			Unit:               string(recipeIngredient.Ingredient().Unit),
 		}
 
 		ingredients = append(ingredients, stockRecipeIngredient)

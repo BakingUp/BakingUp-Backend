@@ -3,13 +3,14 @@ package domain
 import "time"
 
 type StockItem struct {
-	StockId      string  `json:"stock_id"`
-	StockName    string  `json:"stock_name"`
-	StockURL     string  `json:"stock_url"`
-	Quantity     int     `json:"quantity"`
-	LST          int     `json:"lst"`
-	SellingPrice float64 `json:"selling_price"`
-	LSTStatus    string  `json:"lst_status"`
+	StockId       string  `json:"stock_id"`
+	StockName     string  `json:"stock_name"`
+	StockURL      string  `json:"stock_url"`
+	Quantity      int     `json:"quantity"`
+	LST           int     `json:"lst"`
+	SellingPrice  float64 `json:"selling_price"`
+	LSTStatus     string  `json:"lst_status"`
+	StockLessThan int     `json:"stock_less_than"`
 }
 
 type StockList struct {
@@ -75,7 +76,7 @@ type OrderStockList struct {
 }
 
 type StockRecipeIngredient struct {
-	IngredientID 	   string  `json:"ingredient_id"`
+	IngredientID       string  `json:"ingredient_id"`
 	IngredientName     string  `json:"ingredient_name"`
 	IngredientURL      string  `json:"ingredient_url"`
 	IngredientQuantity float64 `json:"ingredient_quantity"`

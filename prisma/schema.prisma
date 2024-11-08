@@ -51,7 +51,7 @@ model Notifications {
   thai_title   String
   eng_message  String
   thai_message String
-  created_at   DateTime
+  created_at   DateTime @default(now())
   is_read      Boolean
   noti_type    NotificationType
   item_id      String
@@ -275,7 +275,6 @@ model Stock_detail {
   sell_by_date             DateTime
   quantity                 Int
   note                     String?
-  cooking_time             DateTime
   cutting_stock            Cutting_stock[]
 }
 

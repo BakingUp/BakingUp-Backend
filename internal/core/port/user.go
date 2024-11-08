@@ -14,6 +14,7 @@ type UserRepository interface {
 	DeleteAllExceptDeviceToken(req *domain.DeviceTokenRequest) error
 	GetUserProductionQueue(c *fiber.Ctx, userID string) ([]db.OrdersModel, error)
 	EditUserInfo(c *fiber.Ctx, editUserRequest *domain.ManageUserRequest) error
+	GetDeviceToken(c *fiber.Ctx, userID string) (*string, error)
 }
 
 type UserService interface {

@@ -23,17 +23,19 @@ func main() {
 
 	app := fiber.New()
 	app.Static("/images", "./images")
-	config, err := config.New()
+	configVar, err := config.New()
 
 	if err != nil {
 		slog.Error("Error loading the configuration", "error", err)
 		os.Exit(1)
 	}
 
+	firebaseApp, _, _ := config.SetupFirebase()
+
 	client := infrastructure.InitializePrismaClient()
 	defer client.Disconnect()
 
-	http.SetupCORS(app, config.HTTP.AllowedOrigins)
+	http.SetupCORS(app, configVar.HTTP.AllowedOrigins)
 
 	userRepo := repository.NewUserRepository(client)
 	userService := service.NewUserService(userRepo)
@@ -52,17 +54,17 @@ func main() {
 	stockService := service.NewStockService(stockRepo, userService, ingredientService, recipeRepo)
 	stockHandler := http.NewStockHandler(stockService)
 
+	notificationRepo := repository.NewNotificationRepository(client)
+	notificationService := service.NewNotificationService(notificationRepo, userService, userRepo, stockService, firebaseApp)
+	notificationHandler := http.NewNotificationHandler(notificationService)
+
 	orderRepo := repository.NewOrderRespository(client)
-	orderService := service.NewOrderService(orderRepo, userService)
+	orderService := service.NewOrderService(orderRepo, userService, notificationService)
 	orderHandler := http.NewOrderHandler(orderService)
 
 	settingsRepo := repository.NewSettingsRepository(client)
 	settingsService := service.NewSettingsService(settingsRepo, userService)
 	settingsHandler := http.NewSetingsHandler(settingsService)
-
-	notificationRepo := repository.NewNotificationRepository(client)
-	notificationService := service.NewNotificationService(notificationRepo, userService)
-	notificationHandler := http.NewNotificationHandler(notificationService)
 
 	homeRepo := repository.NewHomeRepository(client)
 	homeService := service.NewHomeService(homeRepo, userService, settingsService, settingsRepo, recipeRepo, ingredientRepo)
@@ -70,7 +72,7 @@ func main() {
 
 	_, err = http.NewRouter(app, *ingredientHandler, *recipeHandler, *authHandler, *stockHandler, *userHandler, *orderHandler, *settingsHandler, *notificationHandler, *homeHandler)
 
-	port := config.HTTP.Port
+	port := configVar.HTTP.Port
 	if port == "" {
 		port = "8000"
 	}
