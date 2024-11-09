@@ -607,6 +607,44 @@ const docTemplate = `{
                 }
             }
         },
+        "/ingredient/getIngredientListsFromReceipt": {
+            "post": {
+                "description": "Get ingredient lists from receipt by using file",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ingredient"
+                ],
+                "summary": "Get ingredient lists from receipt",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "File",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.IngredientListFromReceiptResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get ingredient lists from receipt",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/ingredient/getIngredientStockDetail": {
             "get": {
                 "description": "Get ingredient stock details by ingredient stock ID",
@@ -2489,6 +2527,20 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.IngredientFromReceiptResponse": {
+            "type": "object",
+            "properties": {
+                "ingredient_name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.IngredientList": {
             "type": "object",
             "properties": {
@@ -2496,6 +2548,17 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/domain.Ingredient"
+                    }
+                }
+            }
+        },
+        "domain.IngredientListFromReceiptResponse": {
+            "type": "object",
+            "properties": {
+                "ingredients": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.IngredientFromReceiptResponse"
                     }
                 }
             }
