@@ -269,6 +269,19 @@ definitions:
       total_mins:
         type: string
     type: object
+  domain.EditStockRequest:
+    properties:
+      expiration_date:
+        type: string
+      lst:
+        type: string
+      recipe_id:
+        type: string
+      selling_price:
+        type: string
+      stock_less_than:
+        type: string
+    type: object
   domain.ExpirationDateSetting:
     properties:
       black_expiration_date:
@@ -402,6 +415,21 @@ definitions:
       ingredient_unit:
         type: string
       ingredient_url:
+        type: string
+    type: object
+  domain.GetEditStockDetail:
+    properties:
+      expiration_date:
+        type: string
+      lst:
+        type: string
+      recipe_name:
+        type: string
+      recipe_url:
+        type: string
+      selling_price:
+        type: string
+      stock_less_than:
         type: string
     type: object
   domain.Ingredient:
@@ -1797,6 +1825,33 @@ paths:
       summary: Delete a stock batch
       tags:
       - stock
+  /stock/editStock:
+    put:
+      consumes:
+      - application/json
+      description: Edit a stock by recipe ID, LST, selling price, stock less than,
+        and expiration date
+      parameters:
+      - description: Stock
+        in: body
+        name: stock
+        required: true
+        schema:
+          $ref: '#/definitions/domain.EditStockRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot edit a stock
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Edit a stock
+      tags:
+      - stock
   /stock/getAllStocks:
     get:
       consumes:
@@ -1820,6 +1875,31 @@ paths:
           schema:
             $ref: '#/definitions/http.response'
       summary: Get all stocks
+      tags:
+      - stock
+  /stock/getEditStockDetail:
+    get:
+      consumes:
+      - application/json
+      description: Get edit stock detail by recipe ID
+      parameters:
+      - description: Recipe ID
+        in: query
+        name: recipe_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/domain.GetEditStockDetail'
+        "400":
+          description: Cannot get edit stock detail
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get edit stock detail
       tags:
       - stock
   /stock/getStockBatch:

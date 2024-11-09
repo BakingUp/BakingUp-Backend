@@ -356,3 +356,49 @@ func (s *StockService) AddStockDetail(c *fiber.Ctx, stockDetail *domain.AddStock
 
 	return nil
 }
+
+func (s *StockService) EditStock(c *fiber.Ctx, stock *domain.EditStockRequest) error {
+	recipeID := stock.RecipeID
+	lst, _ := strconv.Atoi(stock.LST)
+	expirationDate := util.ExpirationDate(stock.ExpirationDate)
+	sellingPrice, _ := strconv.ParseFloat(stock.SellingPrice, 64)
+	stockLessThan, _ := strconv.Atoi(stock.StockLessThan)
+
+	editStock := &domain.EditStockPayload{
+		RecipeID:       recipeID,
+		LST:            lst,
+		ExpirationDate: expirationDate,
+		SellingPrice:   sellingPrice,
+		StockLessThan:  stockLessThan,
+	}
+
+	err := s.stockRepo.EditStock(c, editStock)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *StockService) GetEditStockDetail(c *fiber.Ctx, recipeID string) (*domain.GetEditStockDetail, error) {
+	stock, err := s.stockRepo.GetEditStockDetail(c, recipeID)
+	if err != nil {
+		return nil, err
+	}
+
+	language, err := s.userService.GetUserLanguage(c, stock.Recipe().UserID)
+	if err != nil {
+		return nil, err
+	}
+
+	editStockDetail := &domain.GetEditStockDetail{
+		LST:            strconv.Itoa(stock.Lst),
+		RecipeName:     util.GetRecipeName(stock.Recipe(), language),
+		RecipeURL:      stock.Recipe().RecipeImages()[0].RecipeURL,
+		SellingPrice:   strconv.FormatFloat(stock.SellingPrice, 'g', -1, 64),
+		StockLessThan:  strconv.Itoa(stock.StockLessThan),
+		ExpirationDate: strconv.Itoa(util.DaysSince2000(stock.DayBeforeExpired)),
+	}
+
+	return editStockDetail, nil
+}
