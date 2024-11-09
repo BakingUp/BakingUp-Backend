@@ -1,6 +1,8 @@
 package port
 
 import (
+	"mime/multipart"
+
 	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
 	"github.com/BakingUp/BakingUp-Backend/prisma/db"
 	"github.com/gofiber/fiber/v2"
@@ -25,6 +27,7 @@ type IngredientRepository interface {
 	GetAddEditIngredientDetail(c *fiber.Ctx, ingredientID string) (*db.IngredientsModel, error)
 	EditIngredientStock(c *fiber.Ctx, ingredientStock *domain.EditIngredientStockPayload) error
 	GetEditIngredientStockDetail(c *fiber.Ctx, ingredientStockID string) (*db.IngredientDetailModel, error)
+	GetIngredientListsFromReceipt(c *fiber.Ctx, file *multipart.FileHeader) (*domain.IngredientListFromReceiptModel, error)
 }
 
 type IngredientService interface {
@@ -43,4 +46,5 @@ type IngredientService interface {
 	GetAddEditIngredientDetail(c *fiber.Ctx, ingredientID string) (*domain.GetAddEditIngredientDetail, error)
 	EditIngredientStock(c *fiber.Ctx, ingredientStock *domain.EditIngredientStockRequest) error
 	GetEditIngredientStockDetail(c *fiber.Ctx, ingredientStockID string) (*domain.GetEditIngredientStockDetail, error)
+	GetIngredientListsFromReceipt(c *fiber.Ctx, file *multipart.FileHeader) (*domain.IngredientListFromReceiptResponse, error)
 }

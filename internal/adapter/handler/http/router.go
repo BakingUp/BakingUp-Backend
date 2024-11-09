@@ -49,6 +49,7 @@ func NewRouter(a *fiber.App, ingredientHandler IngredientHandler, recipeHandler 
 			ingredient.Get("/getAddEditIngredientDetail", ingredientHandler.GetAddEditIngredientDetail)
 			ingredient.Put("/editIngredientStock", ingredientHandler.EditIngredientStock)
 			ingredient.Get("/getEditIngredientStockDetail", ingredientHandler.GetEditIngredientStockDetail)
+			ingredient.Post("/getIngredientListsFromReceipt", ingredientHandler.GetIngredientListsFromReceipt)
 		}
 
 		recipe := api.Group("/recipe")

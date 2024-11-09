@@ -466,11 +466,27 @@ definitions:
           $ref: '#/definitions/domain.Stock'
         type: array
     type: object
+  domain.IngredientFromReceiptResponse:
+    properties:
+      ingredient_name:
+        type: string
+      price:
+        type: string
+      quantity:
+        type: string
+    type: object
   domain.IngredientList:
     properties:
       ingredients:
         items:
           $ref: '#/definitions/domain.Ingredient'
+        type: array
+    type: object
+  domain.IngredientListFromReceiptResponse:
+    properties:
+      ingredients:
+        items:
+          $ref: '#/definitions/domain.IngredientFromReceiptResponse'
         type: array
     type: object
   domain.IngredientNote:
@@ -1157,6 +1173,31 @@ paths:
           schema:
             $ref: '#/definitions/http.response'
       summary: Get ingredient details
+      tags:
+      - ingredient
+  /ingredient/getIngredientListsFromReceipt:
+    post:
+      consumes:
+      - application/json
+      description: Get ingredient lists from receipt by using file
+      parameters:
+      - description: File
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/domain.IngredientListFromReceiptResponse'
+        "400":
+          description: Cannot get ingredient lists from receipt
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get ingredient lists from receipt
       tags:
       - ingredient
   /ingredient/getIngredientStockDetail:
