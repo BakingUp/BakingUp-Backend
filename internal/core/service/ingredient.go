@@ -143,7 +143,7 @@ func (s *IngredientService) GetIngredientDetail(c *fiber.Ctx, ingredientID strin
 	sort.Slice(stockDetails, func(i, j int) bool {
 		dateI, _ := time.Parse("02/01/2006", stockDetails[i].ExpirationDate)
 		dateJ, _ := time.Parse("02/01/2006", stockDetails[j].ExpirationDate)
-		return dateI.After(dateJ)
+		return dateI.Before(dateJ)
 	})
 
 	stocks = append(stocks, stockDetails...)
@@ -529,9 +529,15 @@ func (s *IngredientService) BeforeExpiredIngredientNotifiation() error {
 				expiredDate, _ := time.Parse("02/01/2006", batch.ExpirationDate)
 				daysUntilExpire := int(math.Ceil(expiredDate.Sub(now).Hours() / 24))
 
-				if daysUntilExpire <= ingredient.DayBeforeExpire.Day() && daysUntilExpire >= 1 {
-					finalDaysUntilExpire = daysUntilExpire
-				} else if daysUntilExpire < 1 {
+				if daysUntilExpire <= ingredient.DayBeforeExpire.Day() {
+					if finalDaysUntilExpire == 0 {
+						finalDaysUntilExpire = daysUntilExpire
+					} else if finalDaysUntilExpire < 0 {
+						finalDaysUntilExpire = daysUntilExpire
+					} else {
+						finalDaysUntilExpire = int(math.Min(float64(finalDaysUntilExpire), float64(daysUntilExpire)))
+					}
+				} else {
 					break
 				}
 			}

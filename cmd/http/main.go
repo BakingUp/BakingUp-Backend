@@ -88,8 +88,12 @@ func main() {
 		),
 		gocron.NewTask(
 			func() {
-				err = ingredientService.BeforeExpiredIngredientNotifiation()
-				panic(err)
+				if err := ingredientService.BeforeExpiredIngredientNotifiation(); err != nil {
+					panic(err)
+				}
+				if err := stockService.BeforeExpiredStockNotifiation(); err != nil {
+					panic(err)
+				}
 			},
 		),
 	)

@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"math"
 	"sort"
 	"strconv"
 	"strings"
@@ -62,6 +63,7 @@ func (s *StockService) GetAllStocks(c *fiber.Ctx, userID string) (*domain.StockL
 
 		stock.StockName = util.GetRecipeName(&recipe, language)
 		if stockItem, ok := recipe.Stocks(); ok {
+			stock.DayBeforeExpire = stockItem.DayBeforeExpired
 			stock.StockId = stockItem.RecipeID
 			for _, stockDetail := range stockItem.StockDetail() {
 				if stockDetail.RecipeID == stockItem.RecipeID {
@@ -83,6 +85,7 @@ func (s *StockService) GetAllStocks(c *fiber.Ctx, userID string) (*domain.StockL
 		}
 
 		stock.LSTStatus = util.CalculateLstStatus(stock.LST, stock.Quantity)
+
 		stockItems = append(stockItems, stock)
 	}
 
@@ -466,5 +469,109 @@ func (s *StockService) AddStockDetailNotification(c *fiber.Ctx, ingredients []do
 		}
 	}
 
+	return nil
+}
+
+func (s *StockService) BeforeExpiredStockNotifiation() error {
+	users, err := s.userService.GetAllUsers()
+	if err != nil {
+		return err
+	}
+
+	for _, userId := range users {
+		deviceToken, err := s.userRepo.GetDeviceToken(userId)
+		if err != nil {
+			return err
+		}
+
+		stockList, err := s.GetAllStocks(nil, userId)
+		if err != nil {
+			return err
+		}
+
+		for _, stock := range stockList.Stocks {
+			stockDetail, err := s.GetStockDetail(nil, stock.StockId)
+			if err != nil {
+				return err
+			}
+
+			var stockName string
+			if len(stock.StockName) > 0 {
+				stockName = strings.ToLower(string(stock.StockName[0])) + stock.StockName[1:]
+			}
+
+			var finalDaysUntilExpire int
+			for _, batch := range stockDetail.StockDetails {
+				now := time.Now()
+				expiredDate, _ := time.Parse("02/01/2006", batch.SellByDate)
+				daysUntilExpire := int(math.Ceil(expiredDate.Sub(now).Hours() / 24))
+
+				if daysUntilExpire <= stock.DayBeforeExpire.Day() {
+					if finalDaysUntilExpire == 0 {
+						finalDaysUntilExpire = daysUntilExpire
+					} else if finalDaysUntilExpire < 0 {
+						finalDaysUntilExpire = daysUntilExpire
+					} else {
+						finalDaysUntilExpire = int(math.Min(float64(finalDaysUntilExpire), float64(daysUntilExpire)))
+					}
+				} else {
+					break
+				}
+			}
+
+			if finalDaysUntilExpire == stock.DayBeforeExpire.Day() {
+				err = config.SendToToken(
+					s.firebaseApp,
+					*deviceToken,
+					"Expiring Soon!",
+					fmt.Sprintf("Your %s is expiring soon (%d days)", stockName, finalDaysUntilExpire),
+				)
+				if err != nil {
+					return err
+				}
+
+				err = s.notiService.CreateNotification(nil, &domain.CreateNotificationItem{
+					UserID:       userId,
+					EngTitle:     "Expiring Soon!",
+					EngMessage:   fmt.Sprintf("Your %s is expiring soon (%d days)", stockName, finalDaysUntilExpire),
+					IsRead:       false,
+					NotiType:     "WARNING",
+					ItemID:       stock.StockId,
+					ItemName:     stockName,
+					NotiItemType: "STOCK",
+				})
+				if err != nil {
+					return err
+				}
+				break
+			} else if finalDaysUntilExpire == 1 {
+
+				err = config.SendToToken(
+					s.firebaseApp,
+					*deviceToken,
+					"Expiring Soon!",
+					fmt.Sprintf("Your %s is expiring soon (%d days)", stockName, finalDaysUntilExpire),
+				)
+				if err != nil {
+					return err
+				}
+
+				err = s.notiService.CreateNotification(nil, &domain.CreateNotificationItem{
+					UserID:       userId,
+					EngTitle:     "Expiring Soon!",
+					EngMessage:   fmt.Sprintf("Your %s is expiring soon (%d days)", stockName, finalDaysUntilExpire),
+					IsRead:       false,
+					NotiType:     "WARNING",
+					ItemID:       stock.StockId,
+					ItemName:     stockName,
+					NotiItemType: "STOCK",
+				})
+				if err != nil {
+					return err
+				}
+
+			}
+		}
+	}
 	return nil
 }

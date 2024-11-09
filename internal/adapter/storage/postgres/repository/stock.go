@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"time"
 
 	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
@@ -19,6 +20,11 @@ func NewStockRepository(db *db.PrismaClient) *StockRepository {
 }
 
 func (sr *StockRepository) GetAllStocks(c *fiber.Ctx, userID string) ([]db.RecipesModel, error) {
+	context := context.Background()
+	if c != nil {
+		context = c.Context()
+	}
+
 	recipes, err := sr.db.Recipes.FindMany(
 		db.Recipes.UserID.Equals(userID),
 	).With(
@@ -26,7 +32,7 @@ func (sr *StockRepository) GetAllStocks(c *fiber.Ctx, userID string) ([]db.Recip
 			db.Stocks.StockDetail.Fetch(),
 		),
 		db.Recipes.RecipeImages.Fetch(),
-	).Exec(c.Context())
+	).Exec(context)
 
 	if err != nil {
 		return nil, err
@@ -54,6 +60,10 @@ func (sr *StockRepository) GetAllStocks(c *fiber.Ctx, userID string) ([]db.Recip
 //}
 
 func (sr *StockRepository) GetStockDetail(c *fiber.Ctx, recipeID string) (*db.StocksModel, error) {
+	context := context.Background()
+	if c != nil {
+		context = c.Context()
+	}
 	stock, err := sr.db.Stocks.FindFirst(
 		db.Stocks.RecipeID.Equals(recipeID),
 	).With(
@@ -61,7 +71,7 @@ func (sr *StockRepository) GetStockDetail(c *fiber.Ctx, recipeID string) (*db.St
 			db.Recipes.RecipeImages.Fetch(),
 		),
 		db.Stocks.StockDetail.Fetch(),
-	).Exec((c.Context()))
+	).Exec(context)
 
 	if err != nil {
 		return nil, err
