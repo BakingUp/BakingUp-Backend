@@ -3,6 +3,13 @@ package repository
 import (
 	"context"
 
+	"bytes"
+	"encoding/json"
+	"io"
+	"mime/multipart"
+	"net/http"
+
+	"github.com/BakingUp/BakingUp-Backend/internal/adapter/config"
 	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
 	"github.com/BakingUp/BakingUp-Backend/prisma/db"
 	"github.com/gofiber/fiber/v2"
@@ -286,4 +293,62 @@ func (ir *IngredientRepository) GetEditIngredientStockDetail(c *fiber.Ctx, ingre
 	}
 
 	return ingredient, nil
+}
+
+func (ir *IngredientRepository) GetIngredientListsFromReceipt(c *fiber.Ctx, file *multipart.FileHeader) (*domain.IngredientListFromReceiptModel, error) {
+	config, err := config.New()
+
+	if err != nil {
+		return nil, err
+	}
+
+	// Open the file
+	f, err := file.Open()
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+
+	// Create a buffer to hold the file data
+	var buf bytes.Buffer
+	writer := multipart.NewWriter(&buf)
+	part, err := writer.CreateFormFile("file", file.Filename)
+	if err != nil {
+		return nil, err
+	}
+	_, err = io.Copy(part, f)
+	if err != nil {
+		return nil, err
+	}
+	writer.Close()
+
+	// Make the HTTP request to the other backend
+	req, err := http.NewRequest("POST", config.HTTP.ReceiptScannerURL+"/scan_receipt", &buf)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Content-Type", writer.FormDataContentType())
+	req.Header.Set("file", file.Filename)
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	// Read the response
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	// Unmarshal the response into the IngredientListFromReceiptModel
+	var ingredientList domain.IngredientListFromReceiptModel
+	err = json.Unmarshal(body, &ingredientList)
+	if err != nil {
+		return nil, err
+	}
+
+	return &ingredientList, nil
 }

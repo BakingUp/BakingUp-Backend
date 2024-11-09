@@ -334,3 +334,30 @@ func (ih *IngredientHandler) GetEditIngredientStockDetail(c *fiber.Ctx) error {
 	handleSuccess(c, ingredient)
 	return nil
 }
+
+// GetIngredientListsFromReceipt godoc
+// @Summary      Get ingredient lists from receipt
+// @Description  Get ingredient lists from receipt by using file
+// @Tags         ingredient
+// @Accept       json
+// @Produce      json
+// @Param        file  formData  file  true  "File"
+// @Success      200  {object}  domain.IngredientListFromReceiptResponse  "Success"
+// @Failure      400  {object}  response  "Cannot get ingredient lists from receipt"
+// @Router       /ingredient/getIngredientListsFromReceipt [post]
+func (ih *IngredientHandler) GetIngredientListsFromReceipt(c *fiber.Ctx) error {
+	file, err := c.FormFile("file")
+	if err != nil {
+		handleError(c, 400, "Cannot get ingredient lists from receipt", err.Error())
+		return nil
+	}
+
+	ingredientList, err := ih.svc.GetIngredientListsFromReceipt(c, file)
+	if err != nil {
+		handleError(c, 400, "Cannot get ingredient lists from receipt", err.Error())
+		return nil
+	}
+
+	handleSuccess(c, ingredientList)
+	return nil
+}

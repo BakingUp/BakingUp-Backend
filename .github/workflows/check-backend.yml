@@ -13,6 +13,7 @@ jobs:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
       HTTP_PORT: 8000
       HTTP_ALLOWED_ORIGINS: ${{ secrets.HTTP_ALLOWED_ORIGINS }}
+      RECEIPT_SCANNER_URL: ${{ secrets.RECEIPT_SCANNER_URL }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3

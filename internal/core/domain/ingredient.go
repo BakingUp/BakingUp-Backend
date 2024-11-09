@@ -171,3 +171,23 @@ type EditIngredientStockPayload struct {
 	Supplier          string    `json:"supplier"`
 	ExpirationDate    time.Time `json:"expiration_date"`
 }
+
+type IngredientFromReceiptModel struct {
+	IngredientName string `json:"ingredientName"`
+	Quantity       string `json:"quantity"`
+	Price          string `json:"price"`
+}
+
+type IngredientFromReceiptResponse struct {
+	IngredientName string `json:"ingredient_name"`
+	Quantity       string `json:"quantity"`
+	Price          string `json:"price"`
+}
+
+type IngredientListFromReceiptModel struct {
+	Ingredients []IngredientFromReceiptModel `json:"ingredients"`
+}
+
+type IngredientListFromReceiptResponse struct {
+	Ingredients []IngredientFromReceiptResponse `json:"ingredients"`
+}

@@ -3,6 +3,7 @@ package service
 import (
 	"fmt"
 	"math"
+	"mime/multipart"
 	"sort"
 	"strconv"
 	"strings"
@@ -598,4 +599,27 @@ func (s *IngredientService) BeforeExpiredIngredientNotifiation() error {
 
 	}
 	return nil
+}
+
+func (s *IngredientService) GetIngredientListsFromReceipt(c *fiber.Ctx, file *multipart.FileHeader) (*domain.IngredientListFromReceiptResponse, error) {
+	ingredientList, err := s.ingredientRepo.GetIngredientListsFromReceipt(c, file)
+	if err != nil {
+		return nil, err
+	}
+
+	var ingredientListResponse []domain.IngredientFromReceiptResponse
+
+	for _, ingredient := range ingredientList.Ingredients {
+		ingredientListResponse = append(ingredientListResponse, domain.IngredientFromReceiptResponse{
+			IngredientName: ingredient.IngredientName,
+			Quantity:       ingredient.Quantity,
+			Price:          ingredient.Price,
+		})
+	}
+
+	ingredientListFromReceipt := &domain.IngredientListFromReceiptResponse{
+		Ingredients: ingredientListResponse,
+	}
+
+	return ingredientListFromReceipt, nil
 }
