@@ -222,3 +222,54 @@ func (sh *StockHandler) AddStockDetail(c *fiber.Ctx) error {
 	handleSuccess(c, nil)
 	return nil
 }
+
+// EditStock godoc
+// @Summary      Edit a stock
+// @Description  Edit a stock by recipe ID, LST, selling price, stock less than, and expiration date
+// @Tags         stock
+// @Accept       json
+// @Produce      json
+// @Param        stock  body  domain.EditStockRequest  true  "Stock"
+// @Success      200  {object}  response  "Success"
+// @Failure      400  {object}  response     "Cannot edit a stock"
+// @Router       /stock/editStock [put]
+func (sh *StockHandler) EditStock(c *fiber.Ctx) error {
+	var editStockRequest domain.EditStockRequest
+
+	if err := c.BodyParser(&editStockRequest); err != nil {
+		handleError(c, 400, "Cannot edit a stock.", err.Error())
+		return nil
+	}
+
+	err := sh.svc.EditStock(c, &editStockRequest)
+	if err != nil {
+		handleError(c, 400, "Cannot edit a stock.", err.Error())
+		return nil
+	}
+
+	handleSuccess(c, nil)
+	return nil
+}
+
+// GetEditStockDetail godoc
+// @Summary      Get edit stock detail
+// @Description  Get edit stock detail by recipe ID
+// @Tags         stock
+// @Accept       json
+// @Produce      json
+// @Param        recipe_id  query  string  true  "Recipe ID"
+// @Success      200  {object}  domain.GetEditStockDetail  "Success"
+// @Failure      400  {object}  response     "Cannot get edit stock detail"
+// @Router       /stock/getEditStockDetail [get]
+func (sh *StockHandler) GetEditStockDetail(c *fiber.Ctx) error {
+	recipeID := c.Query("recipe_id")
+
+	stock, err := sh.svc.GetEditStockDetail(c, recipeID)
+	if err != nil {
+		handleError(c, 400, "Cannot get edit stock detail.", err.Error())
+		return nil
+	}
+
+	handleSuccess(c, stock)
+	return nil
+}

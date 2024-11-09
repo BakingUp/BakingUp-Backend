@@ -1624,6 +1624,46 @@ const docTemplate = `{
                 }
             }
         },
+        "/stock/editStock": {
+            "put": {
+                "description": "Edit a stock by recipe ID, LST, selling price, stock less than, and expiration date",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stock"
+                ],
+                "summary": "Edit a stock",
+                "parameters": [
+                    {
+                        "description": "Stock",
+                        "name": "stock",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.EditStockRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot edit a stock",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/stock/getAllStocks": {
             "get": {
                 "description": "Get all stocks by user ID",
@@ -1655,6 +1695,44 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Cannot get all stocks",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/stock/getEditStockDetail": {
+            "get": {
+                "description": "Get edit stock detail by recipe ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stock"
+                ],
+                "summary": "Get edit stock detail",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Recipe ID",
+                        "name": "recipe_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.GetEditStockDetail"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get edit stock detail",
                         "schema": {
                             "$ref": "#/definitions/http.response"
                         }
@@ -2230,6 +2308,26 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.EditStockRequest": {
+            "type": "object",
+            "properties": {
+                "expiration_date": {
+                    "type": "string"
+                },
+                "lst": {
+                    "type": "string"
+                },
+                "recipe_id": {
+                    "type": "string"
+                },
+                "selling_price": {
+                    "type": "string"
+                },
+                "stock_less_than": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.ExpirationDateSetting": {
             "type": "object",
             "properties": {
@@ -2433,6 +2531,29 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "ingredient_url": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.GetEditStockDetail": {
+            "type": "object",
+            "properties": {
+                "expiration_date": {
+                    "type": "string"
+                },
+                "lst": {
+                    "type": "string"
+                },
+                "recipe_name": {
+                    "type": "string"
+                },
+                "recipe_url": {
+                    "type": "string"
+                },
+                "selling_price": {
+                    "type": "string"
+                },
+                "stock_less_than": {
                     "type": "string"
                 }
             }

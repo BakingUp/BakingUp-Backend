@@ -110,3 +110,28 @@ type AddStockDetailPayload struct {
 	Quantity      int       `json:"quantity"`
 	Note          string    `json:"note"`
 }
+
+type EditStockRequest struct {
+	RecipeID       string `json:"recipe_id"`
+	LST            string `json:"lst"`
+	SellingPrice   string `json:"selling_price"`
+	StockLessThan  string `json:"stock_less_than"`
+	ExpirationDate string `json:"expiration_date"`
+}
+
+type EditStockPayload struct {
+	RecipeID       string    `json:"recipe_id"`
+	LST            int       `json:"lst"`
+	SellingPrice   float64   `json:"selling_price"`
+	StockLessThan  int       `json:"stock_less_than"`
+	ExpirationDate time.Time `json:"expiration_date"`
+}
+
+type GetEditStockDetail struct {
+	LST            string `json:"lst"`
+	RecipeName     string `json:"recipe_name"`
+	RecipeURL      string `json:"recipe_url"`
+	SellingPrice   string `json:"selling_price"`
+	StockLessThan  string `json:"stock_less_than"`
+	ExpirationDate string `json:"expiration_date"`
+}
