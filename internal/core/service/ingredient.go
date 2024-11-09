@@ -623,3 +623,114 @@ func (s *IngredientService) GetIngredientListsFromReceipt(c *fiber.Ctx, file *mu
 
 	return ingredientListFromReceipt, nil
 }
+
+func (s *IngredientService) GetAllIngredientIDsAndNames(c *fiber.Ctx, userID string) (*domain.AllIngredientIDsAndNames, error) {
+	ingredientList, err := s.ingredientRepo.GetAllIngredientIDsAndNames(c, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	var ingredientListResponse []domain.IngredientIDandName
+
+	for _, ingredient := range ingredientList {
+		ingredientListResponse = append(ingredientListResponse, domain.IngredientIDandName{
+			IngredientID:       ingredient.IngredientID,
+			IngredientEngName:  ingredient.IngredientEngName,
+			IngredientThaiName: ingredient.IngredientThaiName,
+		})
+	}
+
+	ingredientListFromReceipt := &domain.AllIngredientIDsAndNames{
+		Ingredients: ingredientListResponse,
+	}
+
+	return ingredientListFromReceipt, nil
+}
+
+func (s *IngredientService) AddIngredientAndStock(c *fiber.Ctx, ingredientAndStock *domain.AddIngredientAndStockRequest) error {
+	userID := ingredientAndStock.UserID
+	ingredientID := uuid.NewString()
+	dayBeforeExpire := util.ExpirationDate(ingredientAndStock.DayBeforeExpire)
+	stockLessThan, _ := strconv.Atoi(ingredientAndStock.StockLessThan)
+
+	addIngredientPayload := &domain.AddIngredientPayload{
+		UserID:             userID,
+		IngredientID:       ingredientID,
+		IngredientEngName:  ingredientAndStock.IngredientEngName,
+		IngredientThaiName: ingredientAndStock.IngredientThaiName,
+		StockLessThan:      stockLessThan,
+		Unit:               ingredientAndStock.Unit,
+		DayBeforeExpire:    dayBeforeExpire,
+	}
+	err := s.ingredientRepo.AddIngredient(c, addIngredientPayload)
+
+	if err != nil {
+		return err
+	}
+
+	ingredientStockID := uuid.NewString()
+	ingredientNoteID := uuid.NewString()
+	price, _ := strconv.ParseFloat(ingredientAndStock.Price, 64)
+	quantity, _ := strconv.ParseFloat(ingredientAndStock.Quantity, 64)
+	expirationDate, _ := time.Parse("02/01/2006", ingredientAndStock.ExpirationDate)
+	noteCreatedAt := time.Now()
+	ingredientStockImg := ingredientAndStock.Img
+
+	commonPayload := domain.AddIngredientStockPayload{
+		IngredientStockID:  ingredientStockID,
+		IngredientID:       ingredientID,
+		IngredientQuantity: quantity,
+		Price:              price,
+		ExpirationDate:     expirationDate,
+		IngredientSupplier: ingredientAndStock.Supplier,
+		IngredientBrand:    ingredientAndStock.Brand,
+		Note:               ingredientAndStock.Note,
+	}
+
+	if ingredientStockImg != "" {
+		imgIndex := 1
+
+		imgUrl, err := util.UploadIngredientImage(userID, ingredientID, ingredientStockImg, strconv.Itoa(imgIndex))
+		if err != nil {
+			return err
+		}
+		addIngredientImagePayload := &domain.AddIngredientImagePayload{
+			IngredientID: ingredientID,
+			ImgUrl:       imgUrl,
+			ImageIndex:   strconv.Itoa(imgIndex),
+		}
+		err = s.ingredientRepo.AddIngredientImage(c, addIngredientImagePayload)
+		if err != nil {
+			return err
+		}
+		imgIndex++
+		ingredientStockURL, err := util.UploadIngredientStockImage(userID, ingredientID, ingredientStockID, ingredientStockImg)
+		if err != nil {
+			return err
+		}
+		commonPayload.IngredientStockURL = ingredientStockURL
+	}
+
+	ingredientStockPayload := &commonPayload
+
+	err = s.ingredientRepo.AddIngredientStock(c, ingredientStockPayload)
+	if err != nil {
+		return err
+	}
+
+	if ingredientAndStock.Note != "" {
+		ingredientNote := &domain.AddIngredientNotePayload{
+			IngredientNoteID:  ingredientNoteID,
+			IngredientStockID: ingredientStockID,
+			Note:              ingredientAndStock.Note,
+			NoteCreatedAt:     noteCreatedAt,
+		}
+
+		err = s.ingredientRepo.AddIngredientNote(c, ingredientNote)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}

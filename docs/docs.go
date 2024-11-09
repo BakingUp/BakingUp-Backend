@@ -143,6 +143,46 @@ const docTemplate = `{
                 }
             }
         },
+        "/ingredient/addIngredientAndStock": {
+            "post": {
+                "description": "Add ingredient and stock by using add ingredient and stock request",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ingredient"
+                ],
+                "summary": "Add ingredient and stock",
+                "parameters": [
+                    {
+                        "description": "Add Ingredient And Stock Request",
+                        "name": "AddIngredientAndStockRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.AddIngredientAndStockRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot add ingredient and stock",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
         "/ingredient/addIngredientStock": {
             "post": {
                 "description": "Add ingredient stock by using ingredient stock request",
@@ -486,6 +526,44 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Cannot get add edit ingredient stock detail",
+                        "schema": {
+                            "$ref": "#/definitions/http.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/ingredient/getAllIngredientIDsAndNames": {
+            "get": {
+                "description": "Get all ingredient IDs and names by user ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ingredient"
+                ],
+                "summary": "Get all ingredient IDs and names",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/domain.AllIngredientIDsAndNames"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot get all ingredient IDs and names",
                         "schema": {
                             "$ref": "#/definitions/http.response"
                         }
@@ -1948,6 +2026,50 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.AddIngredientAndStockRequest": {
+            "type": "object",
+            "properties": {
+                "brand": {
+                    "type": "string"
+                },
+                "day_before_expire": {
+                    "type": "string"
+                },
+                "expiration_date": {
+                    "type": "string"
+                },
+                "img": {
+                    "type": "string"
+                },
+                "ingredient_eng_name": {
+                    "type": "string"
+                },
+                "ingredient_thai_name": {
+                    "type": "string"
+                },
+                "note": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "string"
+                },
+                "stock_less_than": {
+                    "type": "string"
+                },
+                "supplier": {
+                    "type": "string"
+                },
+                "unit": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.AddIngredientRequest": {
             "type": "object",
             "properties": {
@@ -2121,6 +2243,17 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.AllIngredientIDsAndNames": {
+            "type": "object",
+            "properties": {
+                "ingredients": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.IngredientIDandName"
+                    }
+                }
+            }
+        },
         "domain.ChangeExpirationDateSetting": {
             "type": "object",
             "properties": {
@@ -2207,9 +2340,6 @@ const docTemplate = `{
         "domain.CreateNotificationItem": {
             "type": "object",
             "properties": {
-                "created_at": {
-                    "type": "string"
-                },
                 "eng_message": {
                     "type": "string"
                 },
@@ -2599,11 +2729,17 @@ const docTemplate = `{
         "domain.Ingredient": {
             "type": "object",
             "properties": {
+                "day_before_expire": {
+                    "type": "string"
+                },
                 "expiration_status": {
                     "type": "string"
                 },
                 "ingredient_id": {
                     "type": "string"
+                },
+                "ingredient_less_than": {
+                    "type": "number"
                 },
                 "ingredient_name": {
                     "type": "string"
@@ -2658,6 +2794,20 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "quantity": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.IngredientIDandName": {
+            "type": "object",
+            "properties": {
+                "ingredient_eng_name": {
+                    "type": "string"
+                },
+                "ingredient_id": {
+                    "type": "string"
+                },
+                "ingredient_thai_name": {
                     "type": "string"
                 }
             }
@@ -2986,6 +3136,9 @@ const docTemplate = `{
         "domain.StockItem": {
             "type": "object",
             "properties": {
+                "day_before_expire": {
+                    "type": "string"
+                },
                 "lst": {
                     "type": "integer"
                 },
@@ -3000,6 +3153,9 @@ const docTemplate = `{
                 },
                 "stock_id": {
                     "type": "string"
+                },
+                "stock_less_than": {
+                    "type": "integer"
                 },
                 "stock_name": {
                     "type": "string"

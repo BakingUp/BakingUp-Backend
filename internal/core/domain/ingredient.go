@@ -191,3 +191,29 @@ type IngredientListFromReceiptModel struct {
 type IngredientListFromReceiptResponse struct {
 	Ingredients []IngredientFromReceiptResponse `json:"ingredients"`
 }
+
+type IngredientIDandName struct {
+	IngredientID       string `json:"ingredient_id"`
+	IngredientEngName  string `json:"ingredient_eng_name"`
+	IngredientThaiName string `json:"ingredient_thai_name"`
+}
+
+type AllIngredientIDsAndNames struct {
+	Ingredients []IngredientIDandName `json:"ingredients"`
+}
+
+type AddIngredientAndStockRequest struct {
+	UserID             string `json:"user_id"`
+	IngredientEngName  string `json:"ingredient_eng_name"`
+	IngredientThaiName string `json:"ingredient_thai_name"`
+	Unit               string `json:"unit"`
+	StockLessThan      string `json:"stock_less_than"`
+	DayBeforeExpire    string `json:"day_before_expire"`
+	Price              string `json:"price"`
+	Quantity           string `json:"quantity"`
+	ExpirationDate     string `json:"expiration_date"`
+	Supplier           string `json:"supplier"`
+	Brand              string `json:"brand"`
+	Img                string `json:"img"`
+	Note               string `json:"note"`
+}
