@@ -342,7 +342,7 @@ func (hs *HomeService) GetDashboardChartData(c *fiber.Ctx, userID string, startD
 					costRevenueItem := domain.CostRevenueChartItem{
 						Month:     month,
 						Revenue:   revenue,
-						Cost:      cost,
+						Cost:      cost + fixCostList[month],
 						NetProfit: profit - fixCostList[month],
 					}
 
