@@ -160,3 +160,36 @@ func (sr *StockRepository) AddStockDetail(c *fiber.Ctx, stockDetail *domain.AddS
 
 	return nil
 }
+
+func (sr *StockRepository) EditStock(c *fiber.Ctx, stock *domain.EditStockPayload) error {
+	_, err := sr.db.Stocks.FindUnique(
+		db.Stocks.RecipeID.Equals(stock.RecipeID),
+	).Update(
+		db.Stocks.Lst.Set(stock.LST),
+		db.Stocks.SellingPrice.Set(stock.SellingPrice),
+		db.Stocks.StockLessThan.Set(stock.StockLessThan),
+		db.Stocks.DayBeforeExpired.Set(stock.ExpirationDate),
+	).Exec(c.Context())
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (sr *StockRepository) GetEditStockDetail(c *fiber.Ctx, recipeID string) (*db.StocksModel, error) {
+	stock, err := sr.db.Stocks.FindFirst(
+		db.Stocks.RecipeID.Equals(recipeID),
+	).With(
+		db.Stocks.Recipe.Fetch().With(
+			db.Recipes.RecipeImages.Fetch(),
+		),
+	).Exec(c.Context())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return stock, nil
+}
