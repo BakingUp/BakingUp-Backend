@@ -1,10 +1,14 @@
 package service
 
 import (
+	"fmt"
 	"sort"
 	"strconv"
+	"strings"
 	"time"
 
+	firebase "firebase.google.com/go"
+	"github.com/BakingUp/BakingUp-Backend/internal/adapter/config"
 	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
 	"github.com/BakingUp/BakingUp-Backend/internal/core/port"
 	"github.com/BakingUp/BakingUp-Backend/internal/core/util"
@@ -15,17 +19,23 @@ import (
 
 type StockService struct {
 	stockRepo         port.StockRepository
+	userRepo          port.UserRepository
 	userService       port.UserService
 	ingredientService port.IngredientService
 	recipeRepo        port.RecipeRepository
+	notiService       port.NotificationService
+	firebaseApp       *firebase.App
 }
 
-func NewStockService(stockRepo port.StockRepository, userService port.UserService, ingredientService port.IngredientService, recipeRepo port.RecipeRepository) *StockService {
+func NewStockService(stockRepo port.StockRepository, userRepo port.UserRepository, userService port.UserService, ingredientService port.IngredientService, recipeRepo port.RecipeRepository, notiService port.NotificationService, firebaseApp *firebase.App) *StockService {
 	return &StockService{
 		stockRepo:         stockRepo,
+		userRepo:          userRepo,
 		userService:       userService,
 		ingredientService: ingredientService,
 		recipeRepo:        recipeRepo,
+		notiService:       notiService,
+		firebaseApp:       firebaseApp,
 	}
 }
 
@@ -320,6 +330,16 @@ func (s *StockService) GetStockRecipeDetail(c *fiber.Ctx, recipeID string) (*dom
 	return stockRecipeDetail, nil
 }
 
+func (s *StockService) GetUserIDByStockDetail(c *fiber.Ctx, stockID string) (*string, error) {
+
+	recipe, err := s.recipeRepo.GetRecipeDetail(c, stockID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &recipe.UserID, nil
+}
+
 func (s *StockService) AddStockDetail(c *fiber.Ctx, stockDetail *domain.AddStockDetailRequest) error {
 	recipeID := stockDetail.RecipeID
 	timeFormat := "02/01/2006"
@@ -352,6 +372,97 @@ func (s *StockService) AddStockDetail(c *fiber.Ctx, stockDetail *domain.AddStock
 
 		if err != nil {
 			return err
+		}
+	}
+
+	err = s.AddStockDetailNotification(c, stockDetail.Ingredients, stockDetail.RecipeID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *StockService) AddStockDetailNotification(c *fiber.Ctx, ingredients []domain.AddStockIngredientDetailRequest, stockID string) error {
+
+	userId, err := s.GetUserIDByStockDetail(c, stockID)
+	if err != nil {
+		return err
+	}
+
+	ingredientList, err := s.ingredientService.GetAllIngredients(c, *userId)
+	if err != nil {
+		return err
+	}
+
+	ingredientBatchs := make(map[string]string)
+
+	for _, item := range ingredients {
+		ingredientBatchs[item.IngredientID] = item.IngredientID
+	}
+
+	for _, ingredient := range ingredientList.Ingredients {
+		parts := strings.Fields(ingredient.Quantity)
+
+		quantity, _ := strconv.ParseFloat(parts[0], 64)
+
+		if ingredient.IngredientId == ingredientBatchs[ingredient.IngredientId] && quantity < ingredient.IngredienLessThan {
+
+			deviceToken, err := s.userRepo.GetDeviceToken(c, *userId)
+			if err != nil {
+				return err
+			}
+
+			if quantity == 0 {
+				err = config.SendToToken(
+					s.firebaseApp,
+					*deviceToken,
+					"Restock Reminder!",
+					fmt.Sprintf("%s is running out", ingredient.IngredientName),
+				)
+				if err != nil {
+					return err
+				}
+
+				err = s.notiService.CreateNotification(c, &domain.CreateNotificationItem{
+					UserID:       *userId,
+					EngTitle:     "Restock Reminder!",
+					EngMessage:   fmt.Sprintf("%s is running out", ingredient.IngredientName),
+					IsRead:       false,
+					NotiType:     "ALERT",
+					ItemID:       ingredient.IngredientId,
+					ItemName:     ingredient.IngredientName,
+					NotiItemType: "INGREDIENT",
+				})
+				if err != nil {
+					return err
+				}
+			} else {
+				err = config.SendToToken(
+					s.firebaseApp,
+					*deviceToken,
+					"Stock Up Time!",
+					fmt.Sprintf("%s is running low. Only %.2f left in stock", ingredient.IngredientName, quantity),
+				)
+				if err != nil {
+					return err
+				}
+				err = s.notiService.CreateNotification(c, &domain.CreateNotificationItem{
+					UserID:       *userId,
+					EngTitle:     "Stock Up Time!",
+					EngMessage:   fmt.Sprintf("%s is running low. Only %.2f left in stock", ingredient.IngredientName, quantity),
+					IsRead:       false,
+					NotiType:     "WARNING",
+					ItemID:       ingredient.IngredientId,
+					ItemName:     ingredient.IngredientName,
+					NotiItemType: "INGREDIENT",
+				})
+
+				if err != nil {
+					return err
+				}
+			}
+
 		}
 	}
 

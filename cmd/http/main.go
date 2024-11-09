@@ -50,13 +50,13 @@ func main() {
 	recipeService := service.NewRecipeService(recipeRepo, userService)
 	recipeHandler := http.NewRecipeHandler(recipeService)
 
-	stockRepo := repository.NewStockRepository(client)
-	stockService := service.NewStockService(stockRepo, userService, ingredientService, recipeRepo)
-	stockHandler := http.NewStockHandler(stockService)
-
 	notificationRepo := repository.NewNotificationRepository(client)
 	notificationService := service.NewNotificationService(notificationRepo, userService, userRepo, firebaseApp)
 	notificationHandler := http.NewNotificationHandler(notificationService)
+
+	stockRepo := repository.NewStockRepository(client)
+	stockService := service.NewStockService(stockRepo, userRepo, userService, ingredientService, recipeRepo, notificationService, firebaseApp)
+	stockHandler := http.NewStockHandler(stockService)
 
 	orderRepo := repository.NewOrderRespository(client)
 	orderService := service.NewOrderService(orderRepo, userRepo, userService, notificationService, stockService, firebaseApp)

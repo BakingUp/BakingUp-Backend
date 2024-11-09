@@ -48,11 +48,11 @@ func (s *IngredientService) GetAllIngredients(c *fiber.Ctx, userID string) (*dom
 	var ingredientItems []domain.Ingredient
 	for _, item := range ingredients {
 		var stockAmount int
-		var stockQuantity int
+		var stockQuantity float64
 		var stockExpirationDate time.Time
 		var IImage string
 		for _, ingredientDetailItem := range item.IngredientDetail() {
-			stockQuantity += int(ingredientDetailItem.IngredientQuantity)
+			stockQuantity += ingredientDetailItem.IngredientQuantity
 			if stockAmount == 0 {
 				stockExpirationDate = ingredientDetailItem.ExpirationDate
 			} else if ingredientDetailItem.ExpirationDate.Before(stockExpirationDate) {
@@ -71,12 +71,13 @@ func (s *IngredientService) GetAllIngredients(c *fiber.Ctx, userID string) (*dom
 		unit := string(item.Unit)
 		unit = strings.ToLower(unit)
 		ingredientItem := &domain.Ingredient{
-			IngredientId:     item.IngredientID,
-			IngredientName:   util.GetIngredientName(&item, language),
-			Quantity:         fmt.Sprintf("%d %s", stockQuantity, unit),
-			Stock:            stockAmount,
-			IngredientURL:    IImage,
-			ExpirationStatus: util.CalculateExpirationStatus(stockExpirationDate, expirationDate.BlackExpirationDate, expirationDate.RedExpirationDate, expirationDate.YellowExpirationDate),
+			IngredientId:      item.IngredientID,
+			IngredientName:    util.GetIngredientName(&item, language),
+			Quantity:          fmt.Sprintf("%.2f %s", stockQuantity, unit),
+			Stock:             stockAmount,
+			IngredienLessThan: item.IngredientLessThan,
+			IngredientURL:     IImage,
+			ExpirationStatus:  util.CalculateExpirationStatus(stockExpirationDate, expirationDate.BlackExpirationDate, expirationDate.RedExpirationDate, expirationDate.YellowExpirationDate),
 		}
 
 		ingredientItems = append(ingredientItems, *ingredientItem)
