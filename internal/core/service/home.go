@@ -115,6 +115,14 @@ func (hs *HomeService) GetTopProducts(c *fiber.Ctx, userID string, chartType str
 			profitProducts := (productSellingPrice[name].SellingPrice - productSellingPrice[name].Cost) * float64(quantity)
 			profitMargin := ((profitRevenue - profitProducts) / profitRevenue) * 100
 			profitRatio := ((profitProducts - allFixCost) / profitRevenue) * 100
+
+			if math.IsNaN(profitMargin) {
+				profitMargin = 0
+			}
+
+			if math.IsInf(profitRatio, 0) {
+				profitRatio = 0
+			}
 			switch chartType {
 			case "Top Profit Revenue":
 				productList[i].Detail = fmt.Sprintf("%.2f baht", profitRevenue)
