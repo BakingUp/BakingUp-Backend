@@ -525,8 +525,8 @@ func (s *IngredientService) BeforeExpiredIngredientNotifiation() error {
 
 			var finalDaysUntilExpire int
 			for _, batch := range ingredientDetail.Stocks {
-				now := time.Now()
-				expiredDate, _ := time.Parse("02/01/2006", batch.ExpirationDate)
+				expiredDate, _ := time.ParseInLocation("02/01/2006", batch.ExpirationDate, time.Local)
+				now := time.Now().In(time.Local)
 				daysUntilExpire := int(math.Ceil(expiredDate.Sub(now).Hours() / 24))
 
 				if daysUntilExpire <= ingredient.DayBeforeExpire.Day() {

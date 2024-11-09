@@ -3,7 +3,6 @@ package main
 import (
 	"log/slog"
 	"os"
-	"time"
 
 	_ "github.com/BakingUp/BakingUp-Backend/docs"
 	"github.com/BakingUp/BakingUp-Backend/internal/adapter/config"
@@ -83,8 +82,8 @@ func main() {
 	}
 
 	s.NewJob(
-		gocron.DurationJob(
-			10*time.Second,
+		gocron.DailyJob(
+			1, gocron.NewAtTimes(gocron.NewAtTime(12, 0, 0)),
 		),
 		gocron.NewTask(
 			func() {
@@ -92,6 +91,9 @@ func main() {
 					panic(err)
 				}
 				if err := stockService.BeforeExpiredStockNotifiation(); err != nil {
+					panic(err)
+				}
+				if err := orderService.BeforePickUpPreOrderNotifiation(); err != nil {
 					panic(err)
 				}
 			},

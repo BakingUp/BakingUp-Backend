@@ -24,4 +24,5 @@ type OrderService interface {
 	EditOrderStatus(c *fiber.Ctx, orderStatue *domain.EditOrderStatusRequest) error
 	AddOrderNotification(c *fiber.Ctx, orderProducts []domain.OrderProduct, userId string) error
 	EditPreOrderStatusNotification(c *fiber.Ctx, orderID string) error
+	BeforePickUpPreOrderNotifiation() error
 }

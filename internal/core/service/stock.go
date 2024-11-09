@@ -502,8 +502,8 @@ func (s *StockService) BeforeExpiredStockNotifiation() error {
 
 			var finalDaysUntilExpire int
 			for _, batch := range stockDetail.StockDetails {
-				now := time.Now()
-				expiredDate, _ := time.Parse("02/01/2006", batch.SellByDate)
+				expiredDate, _ := time.ParseInLocation("02/01/2006", batch.SellByDate, time.Local)
+				now := time.Now().In(time.Local)
 				daysUntilExpire := int(math.Ceil(expiredDate.Sub(now).Hours() / 24))
 
 				if daysUntilExpire <= stock.DayBeforeExpire.Day() {

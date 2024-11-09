@@ -2,7 +2,9 @@ package service
 
 import (
 	"fmt"
+	"math"
 	"strings"
+	"time"
 
 	firebase "firebase.google.com/go"
 	"github.com/BakingUp/BakingUp-Backend/internal/adapter/config"
@@ -52,6 +54,7 @@ func (s *OrderService) GetAllOrders(c *fiber.Ctx, userID string) (*domain.Orders
 				totalPrice = totalPrice + (stock.SellingPrice * float64(product.ProductQuantity))
 			}
 		}
+
 		if order.IsPreOrder {
 			//Pre-Order case
 			list = append(list, domain.OrderInfo{
@@ -82,7 +85,6 @@ func (s *OrderService) GetAllOrders(c *fiber.Ctx, userID string) (*domain.Orders
 	reponse := &domain.Orders{
 		Orders: list,
 	}
-
 	return reponse, err
 
 }
@@ -292,8 +294,8 @@ func (s *OrderService) AddOrderNotification(c *fiber.Ctx, orderProducts []domain
 				err = config.SendToToken(
 					s.firebaseApp,
 					*deviceToken,
-					"Restock Reminder!",
-					fmt.Sprintf("%s is running out", stock.StockName),
+					"Sold out!",
+					fmt.Sprintf("We're currently sold out of %s.", stock.StockName),
 				)
 				if err != nil {
 					return err
@@ -301,8 +303,8 @@ func (s *OrderService) AddOrderNotification(c *fiber.Ctx, orderProducts []domain
 
 				err = s.notiService.CreateNotification(c, &domain.CreateNotificationItem{
 					UserID:       userId,
-					EngTitle:     "Restock Reminder!",
-					EngMessage:   fmt.Sprintf("%s is running out", stock.StockName),
+					EngTitle:     "Sold out!",
+					EngMessage:   fmt.Sprintf("We're currently sold out of %s.", stock.StockName),
 					IsRead:       false,
 					NotiType:     "ALERT",
 					ItemID:       stock.StockId,
@@ -420,6 +422,109 @@ func (s *OrderService) EditPreOrderStatusNotification(c *fiber.Ctx, orderID stri
 				}
 			}
 
+		}
+	}
+	return nil
+}
+
+func (s *OrderService) BeforePickUpPreOrderNotifiation() error {
+
+	users, err := s.userService.GetAllUsers()
+	if err != nil {
+		return err
+	}
+
+	for _, userId := range users {
+		deviceToken, err := s.userRepo.GetDeviceToken(userId)
+		if err != nil {
+			return err
+		}
+
+		orderList, err := s.GetAllOrders(nil, userId)
+		if err == nil {
+			for _, order := range orderList.Orders {
+				if order.IsPreOrder && order.OrderStatus != "DONE" {
+					now := time.Now()
+					layout := "02/01/2006 03:04 PM"
+					pickUpDate, _ := time.ParseInLocation(layout, order.PickUpDate, time.Local)
+					daysUntilPickUp := int(math.Ceil(pickUpDate.Sub(now).Hours() / 24))
+
+					if daysUntilPickUp == 5 {
+						err = config.SendToToken(
+							s.firebaseApp,
+							*deviceToken,
+							"Heads Up! New Order Incoming!",
+							fmt.Sprintf("Order #%d for pick-up on %s", order.OrderIndex, order.PickUpDate),
+						)
+						if err != nil {
+							return err
+						}
+
+						err = s.notiService.CreateNotification(nil, &domain.CreateNotificationItem{
+							UserID:       userId,
+							EngTitle:     "Heads Up! New Order Incoming!",
+							EngMessage:   fmt.Sprintf("Order #%d for pick-up on %s", order.OrderIndex, order.PickUpDate),
+							IsRead:       false,
+							NotiType:     "INFO",
+							ItemID:       order.OrderID,
+							ItemName:     order.PickUpDate,
+							NotiItemType: "ORDER",
+						})
+						if err != nil {
+							return err
+						}
+						break
+					} else if daysUntilPickUp == 3 {
+						err = config.SendToToken(
+							s.firebaseApp,
+							*deviceToken,
+							"Almost Time! Upcoming Order in 3 Days!",
+							fmt.Sprintf("Order #%d for pick-up on %s", order.OrderIndex, order.PickUpDate),
+						)
+						if err != nil {
+							return err
+						}
+
+						err = s.notiService.CreateNotification(nil, &domain.CreateNotificationItem{
+							UserID:       userId,
+							EngTitle:     "Almost Time! Upcoming Order in 3 Days!",
+							EngMessage:   fmt.Sprintf("Order #%d for pick-up on %s", order.OrderIndex, order.PickUpDate),
+							IsRead:       false,
+							NotiType:     "WARNING",
+							ItemID:       order.OrderID,
+							ItemName:     order.PickUpDate,
+							NotiItemType: "ORDER",
+						})
+						if err != nil {
+							return err
+						}
+					} else if daysUntilPickUp == 1 {
+						err = config.SendToToken(
+							s.firebaseApp,
+							*deviceToken,
+							"Final Prep! Order Pickup Tomorrow!",
+							fmt.Sprintf("Order #%d for pick-up on %s", order.OrderIndex, order.PickUpDate),
+						)
+						if err != nil {
+							return err
+						}
+
+						err = s.notiService.CreateNotification(nil, &domain.CreateNotificationItem{
+							UserID:       userId,
+							EngTitle:     "Final Prep! Order Pickup Tomorrow!",
+							EngMessage:   fmt.Sprintf("Order #%d for pick-up on %s", order.OrderIndex, order.PickUpDate),
+							IsRead:       false,
+							NotiType:     "ALERT",
+							ItemID:       order.OrderID,
+							ItemName:     order.PickUpDate,
+							NotiItemType: "ORDER",
+						})
+						if err != nil {
+							return err
+						}
+					}
+				}
+			}
 		}
 	}
 	return nil
