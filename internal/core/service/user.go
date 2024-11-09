@@ -18,6 +18,21 @@ func NewUserService(userRepo port.UserRepository) *UserService {
 	}
 }
 
+func (s *UserService) GetAllUsers() ([]string, error) {
+	usersDB, err := s.userRepo.GetAllUsers()
+	if err != nil {
+		return nil, err
+	}
+
+	var response []string
+
+	for _, item := range usersDB {
+		response = append(response, item.UserID)
+	}
+
+	return response, nil
+}
+
 func (s *UserService) GetUserInfo(c *fiber.Ctx, userID string) (*domain.UserInfo, error) {
 	user, err := s.userRepo.GetUser(c, userID)
 	if err != nil {

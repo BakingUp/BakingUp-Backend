@@ -10,6 +10,7 @@ import (
 	"github.com/BakingUp/BakingUp-Backend/internal/adapter/storage/postgres/repository"
 	"github.com/BakingUp/BakingUp-Backend/internal/core/service"
 	"github.com/BakingUp/BakingUp-Backend/internal/infrastructure"
+	"github.com/go-co-op/gocron/v2"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -23,54 +24,85 @@ func main() {
 
 	app := fiber.New()
 	app.Static("/images", "./images")
-	config, err := config.New()
+	configVar, err := config.New()
 
 	if err != nil {
 		slog.Error("Error loading the configuration", "error", err)
 		os.Exit(1)
 	}
 
+	firebaseApp, _, _ := config.SetupFirebase()
+
 	client := infrastructure.InitializePrismaClient()
 	defer client.Disconnect()
 
-	http.SetupCORS(app, config.HTTP.AllowedOrigins)
+	http.SetupCORS(app, configVar.HTTP.AllowedOrigins)
 
 	userRepo := repository.NewUserRepository(client)
 	userService := service.NewUserService(userRepo)
 	authHandler := http.NewAuthHandler(userService)
 	userHandler := http.NewUserHandler(userService)
 
-	ingredientRepo := repository.NewIngredientRepository(client)
-	ingredientService := service.NewIngredientService(ingredientRepo, userService)
-	ingredientHandler := http.NewIngredientHandler(ingredientService)
-
 	recipeRepo := repository.NewRecipeRepository(client)
 	recipeService := service.NewRecipeService(recipeRepo, userService)
 	recipeHandler := http.NewRecipeHandler(recipeService)
 
+	notificationRepo := repository.NewNotificationRepository(client)
+	notificationService := service.NewNotificationService(notificationRepo, userService, userRepo, firebaseApp)
+	notificationHandler := http.NewNotificationHandler(notificationService)
+
+	ingredientRepo := repository.NewIngredientRepository(client)
+	ingredientService := service.NewIngredientService(ingredientRepo, userRepo, userService, notificationService, firebaseApp)
+	ingredientHandler := http.NewIngredientHandler(ingredientService)
+
 	stockRepo := repository.NewStockRepository(client)
-	stockService := service.NewStockService(stockRepo, userService, ingredientService, recipeRepo)
+	stockService := service.NewStockService(stockRepo, userRepo, userService, ingredientService, recipeRepo, notificationService, firebaseApp)
 	stockHandler := http.NewStockHandler(stockService)
 
 	orderRepo := repository.NewOrderRespository(client)
-	orderService := service.NewOrderService(orderRepo, userService)
+	orderService := service.NewOrderService(orderRepo, userRepo, userService, notificationService, stockService, firebaseApp)
 	orderHandler := http.NewOrderHandler(orderService)
 
 	settingsRepo := repository.NewSettingsRepository(client)
 	settingsService := service.NewSettingsService(settingsRepo, userService)
 	settingsHandler := http.NewSetingsHandler(settingsService)
 
-	notificationRepo := repository.NewNotificationRepository(client)
-	notificationService := service.NewNotificationService(notificationRepo, userService)
-	notificationHandler := http.NewNotificationHandler(notificationService)
-
 	homeRepo := repository.NewHomeRepository(client)
 	homeService := service.NewHomeService(homeRepo, userService, settingsService, settingsRepo, recipeRepo, ingredientRepo)
 	homeHandler := http.NewHomeHandler(homeService)
 
 	_, err = http.NewRouter(app, *ingredientHandler, *recipeHandler, *authHandler, *stockHandler, *userHandler, *orderHandler, *settingsHandler, *notificationHandler, *homeHandler)
+	if err != nil {
+		panic(err)
+	}
 
-	port := config.HTTP.Port
+	s, err := gocron.NewScheduler()
+	if err != nil {
+		panic(err)
+	}
+
+	s.NewJob(
+		gocron.DailyJob(
+			1, gocron.NewAtTimes(gocron.NewAtTime(12, 0, 0)),
+		),
+		gocron.NewTask(
+			func() {
+				if err := ingredientService.BeforeExpiredIngredientNotifiation(); err != nil {
+					panic(err)
+				}
+				if err := stockService.BeforeExpiredStockNotifiation(); err != nil {
+					panic(err)
+				}
+				if err := orderService.BeforePickUpPreOrderNotifiation(); err != nil {
+					panic(err)
+				}
+			},
+		),
+	)
+
+	s.Start()
+
+	port := configVar.HTTP.Port
 	if port == "" {
 		port = "8000"
 	}

@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-	"time"
 
 	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
 	"github.com/BakingUp/BakingUp-Backend/prisma/db"
@@ -37,9 +36,6 @@ func (nr *NotificationRepository) GetAllNotifications(c *fiber.Ctx, userID strin
 func (nr *NotificationRepository) CreateNotification(c *fiber.Ctx, notificationItem *domain.CreateNotificationItem) error {
 	ctx := context.Background()
 
-	timeFormat := "2006-01-02T15:04:05Z07:00"
-	createdAt, _ := time.Parse(timeFormat, notificationItem.CreatedAt)
-
 	_, err := nr.db.Notifications.CreateOne(
 		db.Notifications.NotiID.Set(uuid.NewString()),
 		db.Notifications.User.Link(
@@ -49,7 +45,6 @@ func (nr *NotificationRepository) CreateNotification(c *fiber.Ctx, notificationI
 		db.Notifications.ThaiTitle.Set(notificationItem.ThaiTitle),
 		db.Notifications.EngMessage.Set(notificationItem.EngMessage),
 		db.Notifications.ThaiMessage.Set(notificationItem.ThaiMessage),
-		db.Notifications.CreatedAt.Set(createdAt),
 		db.Notifications.IsRead.Set(notificationItem.IsRead),
 		db.Notifications.NotiType.Set(db.NotificationType(notificationItem.NotiType)),
 		db.Notifications.ItemID.Set(notificationItem.ItemID),

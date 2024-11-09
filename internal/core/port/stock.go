@@ -28,6 +28,7 @@ type StockService interface {
 	AddStock(c *fiber.Ctx, stock *domain.AddStockRequest) error
 	GetStockRecipeDetail(c *fiber.Ctx, recipeID string) (*domain.StockRecipeDetail, error)
 	AddStockDetail(c *fiber.Ctx, stockDetail *domain.AddStockDetailRequest) error
+	BeforeExpiredStockNotifiation() error
 	EditStock(c *fiber.Ctx, stock *domain.EditStockRequest) error
 	GetEditStockDetail(c *fiber.Ctx, recipeID string) (*domain.GetEditStockDetail, error)
 }

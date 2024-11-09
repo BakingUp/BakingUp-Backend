@@ -3,6 +3,7 @@ package service
 import (
 	"time"
 
+	firebase "firebase.google.com/go"
 	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
 	"github.com/BakingUp/BakingUp-Backend/internal/core/port"
 	"github.com/BakingUp/BakingUp-Backend/internal/core/util"
@@ -12,12 +13,16 @@ import (
 type NotificationService struct {
 	notificationRepo port.NotificationRepository
 	userService      port.UserService
+	userRepo         port.UserRepository
+	firebaseApp      *firebase.App
 }
 
-func NewNotificationService(notificationRepo port.NotificationRepository, userService port.UserService) *NotificationService {
+func NewNotificationService(notificationRepo port.NotificationRepository, userService port.UserService, userRepo port.UserRepository, firebaseApp *firebase.App) *NotificationService {
 	return &NotificationService{
 		notificationRepo: notificationRepo,
 		userService:      userService,
+		userRepo:         userRepo,
+		firebaseApp:      firebaseApp,
 	}
 }
 
@@ -39,7 +44,7 @@ func (ns *NotificationService) GetAllNotifications(c *fiber.Ctx, userID string) 
 			NotiID:       item.NotiID,
 			Title:        util.GetNotificationTitle(&item, language),
 			Message:      util.GetNotificationMessage(&item, language),
-			CreatedAt:    item.CreatedAt.Format(time.RFC3339),
+			CreatedAt:    item.CreatedAt.Local().Format(time.RFC3339),
 			IsRead:       item.IsRead,
 			NotiType:     string(item.NotiType),
 			ItemID:       item.ItemID,

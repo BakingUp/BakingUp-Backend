@@ -51,7 +51,7 @@ model Notifications {
   thai_title   String
   eng_message  String
   thai_message String
-  created_at   DateTime
+  created_at   DateTime @default(now())
   is_read      Boolean
   noti_type    NotificationType
   item_id      String

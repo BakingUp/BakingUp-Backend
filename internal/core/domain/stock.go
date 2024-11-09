@@ -3,13 +3,15 @@ package domain
 import "time"
 
 type StockItem struct {
-	StockId      string  `json:"stock_id"`
-	StockName    string  `json:"stock_name"`
-	StockURL     string  `json:"stock_url"`
-	Quantity     int     `json:"quantity"`
-	LST          int     `json:"lst"`
-	SellingPrice float64 `json:"selling_price"`
-	LSTStatus    string  `json:"lst_status"`
+	StockId         string    `json:"stock_id"`
+	StockName       string    `json:"stock_name"`
+	StockURL        string    `json:"stock_url"`
+	Quantity        int       `json:"quantity"`
+	LST             int       `json:"lst"`
+	SellingPrice    float64   `json:"selling_price"`
+	LSTStatus       string    `json:"lst_status"`
+	StockLessThan   int       `json:"stock_less_than"`
+	DayBeforeExpire time.Time `json:"day_before_expire"`
 }
 
 type StockList struct {

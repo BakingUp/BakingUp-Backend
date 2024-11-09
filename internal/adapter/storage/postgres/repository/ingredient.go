@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"context"
+
 	"bytes"
 	"encoding/json"
 	"io"
@@ -24,12 +26,16 @@ func NewIngredientRepository(db *db.PrismaClient) *IngredientRepository {
 }
 
 func (ir *IngredientRepository) GetAllIngredients(c *fiber.Ctx, userID string) ([]db.IngredientsModel, error) {
+	context := context.Background()
+	if c != nil {
+		context = c.Context()
+	}
 	ingredients, err := ir.db.Ingredients.FindMany(
 		db.Ingredients.UserID.Equals(userID),
 	).With(
 		db.Ingredients.IngredientDetail.Fetch(),
 		db.Ingredients.IngredientImages.Fetch(),
-	).Exec(c.Context())
+	).Exec(context)
 
 	if err != nil {
 		return nil, err
@@ -39,12 +45,17 @@ func (ir *IngredientRepository) GetAllIngredients(c *fiber.Ctx, userID string) (
 }
 
 func (ir *IngredientRepository) GetIngredientDetail(c *fiber.Ctx, ingredientID string) (*db.IngredientsModel, error) {
+	context := context.Background()
+	if c != nil {
+		context = c.Context()
+	}
+
 	ingredient, err := ir.db.Ingredients.FindFirst(
 		db.Ingredients.IngredientID.Equals(ingredientID),
 	).With(
 		db.Ingredients.IngredientDetail.Fetch(),
 		db.Ingredients.IngredientImages.Fetch(),
-	).Exec(c.Context())
+	).Exec(context)
 
 	if err != nil {
 		return nil, err
@@ -290,7 +301,7 @@ func (ir *IngredientRepository) GetIngredientListsFromReceipt(c *fiber.Ctx, file
 	if err != nil {
 		return nil, err
 	}
-	
+
 	// Open the file
 	f, err := file.Open()
 	if err != nil {
@@ -312,7 +323,7 @@ func (ir *IngredientRepository) GetIngredientListsFromReceipt(c *fiber.Ctx, file
 	writer.Close()
 
 	// Make the HTTP request to the other backend
-	req, err := http.NewRequest("POST", config.HTTP.ReceiptScannerURL + "/scan_receipt", &buf)
+	req, err := http.NewRequest("POST", config.HTTP.ReceiptScannerURL+"/scan_receipt", &buf)
 	if err != nil {
 		return nil, err
 	}

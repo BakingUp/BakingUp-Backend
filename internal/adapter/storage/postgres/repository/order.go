@@ -20,8 +20,12 @@ func NewOrderRespository(db *db.PrismaClient) *OrderRepository {
 }
 
 func (or *OrderRepository) GetAllOrders(c *fiber.Ctx, userID string) ([]db.OrdersModel, error) {
+	context := context.Background()
+	if c != nil {
+		context = c.Context()
+	}
 	orders, err := or.db.Orders.FindMany(
-		db.Orders.UserID.Equals(userID)).With(db.Orders.OrderProducts.Fetch().With(db.OrderProducts.Recipe.Fetch().With(db.Recipes.Stocks.Fetch()))).Exec(c.Context())
+		db.Orders.UserID.Equals(userID)).With(db.Orders.OrderProducts.Fetch().With(db.OrderProducts.Recipe.Fetch().With(db.Recipes.Stocks.Fetch()))).Exec(context)
 
 	if err != nil {
 		return nil, err
