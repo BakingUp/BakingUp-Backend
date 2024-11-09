@@ -408,7 +408,7 @@ func (s *StockService) AddStockDetailNotification(c *fiber.Ctx, ingredients []do
 
 		if ingredient.IngredientId == ingredientBatchs[ingredient.IngredientId] && quantity < ingredient.IngredienLessThan {
 
-			deviceToken, err := s.userRepo.GetDeviceToken(c, *userId)
+			deviceToken, err := s.userRepo.GetDeviceToken(*userId)
 			if err != nil {
 				return err
 			}
@@ -442,7 +442,7 @@ func (s *StockService) AddStockDetailNotification(c *fiber.Ctx, ingredients []do
 					s.firebaseApp,
 					*deviceToken,
 					"Stock Up Time!",
-					fmt.Sprintf("%s is running low. Only %.2f left in stock", ingredient.IngredientName, quantity),
+					fmt.Sprintf("%s is running low. Only %s left in stock", ingredient.IngredientName, ingredient.Quantity),
 				)
 				if err != nil {
 					return err
@@ -450,7 +450,7 @@ func (s *StockService) AddStockDetailNotification(c *fiber.Ctx, ingredients []do
 				err = s.notiService.CreateNotification(c, &domain.CreateNotificationItem{
 					UserID:       *userId,
 					EngTitle:     "Stock Up Time!",
-					EngMessage:   fmt.Sprintf("%s is running low. Only %.2f left in stock", ingredient.IngredientName, quantity),
+					EngMessage:   fmt.Sprintf("%s is running low. Only %s left in stock", ingredient.IngredientName, ingredient.Quantity),
 					IsRead:       false,
 					NotiType:     "WARNING",
 					ItemID:       ingredient.IngredientId,

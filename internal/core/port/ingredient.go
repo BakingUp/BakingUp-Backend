@@ -43,4 +43,5 @@ type IngredientService interface {
 	GetAddEditIngredientDetail(c *fiber.Ctx, ingredientID string) (*domain.GetAddEditIngredientDetail, error)
 	EditIngredientStock(c *fiber.Ctx, ingredientStock *domain.EditIngredientStockRequest) error
 	GetEditIngredientStockDetail(c *fiber.Ctx, ingredientStockID string) (*domain.GetEditIngredientStockDetail, error)
+	BeforeExpiredIngredientNotifiation() error
 }

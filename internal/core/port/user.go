@@ -7,6 +7,7 @@ import (
 )
 
 type UserRepository interface {
+	GetAllUsers() ([]db.UsersModel, error)
 	GetUser(c *fiber.Ctx, userID string) (*db.UsersModel, error)
 	CreateUser(user *domain.ManageUserRequest) error
 	AddDeviceToken(req *domain.DeviceTokenRequest) error
@@ -14,10 +15,11 @@ type UserRepository interface {
 	DeleteAllExceptDeviceToken(req *domain.DeviceTokenRequest) error
 	GetUserProductionQueue(c *fiber.Ctx, userID string) ([]db.OrdersModel, error)
 	EditUserInfo(c *fiber.Ctx, editUserRequest *domain.ManageUserRequest) error
-	GetDeviceToken(c *fiber.Ctx, userID string) (*string, error)
+	GetDeviceToken(userID string) (*string, error)
 }
 
 type UserService interface {
+	GetAllUsers() ([]string, error)
 	GetUserLanguage(c *fiber.Ctx, userID string) (*db.Language, error)
 	GetUserExpirationDate(c *fiber.Ctx, userID string) (*domain.ExpirationDate, error)
 	GetUserInfo(c *fiber.Ctx, userID string) (*domain.UserInfo, error)

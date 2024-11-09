@@ -3,6 +3,7 @@ package main
 import (
 	"log/slog"
 	"os"
+	"time"
 
 	_ "github.com/BakingUp/BakingUp-Backend/docs"
 	"github.com/BakingUp/BakingUp-Backend/internal/adapter/config"
@@ -10,6 +11,7 @@ import (
 	"github.com/BakingUp/BakingUp-Backend/internal/adapter/storage/postgres/repository"
 	"github.com/BakingUp/BakingUp-Backend/internal/core/service"
 	"github.com/BakingUp/BakingUp-Backend/internal/infrastructure"
+	"github.com/go-co-op/gocron/v2"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -42,10 +44,6 @@ func main() {
 	authHandler := http.NewAuthHandler(userService)
 	userHandler := http.NewUserHandler(userService)
 
-	ingredientRepo := repository.NewIngredientRepository(client)
-	ingredientService := service.NewIngredientService(ingredientRepo, userService)
-	ingredientHandler := http.NewIngredientHandler(ingredientService)
-
 	recipeRepo := repository.NewRecipeRepository(client)
 	recipeService := service.NewRecipeService(recipeRepo, userService)
 	recipeHandler := http.NewRecipeHandler(recipeService)
@@ -53,6 +51,10 @@ func main() {
 	notificationRepo := repository.NewNotificationRepository(client)
 	notificationService := service.NewNotificationService(notificationRepo, userService, userRepo, firebaseApp)
 	notificationHandler := http.NewNotificationHandler(notificationService)
+
+	ingredientRepo := repository.NewIngredientRepository(client)
+	ingredientService := service.NewIngredientService(ingredientRepo, userRepo, userService, notificationService, firebaseApp)
+	ingredientHandler := http.NewIngredientHandler(ingredientService)
 
 	stockRepo := repository.NewStockRepository(client)
 	stockService := service.NewStockService(stockRepo, userRepo, userService, ingredientService, recipeRepo, notificationService, firebaseApp)
@@ -71,6 +73,28 @@ func main() {
 	homeHandler := http.NewHomeHandler(homeService)
 
 	_, err = http.NewRouter(app, *ingredientHandler, *recipeHandler, *authHandler, *stockHandler, *userHandler, *orderHandler, *settingsHandler, *notificationHandler, *homeHandler)
+	if err != nil {
+		panic(err)
+	}
+
+	s, err := gocron.NewScheduler()
+	if err != nil {
+		panic(err)
+	}
+
+	s.NewJob(
+		gocron.DurationJob(
+			10*time.Second,
+		),
+		gocron.NewTask(
+			func() {
+				err = ingredientService.BeforeExpiredIngredientNotifiation()
+				panic(err)
+			},
+		),
+	)
+
+	s.Start()
 
 	port := configVar.HTTP.Port
 	if port == "" {

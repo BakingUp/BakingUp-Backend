@@ -2,11 +2,14 @@ package service
 
 import (
 	"fmt"
+	"math"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
 
+	firebase "firebase.google.com/go"
+	"github.com/BakingUp/BakingUp-Backend/internal/adapter/config"
 	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
 	"github.com/BakingUp/BakingUp-Backend/internal/core/port"
 	"github.com/BakingUp/BakingUp-Backend/internal/core/util"
@@ -16,17 +19,24 @@ import (
 
 type IngredientService struct {
 	ingredientRepo port.IngredientRepository
+	userRepo       port.UserRepository
 	userService    port.UserService
+	notiService    port.NotificationService
+	firebaseApp    *firebase.App
 }
 
-func NewIngredientService(ingredientRepo port.IngredientRepository, userService port.UserService) *IngredientService {
+func NewIngredientService(ingredientRepo port.IngredientRepository, userRepo port.UserRepository, userService port.UserService, notiService port.NotificationService, firebaseApp *firebase.App) *IngredientService {
 	return &IngredientService{
 		ingredientRepo: ingredientRepo,
+		userRepo:       userRepo,
 		userService:    userService,
+		notiService:    notiService,
+		firebaseApp:    firebaseApp,
 	}
 }
 
 func (s *IngredientService) GetAllIngredients(c *fiber.Ctx, userID string) (*domain.IngredientList, error) {
+
 	ingredients, err := s.ingredientRepo.GetAllIngredients(c, userID)
 
 	if err != nil {
@@ -77,6 +87,7 @@ func (s *IngredientService) GetAllIngredients(c *fiber.Ctx, userID string) (*dom
 			Stock:             stockAmount,
 			IngredienLessThan: item.IngredientLessThan,
 			IngredientURL:     IImage,
+			DayBeforeExpire:   item.DayBeforeExpire,
 			ExpirationStatus:  util.CalculateExpirationStatus(stockExpirationDate, expirationDate.BlackExpirationDate, expirationDate.RedExpirationDate, expirationDate.YellowExpirationDate),
 		}
 
@@ -481,4 +492,104 @@ func (s *IngredientService) GetEditIngredientStockDetail(c *fiber.Ctx, ingredien
 	}
 
 	return detail, nil
+}
+
+func (s *IngredientService) BeforeExpiredIngredientNotifiation() error {
+
+	users, err := s.userService.GetAllUsers()
+	if err != nil {
+		return err
+	}
+
+	for _, userId := range users {
+		deviceToken, err := s.userRepo.GetDeviceToken(userId)
+		if err != nil {
+			return err
+		}
+
+		ingredientList, err := s.GetAllIngredients(nil, userId)
+		if err != nil {
+			return err
+		}
+
+		for _, ingredient := range ingredientList.Ingredients {
+			ingredientDetail, err := s.GetIngredientDetail(nil, ingredient.IngredientId)
+			if err != nil {
+				return err
+			}
+
+			var ingredientName string
+			if len(ingredient.IngredientName) > 0 {
+				ingredientName = strings.ToLower(string(ingredient.IngredientName[0])) + ingredient.IngredientName[1:]
+			}
+
+			var finalDaysUntilExpire int
+			for _, batch := range ingredientDetail.Stocks {
+				now := time.Now()
+				expiredDate, _ := time.Parse("02/01/2006", batch.ExpirationDate)
+				daysUntilExpire := int(math.Ceil(expiredDate.Sub(now).Hours() / 24))
+
+				if daysUntilExpire <= ingredient.DayBeforeExpire.Day() && daysUntilExpire >= 1 {
+					finalDaysUntilExpire = daysUntilExpire
+				} else if daysUntilExpire < 1 {
+					break
+				}
+			}
+
+			if finalDaysUntilExpire == ingredient.DayBeforeExpire.Day() {
+				err = config.SendToToken(
+					s.firebaseApp,
+					*deviceToken,
+					"Expiring Soon!",
+					fmt.Sprintf("Your %s is expiring soon (%d days)", ingredientName, finalDaysUntilExpire),
+				)
+				if err != nil {
+					return err
+				}
+
+				err = s.notiService.CreateNotification(nil, &domain.CreateNotificationItem{
+					UserID:       userId,
+					EngTitle:     "Expiring Soon!",
+					EngMessage:   fmt.Sprintf("Your %s is expiring soon (%d days)", ingredientName, finalDaysUntilExpire),
+					IsRead:       false,
+					NotiType:     "WARNING",
+					ItemID:       ingredient.IngredientId,
+					ItemName:     ingredientName,
+					NotiItemType: "INGREDIENT",
+				})
+				if err != nil {
+					return err
+				}
+				break
+			} else if finalDaysUntilExpire == 1 {
+
+				err = config.SendToToken(
+					s.firebaseApp,
+					*deviceToken,
+					"Expiring Soon!",
+					fmt.Sprintf("Your %s is expiring soon (%d days)", ingredientName, finalDaysUntilExpire),
+				)
+				if err != nil {
+					return err
+				}
+
+				err = s.notiService.CreateNotification(nil, &domain.CreateNotificationItem{
+					UserID:       userId,
+					EngTitle:     "Expiring Soon!",
+					EngMessage:   fmt.Sprintf("Your %s is expiring soon (%d days)", ingredientName, finalDaysUntilExpire),
+					IsRead:       false,
+					NotiType:     "WARNING",
+					ItemID:       ingredient.IngredientId,
+					ItemName:     ingredientName,
+					NotiItemType: "INGREDIENT",
+				})
+				if err != nil {
+					return err
+				}
+
+			}
+		}
+
+	}
+	return nil
 }

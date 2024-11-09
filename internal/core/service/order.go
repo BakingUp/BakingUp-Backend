@@ -283,7 +283,7 @@ func (s *OrderService) AddOrderNotification(c *fiber.Ctx, orderProducts []domain
 
 		if stock.StockId == recipeMap[stock.StockId] && stock.Quantity < stock.StockLessThan {
 
-			deviceToken, err := s.userRepo.GetDeviceToken(c, userId)
+			deviceToken, err := s.userRepo.GetDeviceToken(userId)
 			if err != nil {
 				return err
 			}
@@ -365,7 +365,7 @@ func (s *OrderService) EditPreOrderStatusNotification(c *fiber.Ctx, orderID stri
 
 		if stock.StockId == recipeMap[stock.StockId] && stock.Quantity < stock.StockLessThan {
 
-			deviceToken, err := s.userRepo.GetDeviceToken(c, preOrderDetail.UserID)
+			deviceToken, err := s.userRepo.GetDeviceToken(preOrderDetail.UserID)
 			if err != nil {
 				return err
 			}

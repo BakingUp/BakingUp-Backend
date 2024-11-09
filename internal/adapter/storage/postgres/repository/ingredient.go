@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"context"
+
 	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
 	"github.com/BakingUp/BakingUp-Backend/prisma/db"
 	"github.com/gofiber/fiber/v2"
@@ -17,12 +19,16 @@ func NewIngredientRepository(db *db.PrismaClient) *IngredientRepository {
 }
 
 func (ir *IngredientRepository) GetAllIngredients(c *fiber.Ctx, userID string) ([]db.IngredientsModel, error) {
+	context := context.Background()
+	if c != nil {
+		context = c.Context()
+	}
 	ingredients, err := ir.db.Ingredients.FindMany(
 		db.Ingredients.UserID.Equals(userID),
 	).With(
 		db.Ingredients.IngredientDetail.Fetch(),
 		db.Ingredients.IngredientImages.Fetch(),
-	).Exec(c.Context())
+	).Exec(context)
 
 	if err != nil {
 		return nil, err
@@ -32,12 +38,17 @@ func (ir *IngredientRepository) GetAllIngredients(c *fiber.Ctx, userID string) (
 }
 
 func (ir *IngredientRepository) GetIngredientDetail(c *fiber.Ctx, ingredientID string) (*db.IngredientsModel, error) {
+	context := context.Background()
+	if c != nil {
+		context = c.Context()
+	}
+
 	ingredient, err := ir.db.Ingredients.FindFirst(
 		db.Ingredients.IngredientID.Equals(ingredientID),
 	).With(
 		db.Ingredients.IngredientDetail.Fetch(),
 		db.Ingredients.IngredientImages.Fetch(),
-	).Exec(c.Context())
+	).Exec(context)
 
 	if err != nil {
 		return nil, err

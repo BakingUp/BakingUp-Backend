@@ -14,13 +14,14 @@ type Stock struct {
 }
 
 type Ingredient struct {
-	IngredientId      string  `json:"ingredient_id"`
-	IngredientName    string  `json:"ingredient_name"`
-	Quantity          string  `json:"quantity"`
-	Stock             int     `json:"stock"`
-	IngredienLessThan float64 `json:"ingredient_less_than"`
-	IngredientURL     string  `json:"ingredient_url"`
-	ExpirationStatus  string  `json:"expiration_status"`
+	IngredientId      string    `json:"ingredient_id"`
+	IngredientName    string    `json:"ingredient_name"`
+	Quantity          string    `json:"quantity"`
+	Stock             int       `json:"stock"`
+	IngredienLessThan float64   `json:"ingredient_less_than"`
+	IngredientURL     string    `json:"ingredient_url"`
+	DayBeforeExpire   time.Time `json:"day_before_expire"`
+	ExpirationStatus  string    `json:"expiration_status"`
 }
 
 type IngredientList struct {

@@ -45,10 +45,24 @@ func (ur *UserRepository) CreateUser(user *domain.ManageUserRequest) error {
 	return nil
 }
 
+func (ur *UserRepository) GetAllUsers() ([]db.UsersModel, error) {
+	context := context.Background()
+	users, err := ur.db.Users.FindMany().Exec(context)
+	if err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}
+
 func (ur *UserRepository) GetUser(c *fiber.Ctx, userID string) (*db.UsersModel, error) {
+	context := context.Background()
+	if c != nil {
+		context = c.Context()
+	}
 	user, err := ur.db.Users.FindFirst(
 		db.Users.UserID.Equals(userID),
-	).Exec(c.Context())
+	).Exec(context)
 
 	if err != nil {
 		return nil, err
@@ -57,11 +71,11 @@ func (ur *UserRepository) GetUser(c *fiber.Ctx, userID string) (*db.UsersModel, 
 	return user, nil
 }
 
-func (ur *UserRepository) GetDeviceToken(c *fiber.Ctx, userID string) (*string, error) {
+func (ur *UserRepository) GetDeviceToken(userID string) (*string, error) {
+	context := context.Background()
 	deviceToken, err := ur.db.Devices.FindFirst(
 		db.Devices.UserID.Equals(userID),
-	).Exec(c.Context())
-
+	).Exec(context)
 	if err != nil {
 		return nil, err
 	}
