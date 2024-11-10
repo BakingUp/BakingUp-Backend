@@ -281,7 +281,22 @@ func (s *StockService) AddStock(c *fiber.Ctx, stock *domain.AddStockRequest) err
 
 	var hiddenCost = recipeDetail.HiddenCost * 0.01 * totalCost
 
+	layout := "2006-01-02 15:04:05"
+	totalTime, err := time.Parse(layout, recipeDetail.TotalTime)
+	if err != nil {
+		return err
+	}
+
+	// Calculate total hours considering the difference in days
+	baseDate := time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC)
+	duration := totalTime.Sub(baseDate)
+	totalHours := int(duration.Hours())
+	totalMins := totalTime.Minute()
+
+	var laborCost = (recipeDetail.LaborCost * float64(totalHours)) + (recipeDetail.LaborCost * float64(totalMins) / 60)
+
 	totalCost += hiddenCost
+	totalCost += laborCost
 	totalCost = totalCost / float64(recipeDetail.Servings)
 	totalCost = math.Trunc(totalCost*100) / 100
 
