@@ -22,7 +22,7 @@ type IngredientRepository interface {
 	AddIngredientNote(c *fiber.Ctx, ingredientNote *domain.AddIngredientNotePayload) error
 	GetUnexpiredIngredientQuantity(c *fiber.Ctx, ingredientID string) (float64, error)
 	DeleteUnexpiredIngredient(c *fiber.Ctx, ingredientStockID string) error
-	UpdateUnexpiredIngredientQuantity(c *fiber.Ctx, ingredientStockID string, quantity float64) error
+	UpdateUnexpiredIngredientQuantity(c *fiber.Ctx, ingredientStockID string, quantity float64, price float64) error
 	EditIngredient(c *fiber.Ctx, ingredient *domain.EditIngredientPayload) error
 	GetAddEditIngredientDetail(c *fiber.Ctx, ingredientID string) (*db.IngredientsModel, error)
 	EditIngredientStock(c *fiber.Ctx, ingredientStock *domain.EditIngredientStockPayload) error
