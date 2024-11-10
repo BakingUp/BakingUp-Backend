@@ -51,7 +51,7 @@ func (s *UserService) GetUserInfo(c *fiber.Ctx, userID string) (*domain.UserInfo
 
 	var queue []domain.ProductionQueueItem
 	for _, order := range orders {
-		for _, orderProduct := range order.OrderProducts() {
+		for _, orderProduct := range order.ProductionQueue() {
 			recipe := orderProduct.Recipe()
 			var recipeImg string
 			if recipe != nil {
@@ -64,7 +64,7 @@ func (s *UserService) GetUserInfo(c *fiber.Ctx, userID string) (*domain.UserInfo
 				queue = append(queue, domain.ProductionQueueItem{
 					OrderIndex: order.OrderIndex,
 					Name:       util.GetRecipeName(recipe, language),
-					Quantity:   orderProduct.ProductQuantity,
+					Quantity:   orderProduct.ProductionQuantity,
 					PickUpDate: order.PickUpDateTime.Format("02/01/2006"),
 					ImgURL:     recipeImg,
 				})
@@ -94,7 +94,7 @@ func (s *UserService) RegisterUser(user *domain.ManageUserRequest) (*domain.User
 
 	return &domain.UserResponse{
 		Status:  201,
-		Message: "Sucessfuly create a new user.",
+		Message: "Successfully create a new user.",
 	}, nil
 }
 
