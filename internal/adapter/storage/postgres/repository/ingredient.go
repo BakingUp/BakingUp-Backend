@@ -222,11 +222,12 @@ func (ir *IngredientRepository) DeleteUnexpiredIngredient(c *fiber.Ctx, ingredie
 	return nil
 }
 
-func (ir *IngredientRepository) UpdateUnexpiredIngredientQuantity(c *fiber.Ctx, ingredientStockID string, quantity float64) error {
+func (ir *IngredientRepository) UpdateUnexpiredIngredientQuantity(c *fiber.Ctx, ingredientStockID string, quantity float64, price float64) error {
 	_, err := ir.db.IngredientDetail.FindUnique(
 		db.IngredientDetail.IngredientStockID.Equals(ingredientStockID),
 	).Update(
 		db.IngredientDetail.IngredientQuantity.Set(quantity),
+		db.IngredientDetail.Price.Set(price),
 	).Exec(c.Context())
 
 	if err != nil {

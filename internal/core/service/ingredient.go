@@ -396,7 +396,10 @@ func (s *IngredientService) UpdateUnexpiredIngredientQuantity(c *fiber.Ctx, ingr
 				ingredientQuantity, _ := strconv.ParseFloat(formattedQuantity, 64)
 				quantity -= ingredientQuantity
 			} else {
-				err = s.ingredientRepo.UpdateUnexpiredIngredientQuantity(c, ingredientStockID, detail.IngredientQuantity-quantity)
+				price := detail.Price * quantity / detail.IngredientQuantity
+				adjustedPrice := detail.Price - price
+				adjustedPrice = math.Trunc(adjustedPrice*100) / 100
+				err = s.ingredientRepo.UpdateUnexpiredIngredientQuantity(c, ingredientStockID, detail.IngredientQuantity-quantity, adjustedPrice)
 				if err != nil {
 					return err
 				}
