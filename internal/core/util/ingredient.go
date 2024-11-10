@@ -54,27 +54,28 @@ func CombineIngredientQuantity(quantity float64, unit db.Unit) string {
 		unitStr = "ml"
 	}
 
-	quantityStr := strconv.FormatFloat(quantity, 'f', -1, 64)
+	quantityStr := strconv.FormatFloat(quantity, 'f', 2, 64)
+	quantityStr = strings.TrimRight(strings.TrimRight(quantityStr, "0"), ".")
 	return fmt.Sprintf("%s %s", quantityStr, unitStr)
 }
 
 func CombinePrice(price float64, unit db.Unit, quantity float64) string {
-    unitStr := ""
-    switch unit {
-    case db.UnitKg:
-        unitStr = "kg"
-    case db.UnitG:
-        unitStr = "g"
-    case db.UnitL:
-        unitStr = "l"
-    case db.UnitMl:
-        unitStr = "ml"
-    }
+	unitStr := ""
+	switch unit {
+	case db.UnitKg:
+		unitStr = "kg"
+	case db.UnitG:
+		unitStr = "g"
+	case db.UnitL:
+		unitStr = "l"
+	case db.UnitMl:
+		unitStr = "ml"
+	}
 
-    actualPrice := price / quantity
-    priceStr := strconv.FormatFloat(actualPrice, 'f', 4, 64)
-    priceStr = strings.TrimRight(strings.TrimRight(priceStr, "0"), ".")
-    return fmt.Sprintf("%s/%s", priceStr, unitStr)
+	actualPrice := price / quantity
+	priceStr := strconv.FormatFloat(actualPrice, 'f', 4, 64)
+	priceStr = strings.TrimRight(strings.TrimRight(priceStr, "0"), ".")
+	return fmt.Sprintf("%s/%s", priceStr, unitStr)
 }
 
 func DaysSince2000(date time.Time) int {
