@@ -100,6 +100,14 @@ func (s *OrderService) GetOrderDetail(c *fiber.Ctx, orderID string) (interface{}
 		return nil, err
 	}
 
+	location, err := time.LoadLocation("Asia/Bangkok")
+	if err != nil {
+		return nil, err
+	}
+
+	orderDateThai := order.OrderDate.In(location)
+	pickUpDateThai := order.PickUpDateTime.In(location)
+
 	var list []domain.OrderStock
 	totalPrice := 0.0
 	cost := 0.0
@@ -134,11 +142,11 @@ func (s *OrderService) GetOrderDetail(c *fiber.Ctx, orderID string) (interface{}
 			OrderIndex:    order.OrderIndex,
 			OrderStatus:   order.OrderStatus,
 			OrderPlatform: order.OrderPlatform,
-			OrderDate:     order.OrderDate.Format("02/01/2006"),
-			OrderTime:     order.OrderDate.Format("03:04 PM"),
+			OrderDate:     orderDateThai.Format("02/01/2006"),
+			OrderTime:     orderDateThai.Format("03:04 PM"),
 			OrderType:     order.OrderType,
-			PickUpDate:    order.PickUpDateTime.Format("02/01/2006"),
-			PickUpTime:    order.PickUpDateTime.Format("03:04 PM"),
+			PickUpDate:    pickUpDateThai.Format("02/01/2006"),
+			PickUpTime:    pickUpDateThai.Format("03:04 PM"),
 			OrderTakenBy:  order.OrderTakenBy,
 			OrderStock:    list,
 			ToTal:         totalPrice,
@@ -161,7 +169,7 @@ func (s *OrderService) GetOrderDetail(c *fiber.Ctx, orderID string) (interface{}
 		date, ok2 := order.OrderNoteCreateAt()
 		if ok1 && ok2 {
 			detail.OrderNoteText = orderNoteText
-			detail.OrderNoteCreateAt = date.Format("02/01/2006")
+			detail.OrderNoteCreateAt = date.In(location).Format("02/01/2006")
 		}
 
 		return detail, nil
@@ -170,8 +178,8 @@ func (s *OrderService) GetOrderDetail(c *fiber.Ctx, orderID string) (interface{}
 			OrderIndex:    order.OrderIndex,
 			OrderStatus:   order.OrderStatus,
 			OrderPlatform: order.OrderPlatform,
-			OrderDate:     order.OrderDate.Format("02/01/2006"),
-			OrderTime:     order.OrderDate.Format("03:04 PM"),
+			OrderDate:     orderDateThai.Format("02/01/2006"),
+			OrderTime:     orderDateThai.Format("03:04 PM"),
 			OrderType:     order.OrderType,
 			OrderTakenBy:  order.OrderTakenBy,
 			OrderStock:    list,
@@ -182,7 +190,7 @@ func (s *OrderService) GetOrderDetail(c *fiber.Ctx, orderID string) (interface{}
 		date, ok2 := order.OrderNoteCreateAt()
 		if ok1 && ok2 {
 			detail.OrderNoteText = orderNoteText
-			detail.OrderNoteCreateAt = date.Format("02/01/2006")
+			detail.OrderNoteCreateAt = date.In(location).Format("02/01/2006")
 		}
 
 		return detail, nil

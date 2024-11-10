@@ -297,7 +297,9 @@ func (or *OrderRepository) EditOrderStatus(c *fiber.Ctx, orderStatue *domain.Edi
 	if order.IsPreOrder {
 		switch order.OrderStatus {
 		case db.OrderStatusInProcess:
-			if orderStatue.OrderStatus == "DONE" {
+			if orderStatue.OrderStatus == "IN_PROCESS" {
+				break
+			} else if orderStatue.OrderStatus == "DONE" {
 				//case 1 : In-process -> Done
 				productionList, err := or.db.ProductionQueue.FindMany(
 					db.ProductionQueue.OrderID.Equals(order.OrderID),
@@ -372,7 +374,9 @@ func (or *OrderRepository) EditOrderStatus(c *fiber.Ctx, orderStatue *domain.Edi
 				}
 			}
 		case db.OrderStatusDone:
-			if orderStatue.OrderStatus == "CANCEL" {
+			if orderStatue.OrderStatus == "DONE" {
+				break
+			} else if orderStatue.OrderStatus == "CANCEL" {
 				//case 3 : Done -> Cancel
 				// undo cutting stock
 				cuttingStockList, err := or.db.CuttingStock.FindMany(
@@ -442,7 +446,9 @@ func (or *OrderRepository) EditOrderStatus(c *fiber.Ctx, orderStatue *domain.Edi
 				}
 			}
 		case db.OrderStatusCancel:
-			if orderStatue.OrderStatus == "DONE" {
+			if orderStatue.OrderStatus == "CANCEL" {
+				break
+			} else if orderStatue.OrderStatus == "DONE" {
 				//case 5 : Cancel -> Done
 				// add cutting stock
 				for _, product := range order.OrderProducts() {
