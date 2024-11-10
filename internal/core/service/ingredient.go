@@ -144,7 +144,17 @@ func (s *IngredientService) GetIngredientDetail(c *fiber.Ctx, ingredientID strin
 	sort.Slice(stockDetails, func(i, j int) bool {
 		dateI, _ := time.Parse("02/01/2006", stockDetails[i].ExpirationDate)
 		dateJ, _ := time.Parse("02/01/2006", stockDetails[j].ExpirationDate)
-		return dateI.Before(dateJ)
+
+		isExpiredI := util.IsIngredientExpired(dateI)
+		isExpiredJ := util.IsIngredientExpired(dateJ)
+
+		// If both are expired or both are not expired, sort by date
+		if isExpiredI == isExpiredJ {
+			return dateI.Before(dateJ)
+		}
+
+		// If only one is expired, the expired one should come last
+		return !isExpiredI
 	})
 
 	stocks = append(stocks, stockDetails...)
