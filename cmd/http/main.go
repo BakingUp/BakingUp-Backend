@@ -68,7 +68,7 @@ func main() {
 	settingsHandler := http.NewSetingsHandler(settingsService)
 
 	homeRepo := repository.NewHomeRepository(client)
-	homeService := service.NewHomeService(homeRepo, userService, settingsService, settingsRepo, recipeRepo, ingredientRepo)
+	homeService := service.NewHomeService(homeRepo, userService, settingsService, settingsRepo, recipeRepo, ingredientRepo, orderRepo)
 	homeHandler := http.NewHomeHandler(homeService)
 
 	_, err = http.NewRouter(app, *ingredientHandler, *recipeHandler, *authHandler, *stockHandler, *userHandler, *orderHandler, *settingsHandler, *notificationHandler, *homeHandler)

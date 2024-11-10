@@ -50,6 +50,7 @@ func (hr *HomeRepository) GetTopProducts(c *fiber.Ctx, userID string, saleChanne
 	).With(
 		db.Orders.OrderProducts.Fetch().With(db.OrderProducts.Recipe.Fetch().With(db.Recipes.Stocks.Fetch().With(db.Stocks.StockDetail.Fetch()), db.Recipes.RecipeImages.Fetch())),
 		db.Orders.User.Fetch().With(db.Users.FixCosts.Fetch()),
+		db.Orders.CuttingStock.Fetch(),
 	).Exec(c.Context())
 
 	if err != nil {

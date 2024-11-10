@@ -58,3 +58,17 @@ type ProfitThresholdChartItem struct {
 	Name      string  `json:"name"`
 	Threshold float64 `json:"threshold"`
 }
+
+type StockBatchDetail struct {
+	Time          time.Time `json:"time"`
+	Quantity      int       `json:"quantity"`
+	RecipeName    string    `json:"recipe_name"`
+	StockDetailId string    `json:"stock_detail_id"`
+	// OrderProductQuantity int       `json:"order_product_quantity"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
+type StockBatchList struct {
+	StockID     string   `json:"stock_id"`
+	StockBatchs []string `json:"stock_batchs"`
+}

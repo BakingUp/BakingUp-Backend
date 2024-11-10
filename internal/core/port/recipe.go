@@ -20,6 +20,7 @@ type RecipeRepository interface {
 	EditRecipe(c *fiber.Ctx, recipe *domain.EditRecipePayload) error
 	DeleteRecipeIngredients(c *fiber.Ctx, recipeID string) error
 	GetEditRecipeDetail(c *fiber.Ctx, recipeID string) (*db.RecipesModel, error)
+	GetRecipeStarData(c *fiber.Ctx, userID string) ([]db.OrdersModel, error)
 }
 
 type RecipeService interface {
@@ -32,4 +33,5 @@ type RecipeService interface {
 	UpdateProfitMargin(c *fiber.Ctx, profitMargin *domain.UpdateProfitMarginRequest) error
 	EditRecipe(c *fiber.Ctx, recipe *domain.EditRecipeRequest) error
 	GetEditRecipeDetail(c *fiber.Ctx, recipeID string) (*domain.GetEditRecipeDetail, error)
+	CalculateRecipeStar(c *fiber.Ctx, recipeID []string, userID string) (map[string]int, error)
 }

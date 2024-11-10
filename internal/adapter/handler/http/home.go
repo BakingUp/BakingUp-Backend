@@ -66,11 +66,17 @@ func (hh *HomeHandler) GetTopProducts(c *fiber.Ctx) error {
 
 	var filterResponse *domain.FilterProductResponse
 	var err error
-	// today := time.Now()
+
 	startDateTime := time.Date(filterRequest.StartDateTime.Year(), filterRequest.StartDateTime.Month(), 1, 0, 0, 0, 0, filterRequest.StartDateTime.Location())
 	endDateTime := time.Date(filterRequest.EndDateTime.Year(), filterRequest.EndDateTime.Month(), 1, 0, 0, 0, 0, filterRequest.EndDateTime.Location())
-	if filterRequest.FilterType != "Wasted Ingredients" && filterRequest.FilterType != "Wasted Bakery Stock" {
+	if filterRequest.FilterType != "Wasted Ingredients" && filterRequest.FilterType != "Wasted Bakery Stock" && filterRequest.FilterType != "Selling Quickly" {
 		filterResponse, err = hh.homeService.GetTopProducts(c, filterRequest.UserID, filterRequest.FilterType, filterRequest.SalesChannel, filterRequest.OrderTypes, startDateTime, endDateTime)
+		if err != nil {
+			handleError(c, 400, "Cannot get the filter response.", err.Error())
+			return nil
+		}
+	} else if filterRequest.FilterType == "Selling Quickly" {
+		filterResponse, err = hh.homeService.GetProductSellingQuickly(c, filterRequest.UserID, filterRequest.SalesChannel, filterRequest.OrderTypes)
 		if err != nil {
 			handleError(c, 400, "Cannot get the filter response.", err.Error())
 			return nil

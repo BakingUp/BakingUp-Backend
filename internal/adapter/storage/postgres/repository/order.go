@@ -25,8 +25,7 @@ func (or *OrderRepository) GetAllOrders(c *fiber.Ctx, userID string) ([]db.Order
 		context = c.Context()
 	}
 	orders, err := or.db.Orders.FindMany(
-		db.Orders.UserID.Equals(userID)).With(db.Orders.OrderProducts.Fetch().With(db.OrderProducts.Recipe.Fetch().With(db.Recipes.Stocks.Fetch()))).Exec(context)
-
+		db.Orders.UserID.Equals(userID)).With(db.Orders.CuttingStock.Fetch(), db.Orders.OrderProducts.Fetch().With(db.OrderProducts.Recipe.Fetch().With(db.Recipes.Stocks.Fetch()))).Exec(context)
 	if err != nil {
 		return nil, err
 	}

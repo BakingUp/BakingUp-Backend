@@ -21,9 +21,10 @@ type HomeService struct {
 	settingRepo    port.SettingsRepository
 	recipeRepo     port.RecipeRepository
 	ingredientRepo port.IngredientRepository
+	orderRepo      port.OrderRepository
 }
 
-func NewHomeService(homeRepo port.HomeRepository, userService port.UserService, settingService port.SettingsService, settingRepo port.SettingsRepository, recipeRepo port.RecipeRepository, ingredientRepo port.IngredientRepository) *HomeService {
+func NewHomeService(homeRepo port.HomeRepository, userService port.UserService, settingService port.SettingsService, settingRepo port.SettingsRepository, recipeRepo port.RecipeRepository, ingredientRepo port.IngredientRepository, orderRepo port.OrderRepository) *HomeService {
 	return &HomeService{
 		homeRepo:       homeRepo,
 		userService:    userService,
@@ -31,6 +32,7 @@ func NewHomeService(homeRepo port.HomeRepository, userService port.UserService, 
 		settingRepo:    settingRepo,
 		recipeRepo:     recipeRepo,
 		ingredientRepo: ingredientRepo,
+		orderRepo:      orderRepo,
 	}
 }
 
@@ -113,8 +115,18 @@ func (hs *HomeService) GetTopProducts(c *fiber.Ctx, userID string, chartType str
 		} else if chartType == "Top Profit Ratio" || chartType == "Top Profit Revenue" || chartType == "Top Profit Margin" {
 			profitRevenue := productSellingPrice[name].SellingPrice * float64(quantity)
 			profitProducts := (productSellingPrice[name].SellingPrice - productSellingPrice[name].Cost) * float64(quantity)
-			profitMargin := ((profitRevenue - profitProducts) / profitRevenue) * 100
+			cost := productSellingPrice[name].Cost * float64(quantity)
+			profitMargin := ((profitRevenue - cost) / profitRevenue) * 100
+
 			profitRatio := ((profitProducts - allFixCost) / profitRevenue) * 100
+
+			if math.IsNaN(profitMargin) {
+				profitMargin = 0
+			}
+
+			if math.IsInf(profitRatio, 0) {
+				profitRatio = 0
+			}
 			switch chartType {
 			case "Top Profit Revenue":
 				productList[i].Detail = fmt.Sprintf("%.2f baht", profitRevenue)
@@ -124,9 +136,6 @@ func (hs *HomeService) GetTopProducts(c *fiber.Ctx, userID string, chartType str
 				productList[i].Detail = fmt.Sprintf("Profit Ratio: %.2f%%", profitRatio)
 			}
 		}
-		// else if chartType == "Selling Quickly" {
-
-		// }
 
 	}
 
@@ -159,6 +168,208 @@ func (hs *HomeService) GetTopProducts(c *fiber.Ctx, userID string, chartType str
 	}
 
 	response = domain.FilterProductResponse{
+		Products: productList,
+	}
+
+	return &response, nil
+}
+
+func (hs *HomeService) GetProductSellingQuickly(c *fiber.Ctx, userID string, saleChannels []string, orderType []string) (*domain.FilterProductResponse, error) {
+	filteredOrder, err := hs.homeRepo.GetTopProducts(c, userID, saleChannels, orderType)
+	if err != nil {
+		return nil, err
+	}
+
+	orders, err := hs.orderRepo.GetAllOrders(c, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	language, err := hs.userService.GetUserLanguage(c, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	products := make(map[string]domain.StockBatchList)
+	var productList []domain.FilterItemResponse
+	stockBatchDetail := make(map[string]domain.StockBatchDetail, 0)
+	stockBatchDetailAll := make(map[string]domain.StockBatchDetail, 0)
+	for _, orderItem := range orders {
+		for _, cuttingStockItem := range orderItem.CuttingStock() {
+
+			if _, ok := stockBatchDetailAll[cuttingStockItem.StockDetailID]; !ok {
+				stockBatchDetailAll[cuttingStockItem.StockDetailID] = domain.StockBatchDetail{
+					Quantity:      0,
+					Time:          time.Now(),
+					StockDetailId: cuttingStockItem.StockDetailID,
+				}
+			}
+			if cuttingStockItem.StockDetailID == stockBatchDetailAll[cuttingStockItem.StockDetailID].StockDetailId && stockBatchDetailAll[cuttingStockItem.StockDetailID].Quantity == 0 {
+				existingBatchDetail := stockBatchDetailAll[cuttingStockItem.StockDetailID]
+
+				existingBatchDetail.Quantity += cuttingStockItem.Quantity
+				existingBatchDetail.Time = cuttingStockItem.CuttingTime
+
+				stockBatchDetailAll[cuttingStockItem.StockDetailID] = existingBatchDetail
+
+			} else if cuttingStockItem.StockDetailID == stockBatchDetailAll[cuttingStockItem.StockDetailID].StockDetailId && stockBatchDetailAll[cuttingStockItem.StockDetailID].Time.Before(cuttingStockItem.CuttingTime) {
+				existingBatchDetail := stockBatchDetailAll[cuttingStockItem.StockDetailID]
+
+				existingBatchDetail.Quantity += cuttingStockItem.Quantity
+				existingBatchDetail.Time = cuttingStockItem.CuttingTime
+
+				stockBatchDetailAll[cuttingStockItem.StockDetailID] = existingBatchDetail
+			} else if cuttingStockItem.StockDetailID == stockBatchDetailAll[cuttingStockItem.StockDetailID].StockDetailId {
+				existingBatchDetail := stockBatchDetailAll[cuttingStockItem.StockDetailID]
+				existingBatchDetail.Quantity += cuttingStockItem.Quantity
+				stockBatchDetailAll[cuttingStockItem.StockDetailID] = existingBatchDetail
+			}
+
+		}
+	}
+	for _, order := range filteredOrder {
+		for _, orderProductItem := range order.OrderProducts() {
+			recipeName := util.GetRecipeName(orderProductItem.Recipe(), language)
+			var recipeImg string
+			if _, ok1 := products[recipeName]; !ok1 {
+				if stock, ok2 := orderProductItem.Recipe().Stocks(); ok2 {
+
+					for _, image := range orderProductItem.Recipe().RecipeImages() {
+						if image.RecipeID == orderProductItem.RecipeID {
+							recipeImg = image.RecipeURL
+							break
+						}
+					}
+
+					stockDetailList := stock.StockDetail()
+					var stockIDList []string
+					var stockBatchAmount int
+					for _, stockBatch := range stockDetailList {
+						if stockBatch.Quantity == 0 {
+							stockBatchAmount++
+							stockBatchDetail[stockBatch.StockDetailID] = domain.StockBatchDetail{
+								Time:          time.Now(),
+								Quantity:      0,
+								RecipeName:    recipeName,
+								StockDetailId: stockBatch.StockDetailID,
+								CreatedAt:     stockBatch.CreatedAt,
+							}
+							stockIDList = append(stockIDList, stockBatch.RecipeID)
+						}
+					}
+					products[recipeName] = domain.StockBatchList{
+						StockID:     stock.RecipeID,
+						StockBatchs: stockIDList,
+					}
+
+					if stockBatchAmount > 0 {
+						productList = append(productList, domain.FilterItemResponse{
+							Name: recipeName,
+							URL:  recipeImg,
+						})
+					}
+				}
+
+			}
+
+		}
+		for _, cuttingStockItem := range order.CuttingStock() {
+
+			if stockBatchDetail[cuttingStockItem.StockDetailID].Time.IsZero() {
+				existingBatchDetail := stockBatchDetail[cuttingStockItem.StockDetailID]
+				existingBatchDetail.Time = time.Now()
+				stockBatchDetail[cuttingStockItem.StockDetailID] = existingBatchDetail
+			}
+
+			if cuttingStockItem.StockDetailID == stockBatchDetail[cuttingStockItem.StockDetailID].StockDetailId && stockBatchDetail[cuttingStockItem.StockDetailID].Quantity == 0 {
+				existingBatchDetail := stockBatchDetail[cuttingStockItem.StockDetailID]
+
+				existingBatchDetail.Quantity += cuttingStockItem.Quantity
+				existingBatchDetail.Time = cuttingStockItem.CuttingTime
+
+				stockBatchDetail[cuttingStockItem.StockDetailID] = existingBatchDetail
+
+			} else if cuttingStockItem.StockDetailID == stockBatchDetail[cuttingStockItem.StockDetailID].StockDetailId && stockBatchDetail[cuttingStockItem.StockDetailID].Time.Before(cuttingStockItem.CuttingTime) {
+				existingBatchDetail := stockBatchDetail[cuttingStockItem.StockDetailID]
+
+				existingBatchDetail.Quantity += cuttingStockItem.Quantity
+				existingBatchDetail.Time = cuttingStockItem.CuttingTime
+
+				stockBatchDetail[cuttingStockItem.StockDetailID] = existingBatchDetail
+			} else if cuttingStockItem.StockDetailID == stockBatchDetail[cuttingStockItem.StockDetailID].StockDetailId {
+				existingBatchDetail := stockBatchDetail[cuttingStockItem.StockDetailID]
+				existingBatchDetail.Quantity += cuttingStockItem.Quantity
+				stockBatchDetail[cuttingStockItem.StockDetailID] = existingBatchDetail
+			}
+		}
+	}
+
+	for i := 0; i < len(productList); i++ {
+		var sumResult float64
+		var sellingTimeList []float64
+		var count int
+		for _, stockBatch := range stockBatchDetail {
+			if stockBatch.RecipeName == productList[i].Name {
+				var finalTime time.Time
+
+				stockBatchItemAllQuantity := stockBatch.Quantity + stockBatchDetailAll[stockBatch.StockDetailId].Quantity
+
+				if stockBatch.Time.Before(stockBatchDetailAll[stockBatch.StockDetailId].Time) {
+					finalTime = stockBatchDetailAll[stockBatch.StockDetailId].Time
+				} else {
+					finalTime = stockBatch.Time
+				}
+
+				rangeTime := finalTime.Sub(stockBatch.CreatedAt).Minutes()
+				sellThroughRate := (float64(stockBatch.Quantity) / float64(stockBatchItemAllQuantity)) * 100
+				resultTime := rangeTime * (sellThroughRate / 100)
+
+				sellingTimeList = append(sellingTimeList, resultTime)
+				if stockBatch.Quantity != 0 {
+					count++
+				}
+			}
+
+		}
+
+		for _, time := range sellingTimeList {
+			sumResult += time
+		}
+		averageResult := sumResult / float64(count)
+		hours := int(averageResult) / 60
+		minutes := int(averageResult) % 60
+
+		var hourUnit string
+		var minuteUnit string
+		var stockUnit string
+
+		if hours == 1 {
+			hourUnit = "hr"
+		} else {
+			hourUnit = "hrs"
+		}
+
+		if minutes == 1 {
+			minuteUnit = "minute"
+		} else {
+			minuteUnit = "minutes"
+		}
+
+		if count == 1 {
+			stockUnit = "stock"
+		} else {
+			stockUnit = "stocks"
+		}
+
+		productList[i].Detail = fmt.Sprintf("%d %s %d %s (%d %s)", hours, hourUnit, minutes, minuteUnit, count, stockUnit)
+
+	}
+
+	sort.Slice(productList, func(i, j int) bool {
+		return productList[i].Detail < productList[j].Detail
+	})
+
+	response := domain.FilterProductResponse{
 		Products: productList,
 	}
 
@@ -342,7 +553,7 @@ func (hs *HomeService) GetDashboardChartData(c *fiber.Ctx, userID string, startD
 					costRevenueItem := domain.CostRevenueChartItem{
 						Month:     month,
 						Revenue:   revenue,
-						Cost:      cost,
+						Cost:      cost + fixCostList[month],
 						NetProfit: profit - fixCostList[month],
 					}
 
