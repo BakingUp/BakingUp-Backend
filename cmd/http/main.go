@@ -56,7 +56,7 @@ func main() {
 	ingredientHandler := http.NewIngredientHandler(ingredientService)
 
 	stockRepo := repository.NewStockRepository(client)
-	stockService := service.NewStockService(stockRepo, userRepo, userService, ingredientService, recipeRepo, notificationService, firebaseApp)
+	stockService := service.NewStockService(stockRepo, userRepo, userService, ingredientService, recipeRepo, recipeService, notificationService, firebaseApp)
 	stockHandler := http.NewStockHandler(stockService)
 
 	orderRepo := repository.NewOrderRespository(client)

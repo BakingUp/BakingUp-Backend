@@ -24,17 +24,19 @@ type StockService struct {
 	userService       port.UserService
 	ingredientService port.IngredientService
 	recipeRepo        port.RecipeRepository
+	recipeService     port.RecipeService
 	notiService       port.NotificationService
 	firebaseApp       *firebase.App
 }
 
-func NewStockService(stockRepo port.StockRepository, userRepo port.UserRepository, userService port.UserService, ingredientService port.IngredientService, recipeRepo port.RecipeRepository, notiService port.NotificationService, firebaseApp *firebase.App) *StockService {
+func NewStockService(stockRepo port.StockRepository, userRepo port.UserRepository, userService port.UserService, ingredientService port.IngredientService, recipeRepo port.RecipeRepository, recipeService port.RecipeService, notiService port.NotificationService, firebaseApp *firebase.App) *StockService {
 	return &StockService{
 		stockRepo:         stockRepo,
 		userRepo:          userRepo,
 		userService:       userService,
 		ingredientService: ingredientService,
 		recipeRepo:        recipeRepo,
+		recipeService:     recipeService,
 		notiService:       notiService,
 		firebaseApp:       firebaseApp,
 	}
@@ -266,15 +268,32 @@ func (s *StockService) AddStock(c *fiber.Ctx, stock *domain.AddStockRequest) err
 	sellingPrice, _ := strconv.ParseFloat(stock.SellingPrice, 64)
 	stockLessThan, _ := strconv.Atoi(stock.StockLessThan)
 
+	recipeDetail, err := s.recipeService.GetRecipeDetail(c, stockID)
+	if err != nil {
+		return err
+	}
+
+	var totalCost float64
+	for _, ingredient := range recipeDetail.RecipeIngredients {
+		price := ingredient.IngredientPrice
+		totalCost += price
+	}
+
+	var hiddenCost = recipeDetail.HiddenCost * 0.01 * totalCost
+
+	totalCost += hiddenCost
+	totalCost = math.Trunc(totalCost*100) / 100
+
 	stockDetail := &domain.AddStockPayload{
 		StockID:        stockID,
 		LST:            lst,
 		ExpirationDate: expirationDate,
 		SellingPrice:   sellingPrice,
 		StockLessThan:  stockLessThan,
+		Cost:           totalCost,
 	}
 
-	err := s.stockRepo.AddStock(c, stockDetail)
+	err = s.stockRepo.AddStock(c, stockDetail)
 	if err != nil {
 		return err
 	}

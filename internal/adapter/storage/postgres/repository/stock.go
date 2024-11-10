@@ -129,8 +129,7 @@ func (sr *StockRepository) AddStock(c *fiber.Ctx, stock *domain.AddStockPayload)
 		),
 		db.Stocks.Lst.Set(stock.LST),
 		db.Stocks.SellingPrice.Set(stock.SellingPrice),
-		// TODO: Remove
-		db.Stocks.Cost.Set(0),
+		db.Stocks.Cost.Set(stock.Cost),
 		db.Stocks.StockLessThan.Set(stock.StockLessThan),
 		db.Stocks.DayBeforeExpired.Set(stock.ExpirationDate),
 	).Exec(c.Context())
