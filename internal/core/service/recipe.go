@@ -1,8 +1,10 @@
 package service
 
 import (
+	"math"
 	"sort"
 	"strconv"
+	"time"
 
 	"github.com/BakingUp/BakingUp-Backend/internal/core/domain"
 	"github.com/BakingUp/BakingUp-Backend/internal/core/port"
@@ -34,6 +36,17 @@ func (s *RecipeService) GetAllRecipes(c *fiber.Ctx, userID string) (*domain.Reci
 		return nil, err
 	}
 	var recipeItems []domain.Recipe
+
+	var recipeIDList []string
+	for _, item := range recipes {
+		recipeIDList = append(recipeIDList, item.RecipeID)
+	}
+
+	recipeStarList, err := s.CalculateRecipeStar(c, recipeIDList, userID)
+	if err != nil {
+		return nil, err
+	}
+
 	for _, item := range recipes {
 		var orderAmount int
 		var recipeImg string
@@ -58,7 +71,7 @@ func (s *RecipeService) GetAllRecipes(c *fiber.Ctx, userID string) (*domain.Reci
 			RecipeImg:  recipeImg,
 			TotalTime:  util.FormatTotalTime(totalTimeHours, totalTimeMinutes),
 			Servings:   item.Serving,
-			Stars:      4,
+			Stars:      recipeStarList[item.RecipeID],
 			NumOfOrder: orderAmount,
 		}
 
@@ -375,4 +388,116 @@ func (s *RecipeService) GetEditRecipeDetail(c *fiber.Ctx, recipeID string) (*dom
 	}
 
 	return recipeDetail, nil
+}
+
+func (s *RecipeService) CalculateRecipeStar(c *fiber.Ctx, recipeID []string, userID string) (map[string]int, error) {
+	orders, err := s.recipeRepo.GetRecipeStarData(c, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	product := make(map[string]domain.CalculateRecipeStarPayload)
+	productSellingPrice := make(map[string]domain.ProductPricing)
+
+	for _, order := range orders {
+
+		for _, orderProductItem := range order.OrderProducts() {
+			temp := product[orderProductItem.RecipeID]
+			if _, ok := product[orderProductItem.RecipeID]; ok {
+
+				temp.Quantity += orderProductItem.ProductQuantity
+
+			} else {
+				temp.Quantity = orderProductItem.ProductQuantity
+				if stock, ok := orderProductItem.Recipe().Stocks(); ok {
+					productSellingPrice[orderProductItem.RecipeID] = domain.ProductPricing{
+						SellingPrice: stock.SellingPrice,
+						Cost:         stock.Cost,
+					}
+					for _, stockDetail := range stock.StockDetail() {
+						if stockDetail.SellByDate.Before(time.Now()) {
+							temp.StockWastedAmount += 1
+						}
+						temp.AllStock += 1
+					}
+				}
+			}
+			product[orderProductItem.RecipeID] = temp
+
+		}
+
+	}
+
+	var highestProfitMargin float64
+	var highestProfitRatio float64
+	var highestWastedStockScore float64
+	for i := 0; i < len(recipeID); i++ {
+		recipeID := recipeID[i]
+		quantity := product[recipeID].Quantity
+		var profitRevenue float64
+		var profitMargin float64
+		var profitRatio float64
+
+		if productSellingPrice[recipeID].SellingPrice != 0 || float64(quantity) != 0 {
+			profitRevenue = productSellingPrice[recipeID].SellingPrice * float64(quantity)
+		}
+		profitProducts := (productSellingPrice[recipeID].SellingPrice - productSellingPrice[recipeID].Cost) * float64(quantity)
+
+		cost := productSellingPrice[recipeID].Cost * float64(quantity)
+		if profitRevenue != 0 {
+			profitMargin = ((profitRevenue - cost) / profitRevenue) * 100
+			profitRatio = (profitProducts / profitRevenue) * 100
+		}
+
+		temp := product[recipeID]
+		temp.ProfitMarginScore = profitMargin
+		temp.ProfitRatioScore = profitRatio
+
+		var wastedStockPercentage float64
+		if temp.AllStock != 0 {
+			wastedStockPercentage = (float64(temp.StockWastedAmount) / float64(temp.AllStock)) * 100
+		}
+
+		temp.WastedStockScore = float64(wastedStockPercentage)
+
+		if highestProfitMargin < profitMargin {
+			highestProfitMargin = profitMargin
+		}
+
+		if highestProfitRatio < profitRatio {
+			highestProfitRatio = profitRatio
+		}
+
+		if highestWastedStockScore < temp.WastedStockScore {
+			highestWastedStockScore = temp.WastedStockScore
+		}
+
+		product[recipeID] = temp
+	}
+
+	response := make(map[string]int)
+	for i := 0; i < len(recipeID); i++ {
+		recipeID := recipeID[i]
+		temp := product[recipeID]
+
+		if highestProfitMargin != 0 {
+			temp.ProfitMarginScore = (temp.ProfitMarginScore / highestProfitMargin) * 5
+		}
+
+		if highestProfitRatio != 0 {
+			temp.ProfitRatioScore = (temp.ProfitRatioScore / highestProfitRatio) * 5
+		}
+
+		if highestWastedStockScore != 0 {
+			temp.WastedStockScore = 5 - ((temp.WastedStockScore / float64(highestWastedStockScore)) * 5)
+		}
+
+		star := (temp.ProfitMarginScore + temp.ProfitRatioScore + temp.WastedStockScore) / 3
+
+		response[recipeID] = int(math.Ceil(star))
+
+	}
+
+	return response, nil
+
 }

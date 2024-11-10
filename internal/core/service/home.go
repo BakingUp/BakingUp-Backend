@@ -115,7 +115,9 @@ func (hs *HomeService) GetTopProducts(c *fiber.Ctx, userID string, chartType str
 		} else if chartType == "Top Profit Ratio" || chartType == "Top Profit Revenue" || chartType == "Top Profit Margin" {
 			profitRevenue := productSellingPrice[name].SellingPrice * float64(quantity)
 			profitProducts := (productSellingPrice[name].SellingPrice - productSellingPrice[name].Cost) * float64(quantity)
-			profitMargin := ((profitRevenue - profitProducts) / profitRevenue) * 100
+			cost := productSellingPrice[name].Cost * float64(quantity)
+			profitMargin := ((profitRevenue - cost) / profitRevenue) * 100
+
 			profitRatio := ((profitProducts - allFixCost) / profitRevenue) * 100
 
 			if math.IsNaN(profitMargin) {
@@ -134,9 +136,6 @@ func (hs *HomeService) GetTopProducts(c *fiber.Ctx, userID string, chartType str
 				productList[i].Detail = fmt.Sprintf("Profit Ratio: %.2f%%", profitRatio)
 			}
 		}
-		// else if chartType == "Selling Quickly" {
-
-		// }
 
 	}
 

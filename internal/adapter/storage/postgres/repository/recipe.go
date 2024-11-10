@@ -228,3 +228,19 @@ func (rr *RecipeRepository) GetEditRecipeDetail(c *fiber.Ctx, recipeID string) (
 
 	return recipe, nil
 }
+
+func (rr *RecipeRepository) GetRecipeStarData(c *fiber.Ctx, userID string) ([]db.OrdersModel, error) {
+	orders, err := rr.db.Orders.FindMany(
+		db.Orders.UserID.Equals(userID),
+	).With(
+		db.Orders.OrderProducts.Fetch().With(db.OrderProducts.Recipe.Fetch().With(db.Recipes.Stocks.Fetch().With(db.Stocks.StockDetail.Fetch()), db.Recipes.RecipeImages.Fetch())),
+		db.Orders.User.Fetch().With(db.Users.FixCosts.Fetch()),
+		db.Orders.CuttingStock.Fetch(),
+	).Exec(c.Context())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return orders, nil
+}

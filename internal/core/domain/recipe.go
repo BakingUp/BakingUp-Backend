@@ -118,25 +118,25 @@ type UpdateProfitMarginPayload struct {
 }
 
 type EditRecipeRequest struct {
-	RecipeID         string                          `json:"recipe_id"`
-	RecipeEngName    string                          `json:"recipe_eng_name"`
-	RecipeThaiName   string                          `json:"recipe_thai_name"`
-	TotalHours       string                          `json:"total_hours"`
-	TotalMins        string                          `json:"total_mins"`
-	Servings         string                          `json:"servings"`
-	EngInstruction   string                          `json:"eng_instruction"`
-	ThaiInstruction  string                          `json:"thai_instruction"`
-	Ingredients      []AddRecipeIngredientRequest    `json:"ingredients"`
+	RecipeID        string                       `json:"recipe_id"`
+	RecipeEngName   string                       `json:"recipe_eng_name"`
+	RecipeThaiName  string                       `json:"recipe_thai_name"`
+	TotalHours      string                       `json:"total_hours"`
+	TotalMins       string                       `json:"total_mins"`
+	Servings        string                       `json:"servings"`
+	EngInstruction  string                       `json:"eng_instruction"`
+	ThaiInstruction string                       `json:"thai_instruction"`
+	Ingredients     []AddRecipeIngredientRequest `json:"ingredients"`
 }
 
 type EditRecipePayload struct {
-	RecipeID         string    `json:"recipe_id"`
-	RecipeEngName    string    `json:"recipe_eng_name"`
-	RecipeThaiName   string    `json:"recipe_thai_name"`
-	TotalTime        time.Time `json:"total_time"`
-	Servings         int       `json:"servings"`
-	EngInstruction   string    `json:"eng_instruction"`
-	ThaiInstruction  string    `json:"thai_instruction"`
+	RecipeID        string    `json:"recipe_id"`
+	RecipeEngName   string    `json:"recipe_eng_name"`
+	RecipeThaiName  string    `json:"recipe_thai_name"`
+	TotalTime       time.Time `json:"total_time"`
+	Servings        int       `json:"servings"`
+	EngInstruction  string    `json:"eng_instruction"`
+	ThaiInstruction string    `json:"thai_instruction"`
 }
 
 type GetEditRecipeDetail struct {
@@ -156,4 +156,13 @@ type GetEditRecipeIngredientDetail struct {
 	IngredientURL      string `json:"ingredient_url"`
 	IngredientQuantity string `json:"ingredient_quantity"`
 	IngredientUnit     string `json:"ingredient_unit"`
+}
+
+type CalculateRecipeStarPayload struct {
+	Quantity          int     `json:"quantity"`
+	AllStock          int     `json:"all_stock"`
+	StockWastedAmount int     `json:"stock_wasted_amount"`
+	ProfitMarginScore float64 `json:"profit_margin_score"`
+	ProfitRatioScore  float64 `json:"profit_ratio_score"`
+	WastedStockScore  float64 `json:"wasted_stock_score"`
 }
