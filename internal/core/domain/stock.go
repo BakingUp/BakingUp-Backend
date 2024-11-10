@@ -69,6 +69,7 @@ type AddStockPayload struct {
 	LST            int       `json:"lst"`
 	ExpirationDate time.Time `json:"expiration_date"`
 	SellingPrice   float64   `json:"selling_price"`
+	Cost           float64   `json:"cost"`
 	StockLessThan  int       `json:"stock_less_than"`
 }
 
