@@ -45,6 +45,11 @@ func (s *OrderService) GetAllOrders(c *fiber.Ctx, userID string) (*domain.Orders
 		return nil, fmt.Errorf("No orders found for user ID %s", userID)
 	}
 
+	location, err := time.LoadLocation("Asia/Bangkok")
+	if err != nil {
+		return nil, err
+	}
+
 	var list []domain.OrderInfo
 	for _, order := range orders {
 		totalPrice := 0.0
@@ -55,6 +60,9 @@ func (s *OrderService) GetAllOrders(c *fiber.Ctx, userID string) (*domain.Orders
 			}
 		}
 
+		orderDateThai := order.OrderDate.In(location)
+		pickUpDateThai := order.PickUpDateTime.In(location)
+
 		if order.IsPreOrder {
 			//Pre-Order case
 			list = append(list, domain.OrderInfo{
@@ -63,8 +71,8 @@ func (s *OrderService) GetAllOrders(c *fiber.Ctx, userID string) (*domain.Orders
 				OrderPlatform: order.OrderPlatform,
 				IsPreOrder:    order.IsPreOrder,
 				Total:         totalPrice,
-				OrderDate:     order.OrderDate.Format("02/01/2006 03:04 PM"),
-				PickUpDate:    order.PickUpDateTime.Format("02/01/2006 03:04 PM"),
+				OrderDate:     orderDateThai.Format("02/01/2006 03:04 PM"),
+				PickUpDate:    pickUpDateThai.Format("02/01/2006 03:04 PM"),
 				OrderStatus:   order.OrderStatus,
 			})
 		} else {
@@ -75,7 +83,7 @@ func (s *OrderService) GetAllOrders(c *fiber.Ctx, userID string) (*domain.Orders
 				OrderPlatform: order.OrderPlatform,
 				IsPreOrder:    order.IsPreOrder,
 				Total:         totalPrice,
-				OrderDate:     order.OrderDate.Format("02/01/2006 03:04 PM"),
+				OrderDate:     orderDateThai.Format("02/01/2006 03:04 PM"),
 				OrderStatus:   order.OrderStatus,
 			})
 		}
