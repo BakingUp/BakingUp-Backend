@@ -352,3 +352,15 @@ func (ir *IngredientRepository) GetIngredientListsFromReceipt(c *fiber.Ctx, file
 
 	return &ingredientList, nil
 }
+
+func (ir *IngredientRepository) GetAllIngredientIDsAndNames(c *fiber.Ctx, userID string) ([]db.IngredientsModel, error) {
+	ingredients, err := ir.db.Ingredients.FindMany(
+		db.Ingredients.UserID.Equals(userID),
+	).Exec(c.Context())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return ingredients, nil
+}
