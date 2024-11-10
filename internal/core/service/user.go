@@ -94,7 +94,7 @@ func (s *UserService) RegisterUser(user *domain.ManageUserRequest) (*domain.User
 
 	return &domain.UserResponse{
 		Status:  201,
-		Message: "Sucessfuly create a new user.",
+		Message: "Successfully create a new user.",
 	}, nil
 }
 
