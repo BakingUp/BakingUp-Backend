@@ -20,6 +20,10 @@ func GetIngredientName(ingredient *db.IngredientsModel, language *db.Language) s
 	return ingredient.IngredientEngName
 }
 
+func IsIngredientExpired(expirationDate time.Time) bool {
+	return time.Now().After(expirationDate)
+}
+
 // TODO: daysUntilExpiration should be set according to user's setting
 func CalculateExpirationStatus(expirationDate time.Time, blackExpirationDate time.Time, redExpirationDate time.Time, yellowExpirationDate time.Time) string {
 	daysUntilExpiration := time.Until(expirationDate).Hours() / 24
