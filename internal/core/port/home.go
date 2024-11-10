@@ -20,4 +20,5 @@ type HomeService interface {
 	GetTopProducts(c *fiber.Ctx, userID string, chartType string, saleChannels []string, orderTypes []string, startDateTime time.Time, endDateTime time.Time) (*domain.FilterProductResponse, error)
 	GetWastedProduct(c *fiber.Ctx, userID string, chartType string, productType string, sortType string) (*domain.FilterProductResponse, error)
 	GetDashboardChartData(c *fiber.Ctx, userID string, startDateTime time.Time, endDateTime time.Time) (*domain.DashboardChartDataResponse, error)
+	GetProductSellingQuickly(c *fiber.Ctx, userID string, saleChannels []string, orderType []string) (*domain.FilterProductResponse, error)
 }
