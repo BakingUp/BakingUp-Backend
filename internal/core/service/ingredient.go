@@ -637,6 +637,7 @@ func (s *IngredientService) GetAllIngredientIDsAndNames(c *fiber.Ctx, userID str
 			IngredientID:       ingredient.IngredientID,
 			IngredientEngName:  ingredient.IngredientEngName,
 			IngredientThaiName: ingredient.IngredientThaiName,
+			Unit:               string(ingredient.Unit),
 		})
 	}
 

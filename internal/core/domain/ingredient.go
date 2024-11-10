@@ -196,6 +196,7 @@ type IngredientIDandName struct {
 	IngredientID       string `json:"ingredient_id"`
 	IngredientEngName  string `json:"ingredient_eng_name"`
 	IngredientThaiName string `json:"ingredient_thai_name"`
+	Unit               string `json:"unit"`
 }
 
 type AllIngredientIDsAndNames struct {

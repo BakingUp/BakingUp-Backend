@@ -2809,6 +2809,9 @@ const docTemplate = `{
                 },
                 "ingredient_thai_name": {
                     "type": "string"
+                },
+                "unit": {
+                    "type": "string"
                 }
             }
         },
