@@ -629,10 +629,14 @@ func (s *StockService) GetEditStockDetail(c *fiber.Ctx, recipeID string) (*domai
 		return nil, err
 	}
 
+	firstRecipeURL := ""
+	if len(stock.Recipe().RecipeImages()) != 0 {
+		firstRecipeURL = stock.Recipe().RecipeImages()[0].RecipeURL
+	}
 	editStockDetail := &domain.GetEditStockDetail{
 		LST:            strconv.Itoa(stock.Lst),
 		RecipeName:     util.GetRecipeName(stock.Recipe(), language),
-		RecipeURL:      stock.Recipe().RecipeImages()[0].RecipeURL,
+		RecipeURL:      firstRecipeURL,
 		SellingPrice:   strconv.FormatFloat(stock.SellingPrice, 'g', -1, 64),
 		StockLessThan:  strconv.Itoa(stock.StockLessThan),
 		ExpirationDate: strconv.Itoa(util.DaysSince2000(stock.DayBeforeExpired)),
