@@ -282,6 +282,7 @@ func (s *StockService) AddStock(c *fiber.Ctx, stock *domain.AddStockRequest) err
 	var hiddenCost = recipeDetail.HiddenCost * 0.01 * totalCost
 
 	totalCost += hiddenCost
+	totalCost = totalCost / float64(recipeDetail.Servings)
 	totalCost = math.Trunc(totalCost*100) / 100
 
 	stockDetail := &domain.AddStockPayload{
