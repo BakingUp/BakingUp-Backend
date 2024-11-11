@@ -12,6 +12,12 @@ RUN go build -o app cmd/http/main.go
 FROM ubuntu:22.04
 
 WORKDIR /app
+
+# Install tzdata
+RUN apt-get update && \
+    apt-get install -y tzdata && \
+    rm -rf /var/lib/apt/lists/*
+
 COPY --from=builder /go/src/app/app /app
 COPY ./docs/swagger.json /app/docs/swagger.json
 COPY .env /app/.env
