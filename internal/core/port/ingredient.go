@@ -28,6 +28,7 @@ type IngredientRepository interface {
 	EditIngredientStock(c *fiber.Ctx, ingredientStock *domain.EditIngredientStockPayload) error
 	GetEditIngredientStockDetail(c *fiber.Ctx, ingredientStockID string) (*db.IngredientDetailModel, error)
 	GetIngredientListsFromReceipt(c *fiber.Ctx, file *multipart.FileHeader) (*domain.IngredientListFromReceiptModel, error)
+	GetAllIngredientIDsAndNames(c *fiber.Ctx, userID string) ([]db.IngredientsModel, error)
 }
 
 type IngredientService interface {
@@ -48,4 +49,6 @@ type IngredientService interface {
 	GetEditIngredientStockDetail(c *fiber.Ctx, ingredientStockID string) (*domain.GetEditIngredientStockDetail, error)
 	BeforeExpiredIngredientNotifiation() error
 	GetIngredientListsFromReceipt(c *fiber.Ctx, file *multipart.FileHeader) (*domain.IngredientListFromReceiptResponse, error)
+	GetAllIngredientIDsAndNames(c *fiber.Ctx, userID string) (*domain.AllIngredientIDsAndNames, error)
+	AddIngredientAndStock(c *fiber.Ctx, ingredientAndStock *domain.AddIngredientAndStockRequest) error
 }

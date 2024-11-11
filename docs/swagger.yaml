@@ -9,6 +9,35 @@ definitions:
       unit:
         type: string
     type: object
+  domain.AddIngredientAndStockRequest:
+    properties:
+      brand:
+        type: string
+      day_before_expire:
+        type: string
+      expiration_date:
+        type: string
+      img:
+        type: string
+      ingredient_eng_name:
+        type: string
+      ingredient_thai_name:
+        type: string
+      note:
+        type: string
+      price:
+        type: string
+      quantity:
+        type: string
+      stock_less_than:
+        type: string
+      supplier:
+        type: string
+      unit:
+        type: string
+      user_id:
+        type: string
+    type: object
   domain.AddIngredientRequest:
     properties:
       day_before_expire:
@@ -122,6 +151,13 @@ definitions:
       stock_less_than:
         type: string
     type: object
+  domain.AllIngredientIDsAndNames:
+    properties:
+      ingredients:
+        items:
+          $ref: '#/definitions/domain.IngredientIDandName'
+        type: array
+    type: object
   domain.ChangeExpirationDateSetting:
     properties:
       black_expiration_date:
@@ -178,8 +214,6 @@ definitions:
     type: object
   domain.CreateNotificationItem:
     properties:
-      created_at:
-        type: string
       eng_message:
         type: string
       eng_title:
@@ -434,10 +468,14 @@ definitions:
     type: object
   domain.Ingredient:
     properties:
+      day_before_expire:
+        type: string
       expiration_status:
         type: string
       ingredient_id:
         type: string
+      ingredient_less_than:
+        type: number
       ingredient_name:
         type: string
       ingredient_url:
@@ -473,6 +511,17 @@ definitions:
       price:
         type: string
       quantity:
+        type: string
+    type: object
+  domain.IngredientIDandName:
+    properties:
+      ingredient_eng_name:
+        type: string
+      ingredient_id:
+        type: string
+      ingredient_thai_name:
+        type: string
+      unit:
         type: string
     type: object
   domain.IngredientList:
@@ -686,6 +735,8 @@ definitions:
     type: object
   domain.StockItem:
     properties:
+      day_before_expire:
+        type: string
       lst:
         type: integer
       lst_status:
@@ -696,6 +747,8 @@ definitions:
         type: number
       stock_id:
         type: string
+      stock_less_than:
+        type: integer
       stock_name:
         type: string
       stock_url:
@@ -871,6 +924,32 @@ paths:
       summary: Get unread notification amount of user
       tags:
       - home
+  /ingredient/addIngredientAndStock:
+    post:
+      consumes:
+      - application/json
+      description: Add ingredient and stock by using add ingredient and stock request
+      parameters:
+      - description: Add Ingredient And Stock Request
+        in: body
+        name: AddIngredientAndStockRequest
+        required: true
+        schema:
+          $ref: '#/definitions/domain.AddIngredientAndStockRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/http.response'
+        "400":
+          description: Cannot add ingredient and stock
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Add ingredient and stock
+      tags:
+      - ingredient
   /ingredient/addIngredientStock:
     post:
       consumes:
@@ -1098,6 +1177,31 @@ paths:
           schema:
             $ref: '#/definitions/http.response'
       summary: Get add edit ingredient stock details
+      tags:
+      - ingredient
+  /ingredient/getAllIngredientIDsAndNames:
+    get:
+      consumes:
+      - application/json
+      description: Get all ingredient IDs and names by user ID
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/domain.AllIngredientIDsAndNames'
+        "400":
+          description: Cannot get all ingredient IDs and names
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get all ingredient IDs and names
       tags:
       - ingredient
   /ingredient/getAllIngredients:

@@ -361,3 +361,54 @@ func (ih *IngredientHandler) GetIngredientListsFromReceipt(c *fiber.Ctx) error {
 	handleSuccess(c, ingredientList)
 	return nil
 }
+
+// GetAllIngredientIDsAndNames godoc
+// @Summary      Get all ingredient IDs and names
+// @Description  Get all ingredient IDs and names by user ID
+// @Tags         ingredient
+// @Accept       json
+// @Produce      json
+// @Param        user_id  query  string  true  "User ID"
+// @Success      200  {object}  domain.AllIngredientIDsAndNames  "Success"
+// @Failure      400  {object}  response  "Cannot get all ingredient IDs and names"
+// @Router       /ingredient/getAllIngredientIDsAndNames [get]
+func (ih *IngredientHandler) GetAllIngredientIDsAndNames(c *fiber.Ctx) error {
+	userID := c.Query("user_id")
+
+	ingredientList, err := ih.svc.GetAllIngredientIDsAndNames(c, userID)
+	if err != nil {
+		handleError(c, 400, "Cannot get all ingredient IDs and names", err.Error())
+		return nil
+	}
+
+	handleSuccess(c, ingredientList)
+	return nil
+}
+
+// AddIngredientAndStock godoc
+// @Summary      Add ingredient and stock
+// @Description  Add ingredient and stock by using add ingredient and stock request
+// @Tags         ingredient
+// @Accept       json
+// @Produce      json
+// @Param        AddIngredientAndStockRequest  body  domain.AddIngredientAndStockRequest  true  "Add Ingredient And Stock Request"
+// @Success      200  {object}  response  "Success"
+// @Failure      400  {object}  response  "Cannot add ingredient and stock"
+// @Router       /ingredient/addIngredientAndStock [post]
+func (ih *IngredientHandler) AddIngredientAndStock(c *fiber.Ctx) error {
+	var addIngredientAndStockRequest domain.AddIngredientAndStockRequest
+
+	if err := c.BodyParser(&addIngredientAndStockRequest); err != nil {
+		handleError(c, 400, "Cannot add ingredient and stock", err.Error())
+		return nil
+	}
+
+	err := ih.svc.AddIngredientAndStock(c, &addIngredientAndStockRequest)
+	if err != nil {
+		handleError(c, 400, "Cannot add ingredient and stock", err.Error())
+		return nil
+	}
+
+	handleSuccessMessage(c, "Successfully add ingredient and stock")
+	return nil
+}
