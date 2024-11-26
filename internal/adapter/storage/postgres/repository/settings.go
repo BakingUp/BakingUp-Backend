@@ -69,6 +69,11 @@ func (sr *SettingsRepository) GetFixCost(c *fiber.Ctx, userID string, startDateT
 		db.FixCost.CreatedAt.BeforeEquals(endDateTime),
 	).Exec(c.Context())
 
+	if len(fixCosts) == 0 {
+		fixCostItem := db.FixCostModel{}
+		fixCosts = append(fixCosts, fixCostItem)
+	}
+
 	if err != nil {
 		return nil, err
 	}
